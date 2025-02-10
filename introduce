@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siri 채팅 - 당신의 지능형 대화 파트너</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            color: #1d1d1f;
+            background-color: #f5f5f7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 10px auto;
+            padding: 0 20px;
+        }
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+        }
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #000;
+        }
+        .hero {
+            padding: 120px 0 60px;
+            text-align: center;
+            background: linear-gradient(to bottom, #f0f0f0, #fff);
+        }
+        h1 {
+            font-size: 56px;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-size: 28px;
+            color: #86868b;
+            margin-bottom: 40px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #0071e3;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+        .cta-button:hover {
+            background-color: #0077ed;
+        }
+        .features {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+        .feature-content {
+            flex: 1;
+        }
+        .feature-image {
+            flex: 1;
+            text-align: center;
+        }
+        .feature-image img {
+            max-width: 100%;
+            height: auto;
+        }
+        h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 18px;
+            color: #86868b;
+        }
+        footer {
+            background-color: #f5f5f7;
+            padding: 40px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">Siri 채팅</div>
+            <div class="nav-links">
+                <a href="#features">기능</a>
+                <a href="#about">소개</a>
+                <a href="http://www.sodam-siri-browse.kro.kr/" target="_blank">시작하기</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Siri 채팅과 함께하는<br>지능형 대화의 시작</h1>
+                <p class="subtitle">당신의 질문에 언제나 준비된 AI 어시스턴트</p>
+                <a href="http://www.sodam-siri-browse.kro.kr/" class="cta-button">지금 시작하기</a>
+            </div>
+        </section>
+
+        <section id="features" class="features">
+            <div class="container">
+                <div class="feature">
+                    <div class="feature-content">
+                        <h2>자연스러운 대화</h2>
+                        <p>Siri 채팅은 단순한 명령어 인식을 넘어, 문맥을 이해하고 자연스러운 대화를 이어갑니다. 마치 실제 대화하는 것처럼 편안하게 소통하세요.</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="/api/placeholder/600/400" alt="자연스러운 대화 이미지">
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-image">
+                        <img src="/api/placeholder/600/400" alt="다양한 주제 이미지">
+                    </div>
+                    <div class="feature-content">
+                        <h2>다양한 주제에 대한 지식</h2>
+                        <p>일상적인 대화부터 전문적인 주제까지, Siri 채팅은 폭넓은 지식을 바탕으로 다양한 질문에 답변합니다. 당신의 호기심을 자극하는 대화를 경험하세요.</p>
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-content">
+                        <h2>개인정보 보호</h2>
+                        <p>당신의 프라이버시는 우리의 최우선 과제입니다. Siri 채팅은 독립된 공간에서 안전하게 운영되며, 민감한 정보도 안심하고 공유할 수 있습니다.</p>
+                    </div>
+                    <div class="feature-image">
+                        <img src="/api/placeholder/600/400" alt="개인정보 보호 이미지">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="hero">
+            <div class="container">
+                <h2>Siri 채팅 소개</h2>
+                <p>Siri 채팅은 Apple Sodam이 제공하는 최첨단 AI 채팅 서비스입니다. 우리의 목표는 사용자에게 직관적이고 지능적인 대화 경험을 제공하는 것입니다. 질문하고, 학습하고, 영감을 얻으세요. Siri 채팅과 함께라면 당신의 일상이 더욱 풍요로워집니다.</p>
+                <a href="http://www.sodam-siri-browse.kro.kr/" class="cta-button">Siri와 대화 시작하기</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Apple Sodam. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
