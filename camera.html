@@ -1,179 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<title>iOS Camera</title>
-<style>
-body {
-  margin: 0;
-  overflow: hidden; /* 카메라 화면 밖으로 내용이 넘치지 않도록 */
-}
-
-.camera {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden; /* 카메라 화면 밖으로 내용이 넘치지 않도록 */
-}
-
-.camera video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* 비디오 화면을 채우도록 설정 */
-}
-
-.top-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 44px;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 16px;
-  z-index: 2; /* video 위에 표시 */
-}
-
-.top-bar button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-}
-
-.bottom-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100px;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2; /* video 위에 표시 */
-}
-
-.capture-button {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: white;
-  border: none;
-}
-
-.mode-selector {
-  position: absolute;
-  bottom: 120px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 2; /* video 위에 표시 */
-}
-
-.mode-selector button {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 16px;
-  opacity: 0.7;
-}
-
-.mode-selector button.active {
-  opacity: 1;
-  font-weight: bold;
-}
-
-.zoom-control {
-  position: absolute;
-  right: 20px;
-  bottom: 120px;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2; /* video 위에 표시 */
-}
-
-.zoom-control img {
-  width: 20px;
-  height: 20px;
-}
-
-.recent-photo {
-  position: absolute;
-  left: 20px;
-  bottom: 120px;
-  width: 40px;
-  height: 40px;
-  overflow: hidden;
-  border-radius: 8px;
-  z-index: 2; /* video 위에 표시 */
-}
-
-.recent-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS-style Camera Interface with Real Camera</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+        }
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        .control-button {
+            color: white;
+            font-size: 24px;
+            background: none;
+            border: none;
+        }
+        .preview-area {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        #camera-stream {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .bottom-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+        }
+        .mode-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .mode-button {
+            color: #fff;
+            background: none;
+            border: none;
+            font-size: 16px;
+            opacity: 0.7;
+        }
+        .mode-button.active {
+            opacity: 1;
+            font-weight: bold;
+        }
+        .capture-button {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #fff;
+            border: 2px solid #fff;
+        }
+        .thumbnail {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            background-color: #555;
+            overflow: hidden;
+        }
+        #captured-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    </style>
 </head>
 <body>
-<div class="camera">
-  <video id="video" autoplay playsinline></video>
-  <div class="top-bar">
-    <button id="close">✕</button>
-    <button id="flash">^</button>
-    <button id="switchCamera">⊙</button>
-  </div>
-  <div class="bottom-bar">
-    <button class="capture-button" id="capture"></button>
-  </div>
-  <div class="mode-selector">
-    <button id="cinematic">Cinematic</button>
-    <button id="video">Video</button>
-    <button id="photo" class="active">Photo</button>
-    <button id="portrait">Portrait</button>
-    <button id="pano">Pano</button>
-  </div>
-  <div class="zoom-control">
-    <img src="zoom.svg" alt="Zoom">
-  </div>
-  <div class="recent-photo">
-    <img src="recent.jpg" alt="Recent Photo">
-  </div>
-</div>
+    <div class="camera-container">
+        <div class="top-controls">
+            <button class="control-button" id="flash-toggle">⚡️</button>
+            <button class="control-button">^</button>
+            <button class="control-button" id="camera-switch">⟲</button>
+        </div>
+        <div class="preview-area">
+            <video id="camera-stream" autoplay playsinline></video>
+        </div>
+        <div class="bottom-controls">
+            <div class="thumbnail">
+                <img id="captured-image" alt="Captured image thumbnail">
+            </div>
+            <div>
+                <div class="mode-selector">
+                    <button class="mode-button">CINEMATIC</button>
+                    <button class="mode-button">VIDEO</button>
+                    <button class="mode-button active">PHOTO</button>
+                    <button class="mode-button">PORTRAIT</button>
+                    <button class="mode-button">PANO</button>
+                </div>
+                <button class="capture-button" id="capture-button"></button>
+            </div>
+            <div style="width: 40px;"></div> <!-- Placeholder for layout balance -->
+        </div>
+    </div>
 
-<script>
-const video = document.getElementById('video');
-const captureButton = document.getElementById('capture');
-const switchCameraButton = document.getElementById('switchCamera');
+    <script>
+        const videoElement = document.getElementById('camera-stream');
+        const captureButton = document.getElementById('capture-button');
+        const cameraSwitchButton = document.getElementById('camera-switch');
+        const flashToggleButton = document.getElementById('flash-toggle');
+        const thumbnailImage = document.getElementById('captured-image');
 
-navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-  .then(stream => {
-    video.srcObject = stream;
-  })
-  .catch(err => {
-    console.error("Error accessing camera:", err);
-  });
+        let currentStream;
+        let facingMode = 'environment'; // Start with back camera
 
-captureButton.addEventListener('click', () => {
-  // 사진 캡처 로직 추가
-  console.log('사진 캡처!');
-});
+        async function startCamera() {
+            const constraints = {
+                video: { facingMode: facingMode }
+            };
 
-switchCameraButton.addEventListener('click', () => {
-  // 카메라 전환 로직 추가
-  console.log('카메라 전환!');
-});
-</script>
+            try {
+                currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = currentStream;
+            } catch (err) {
+                console.error("Error accessing the camera", err);
+            }
+        }
+
+        startCamera();
+
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            canvas.getContext('2d').drawImage(videoElement, 0, 0);
+            thumbnailImage.src = canvas.toDataURL('image/jpeg');
+        });
+
+        cameraSwitchButton.addEventListener('click', () => {
+            facingMode = facingMode === 'user' ? 'environment' : 'user';
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            startCamera();
+        });
+
+        // Flash toggle functionality would require additional handling
+        flashToggleButton.addEventListener('click', () => {
+            alert('Flash functionality would require additional hardware control');
+        });
+    </script>
 </body>
 </html>
