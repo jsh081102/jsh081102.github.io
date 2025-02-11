@@ -76,18 +76,27 @@
             display: flex;
             align-items: center;
             margin-bottom: 80px;
+            flex-wrap: wrap; /* 화면이 작을 때 줄바꿈 */
         }
         .service-content {
             flex: 1;
+            order: 1; /* 작은 화면에서 텍스트가 먼저 나오도록 */
+            min-width: 300px; /* 텍스트 최소 너비 */
+
         }
         .service-image {
             flex: 1;
             text-align: center;
+            order: 2;  /* 작은 화면에서 이미지가 나중에 나오도록 */
         }
         .service-image img {
-            max-width: 100%;
+            max-width: 400px; /* 최대 너비 */
+            max-height: 300px; /* 최대 높이 */
+            width: 100%;
             height: auto;
+            object-fit: contain; /* 이미지 비율 유지하면서 채우기 */
         }
+
         h2 {
             font-size: 40px;
             margin-bottom: 20px;
@@ -101,6 +110,24 @@
             padding: 40px 0;
             text-align: center;
         }
+
+        /* 미디어 쿼리 (화면이 작을 때 이미지 크기 조정) */
+        @media (max-width: 768px) {
+            .service {
+                flex-direction: column; /* 세로로 배치 */
+            }
+             .service-image img {
+                max-width: 80%; /* 최대 너비를 화면의 80%로 */
+                max-height: 200px;
+            }
+
+            .service-content, .service-image{
+                order: 0; /* 순서 원래대로 */
+                min-width: auto;
+            }
+
+        }
+
     </style>
 </head>
 <body>
@@ -128,7 +155,7 @@
                 <div class="service">
                     <div class="service-content">
                         <h2>Siri Chat</h2>
-                        <p>Siri와 자연스럽게 대화하세요. Siri Chat은 당신의 질문에 답변하고, 유용한 정보를 빠르게 제공하며, 즐거운 대화를 나눌 준비가 되어 있습니다.</p>
+                        <p>똑똑한 AI 챗봇과 자연스럽게 대화하세요. Siri Chat은 당신의 질문에 답변하고, 유용한 정보를 제공하며, 즐거운 대화를 나눌 준비가 되어 있습니다.</p>
                         <a href="/chat" class="cta-button">Siri Chat 시작하기</a>
                     </div>
                     <div class="service-image">
@@ -141,7 +168,7 @@
                     </div>
                     <div class="service-content">
                         <h2>Siri Translate</h2>
-                        <p>Siri 번역으로 언어 장벽을 허물어 보세요. Siri Translate는 다양한 언어를 빠르고 정확하게 번역하여 당신의 글로벌 커뮤니케이션을 지원합니다.</p>
+                        <p>AI 번역으로 언어 장벽을 허물어 보세요. Siri Translate는 다양한 언어를 빠르고 정확하게 번역하여 당신의 글로벌 커뮤니케이션을 지원합니다.</p>
                         <a href="/translate" class="cta-button">Siri Translate 시작하기</a>
                     </div>
                 </div>
@@ -160,7 +187,7 @@
 
     <footer>
         <div class="container">
-            <p>© 2025 Apple Sodam. All rights reserved.</p>
+            <p>© 2024 Apple Sodam. All rights reserved.</p>
         </div>
     </footer>
 </body>
