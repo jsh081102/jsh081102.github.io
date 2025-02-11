@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>iOS Camera</title>
+<style>
+body {
+  margin: 0;
+  overflow: hidden; /* 카메라 화면 밖으로 내용이 넘치지 않도록 */
+}
+
+.camera {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden; /* 카메라 화면 밖으로 내용이 넘치지 않도록 */
+}
+
+.camera video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 비디오 화면을 채우도록 설정 */
+}
+
+.top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 44px;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 2; /* video 위에 표시 */
+}
+
+.top-bar button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+}
+
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2; /* video 위에 표시 */
+}
+
+.capture-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: white;
+  border: none;
+}
+
+.mode-selector {
+  position: absolute;
+  bottom: 120px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 2; /* video 위에 표시 */
+}
+
+.mode-selector button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  opacity: 0.7;
+}
+
+.mode-selector button.active {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.zoom-control {
+  position: absolute;
+  right: 20px;
+  bottom: 120px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2; /* video 위에 표시 */
+}
+
+.zoom-control img {
+  width: 20px;
+  height: 20px;
+}
+
+.recent-photo {
+  position: absolute;
+  left: 20px;
+  bottom: 120px;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 8px;
+  z-index: 2; /* video 위에 표시 */
+}
+
+.recent-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+</style>
+</head>
+<body>
+<div class="camera">
+  <video id="video" autoplay playsinline></video>
+  <div class="top-bar">
+    <button id="close">✕</button>
+    <button id="flash">^</button>
+    <button id="switchCamera">⊙</button>
+  </div>
+  <div class="bottom-bar">
+    <button class="capture-button" id="capture"></button>
+  </div>
+  <div class="mode-selector">
+    <button id="cinematic">Cinematic</button>
+    <button id="video">Video</button>
+    <button id="photo" class="active">Photo</button>
+    <button id="portrait">Portrait</button>
+    <button id="pano">Pano</button>
+  </div>
+  <div class="zoom-control">
+    <img src="zoom.svg" alt="Zoom">
+  </div>
+  <div class="recent-photo">
+    <img src="recent.jpg" alt="Recent Photo">
+  </div>
+</div>
+
+<script>
+const video = document.getElementById('video');
+const captureButton = document.getElementById('capture');
+const switchCameraButton = document.getElementById('switchCamera');
+
+navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+  .then(stream => {
+    video.srcObject = stream;
+  })
+  .catch(err => {
+    console.error("Error accessing camera:", err);
+  });
+
+captureButton.addEventListener('click', () => {
+  // 사진 캡처 로직 추가
+  console.log('사진 캡처!');
+});
+
+switchCameraButton.addEventListener('click', () => {
+  // 카메라 전환 로직 추가
+  console.log('카메라 전환!');
+});
+</script>
+</body>
+</html>
