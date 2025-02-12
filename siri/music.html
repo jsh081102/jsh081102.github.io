@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Siri Music - musicOS 1.0</title>
     <style>
+        :root {
+            --background-color: #f0f0f0;
+            --text-color: #000;
+            --card-background: #fff;
+            --hover-background: #e0e0e0;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #000;
+            --text-color: #fff;
+            --card-background: #1a1a1a;
+            --hover-background: #2a2a2a;
+        }
+
         /* Reset CSS */
         * {
             margin: 0;
@@ -15,8 +29,9 @@
 
         /* Main Styles */
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .container {
@@ -36,7 +51,34 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #fff;
+            color: var(--text-color);
+        }
+
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 20px;
+            border: none;
+            background: var(--card-background);
+            color: var(--text-color);
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 10px;
+            font-size: 20px;
         }
 
         /* Main Content */
@@ -50,27 +92,33 @@
             gap: 20px;
         }
 
-        .artist-card {
+        .artist-card, .album-card {
             position: relative;
             cursor: pointer;
             transition: transform 0.2s;
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        .artist-card:hover {
+        .artist-card:hover, .album-card:hover {
             transform: scale(1.05);
+            background: var(--hover-background);
         }
 
-        .artist-image {
+        .artist-image, .album-image {
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
             border-radius: 8px;
         }
 
-        .artist-name {
+        .artist-name, .album-name {
             margin-top: 10px;
             font-size: 16px;
             font-weight: 500;
+            color: var(--text-color);
         }
 
         /* Artist View */
@@ -82,6 +130,8 @@
             position: relative;
             height: 400px;
             overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 20px;
         }
 
         .artist-video {
@@ -97,6 +147,7 @@
             right: 0;
             padding: 20px;
             background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            color: #fff;
         }
 
         /* Album List */
@@ -107,17 +158,6 @@
             gap: 20px;
         }
 
-        .album-card {
-            cursor: pointer;
-        }
-
-        .album-image {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
         /* Player */
         .mini-player {
             position: fixed;
@@ -125,10 +165,11 @@
             right: 20px;
             width: 80px;
             height: 80px;
-            background: #333;
+            background: var(--card-background);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .full-player {
@@ -137,7 +178,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.95);
+            background: var(--background-color);
             display: none;
             flex-direction: column;
             align-items: center;
@@ -150,6 +191,7 @@
             font-size: 24px;
             height: 300px;
             overflow: hidden;
+            color: var(--text-color);
         }
 
         .controls {
@@ -162,24 +204,37 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: rgba(255,255,255,0.1);
+            background: var(--card-background);
             border: none;
-            color: #fff;
+            color: var(--text-color);
             cursor: pointer;
         }
 
         .progress-bar {
             width: 100%;
             height: 4px;
-            background: rgba(255,255,255,0.1);
+            background: var(--hover-background);
             margin-top: 20px;
             position: relative;
+            border-radius: 2px;
         }
 
         .progress {
             height: 100%;
-            background: #fff;
+            background: var(--text-color);
             width: 0;
+            border-radius: 2px;
+        }
+
+        /* Back Button */
+        .back-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding: 10px;
         }
     </style>
 </head>
@@ -187,7 +242,12 @@
     <div class="container">
         <header class="header">
             <div class="logo">Siri Music</div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
         </header>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="아티스트, 앨범 또는 곡 검색..." onkeyup="handleSearch(event)">
+        </div>
 
         <main class="main-content">
             <div class="artist-grid">
@@ -195,8 +255,9 @@
             </div>
 
             <div class="artist-view">
+                <button class="back-button" onclick="goBack()">← 뒤로가기</button>
                 <div class="artist-header">
-                    <video class="artist-video" loop muted></video>
+                    <video class="artist-video" loop autoplay muted></video>
                     <div class="artist-info">
                         <h1 class="artist-title"></h1>
                         <button class="play-button">▶</button>
@@ -233,6 +294,24 @@
     </div>
 
     <script>
+        // Theme handling
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
         // Sample music data structure
         const musicData = {
             artists: [
@@ -257,6 +336,30 @@
             ]
         };
 
+        // Search functionality
+        function handleSearch(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const artistGrid = document.querySelector('.artist-grid');
+            const artists = musicData.artists;
+
+            const filteredArtists = artists.filter(artist => 
+                artist.name.toLowerCase().includes(searchTerm) ||
+                artist.albums.some(album => 
+                    album.name.toLowerCase().includes(searchTerm) ||
+                    album.tracks.some(track => 
+                        track.name.toLowerCase().includes(searchTerm)
+                    )
+                )
+            );
+
+            renderArtists(filteredArtists);
+        }
+
+        function goBack() {
+            document.querySelector('.artist-grid').style.display = 'grid';
+            document.querySelector('.artist-view').style.display = 'none';
+        }
+
         // Main application logic
         class SiriMusic {
             constructor() {
@@ -270,30 +373,43 @@
             }
 
             initializeUI() {
-                this.renderArtists();
+                this.renderArtists(musicData.artists);
             }
 
-            renderArtists() {
+            renderArtists(artists) {
                 const artistGrid = document.querySelector('.artist-grid');
-                artistGrid.innerHTML = musicData.artists.map(artist => `
+                artistGrid.innerHTML = artists.map(artist => `
                     <div class="artist-card" data-artist="${artist.name}">
                         <img src="${artist.image}" alt="${artist.name}" class="artist-image">
                         <div class="artist-name">${artist.name}</div>
                     </div>
                 `).join('');
+
+                this.setupArtistEventListeners();
             }
 
             setupEventListeners() {
+                this.audio.addEventListener('timeupdate', () => {
+                    this.updateProgress();
+                    this.updateLyrics();
+                });
+            }
+
+            setupArtistEventListeners() {
                 document.querySelectorAll('.artist-card').forEach(card => {
                     card.addEventListener('click', (e) => {
                         const artistName = e.currentTarget.dataset.artist;
                         this.showArtistView(artistName);
                     });
                 });
+            }
 
-                this.audio.addEventListener('timeupdate', () => {
-                    this.updateProgress();
-                    this.updateLyrics();
+            setupAlbumEventListeners() {
+                document.querySelectorAll('.album-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const albumName = e.currentTarget.dataset.album;
+                        this.showAlbumView(albumName);
+                    });
                 });
             }
 
@@ -308,7 +424,6 @@
             }
 
             parseSRT(srtContent) {
-                // Simple SRT parser
                 const lines = srtContent.split('\n');
                 const lyrics = [];
                 let currentLyric = {};
@@ -357,11 +472,14 @@
                 document.querySelector('.artist-grid').style.display = 'none';
                 document.querySelector('.artist-view').style.display = 'block';
                 
-                // Update artist view content
-                document.querySelector('.artist-video').src = artist.video;
+                const videoElement = document.querySelector('.artist-video');
+                videoElement.src = artist.video;
+                videoElement.play();
+                
                 document.querySelector('.artist-title').textContent = artist.name;
                 
                 this.renderAlbums(artist.albums);
+                this.setupAlbumEventListeners();
             }
 
             renderAlbums(albums) {
@@ -372,6 +490,11 @@
                         <div class="album-name">${album.name}</div>
                     </div>
                 `).join('');
+            }
+
+            showAlbumView(albumName) {
+                // Implement album view logic here
+                console.log(`Showing album: ${albumName}`);
             }
         }
 
