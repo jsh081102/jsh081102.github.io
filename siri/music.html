@@ -2,153 +2,131 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siri Music</title>
+    <title>Siri Music - musicOS 1.0</title>
     <style>
+        :root {
+            --apple-primary: #f0f0f0;
+            --player-height: 80px;
+        }
+
         body {
-            background-color: #f0f0f0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #333;
             margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
+            background: var(--apple-primary);
         }
-        header {
-            background: #fff;
+
+        /* Apple-style 그리드 레이아웃 */
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 24px;
             padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
         }
-        main {
-            padding: 20px;
+
+        /* 앨범 아트 카드 */
+        .album-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+            cursor: pointer;
         }
-        .artist {
+
+        /* 플레이어 스타일링 */
+        #player {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: var(--player-height);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            padding: 0 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
         }
-        .artist img {
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            margin-right: 20px;
-        }
-        .player-container {
+
+        /* 가사 표시 패널 */
+        .lyrics-panel {
             position: fixed;
-            bottom: 20px;
+            bottom: var(--player-height);
             left: 50%;
             transform: translateX(-50%);
-            background: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            display: none;
-        }
-        .player-container.active {
-            display: block;
-        }
-        .player-container img {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-        }
-        .lyrics {
-            display: none;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
+            width: 60%;
+            max-height: 50vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.9);
             padding: 20px;
-            border-radius: 10px;
-        }
-        .lyrics.active {
-            display: block;
+            border-radius: 16px 16px 0 0;
+            display: none;
         }
     </style>
 </head>
 <body>
     <header>
         <h1>musicOS 1.0</h1>
+        <h2>Siri Music</h2>
     </header>
-    <main id="main-content">
-        <!-- Example artist view -->
-        <div class="artist" id="newjeans">
-            <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg" alt="NewJeans">
-            <div>
-                <h2>뉴진스</h2>
-                <button onclick="showAlbums('NewJeans2ndEPGetUp')">앨범 보기</button>
-            </div>
-        </div>
 
-        <!-- Example albums and songs -->
-        <div id="NewJeans2ndEPGetUp-albums" class="albums" style="display: none;">
-            <h3>NewJeans - 2nd EP 'Get Up'</h3>
-            <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" alt="New Jeans 2nd EP 'Get Up'">
-            <ul>
-                <li><button onclick="playSong('http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP\'GetUp\'/ETA.mp3', 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP\'GetUp\'/ETA.srt')">ETA</button></li>
-                <!-- Add more songs as needed -->
-            </ul>
-        </div>
-
-        <!-- Player -->
-        <div class="player-container" id="player">
-            <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" alt="Album Art">
-            <audio controls id="audio" ontimeupdate="updateLyrics()"></audio>
-        </div>
-        <div class="lyrics" id="lyrics"></div>
+    <main class="music-grid" id="mainContent">
+        <!-- 동적으로 아티스트 로드 -->
     </main>
 
-    <script>
-        function showAlbums(albumId) {
-            const albumElement = document.getElementById(albumId + '-albums');
-            if (albumElement) {
-                albumElement.style.display = 'block';
+    <div id="player">
+        <img id="nowPlayingArt" src="" alt="Album Art" style="height: 60px; border-radius: 8px;">
+        <div id="playerControls">
+            <button id="playPause">▶</button>
+            <input type="range" id="progress" value="0" style="width: 300px;">
+            <span id="currentTime">0:00</span>
+        </div>
+    </div>
+
+    <div class="lyrics-panel" id="lyricsContainer"></div>
+
+<script>
+const musicLibrary = {
+    "NewJeans": {
+        artistImage: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg",
+        albums: {
+            "NewJeans2ndEP'GetUp'": {
+                cover: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
+                tracks: [
+                    {
+                        title: "ETA",
+                        url: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
+                        lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
+                    }
+                ]
             }
         }
+    }
+};
 
-        function playSong(audioSrc, lyricsSrc) {
-            const player = document.getElementById('player');
-            const audio = document.getElementById('audio');
-            const lyricsContainer = document.getElementById('lyrics');
+// 가사 파싱 및 동기화 시스템
+async function loadLyrics(url) {
+    const response = await fetch(url);
+    const data = await response.text();
+    return data.split('\n\n').map(entry => {
+        const [time, ...text] = entry.split('\n');
+        const [start, end] = time.split(' --> ').map(t => {
+            const [hms, ms] = t.split(',');
+            const [h, m, s] = hms.split(':').map(Number);
+            return h * 3600 + m * 60 + s + parseFloat(`0.${ms}`);
+        });
+        return { start, end, text: text.join(' ') };
+    });
+}
 
-            fetch(lyricsSrc)
-                .then(response => response.text())
-                .then(text => parseLyrics(text));
+// 음악 플레이어 로직
+const audio = new Audio();
+let currentLyrics = [];
 
-            audio.src = audioSrc;
-            player.style.display = 'block';
-            audio.play();
-            player.classList.add('active');
-            lyricsContainer.classList.add('active');
-        }
-
-        function parseLyrics(text) {
-            const lyrics = text.split('\n').filter(line => !!line);
-            window.lyricsData = lyrics.map(line => {
-                const [time, lyric] = line.split(' --> ');
-                const [start, end] = time.split(' --> ');
-                return {
-                    start: parseTime(start),
-                    end: parseTime(end),
-                    lyric
-                };
-            });
-        }
-
-        function parseTime(timeStr) {
-            const [hours, minutes, seconds] = timeStr.split(':');
-            return (parseInt(hours, 10) * 3600) + (parseInt(minutes, 10) * 60) + parseFloat(seconds.replace(',', '.'));
-        }
-
-        function updateLyrics() {
-            const audio = document.getElementById('audio');
-            const lyricsContainer = document.getElementById('lyrics');
-            const currentTime = audio.currentTime;
-
-            const currentLyric = window.lyricsData.find(lyric => currentTime >= lyric.start && currentTime <= lyric.end);
-            if (currentLyric) {
-                lyricsContainer.innerText = currentLyric.lyric;
-            } else {
-                lyricsContainer.innerText = '';
-            }
-        }
-    </script>
+audio.ontimeupdate = () => {
+    const currentTime = audio.currentTime;
+    const lyricLine = currentLyrics.find(l => currentTime >= l.start && currentTime < l.end);
+    if(lyricLine) document.getElementById('lyricsContainer').innerText = lyricLine.text;
+};
+</script>
 </body>
 </html>
