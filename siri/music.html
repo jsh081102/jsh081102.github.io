@@ -1,165 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Player</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-        }
-        .album-art {
-            width: 200px;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .song-info {
-            margin-bottom: 20px;
-        }
-        .song-info h2 {
-            margin: 0;
-        }
-        .song-info p {
-            margin: 0;
-            color: #666;
-        }
-        .player-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-        .player-controls button {
-            border: none;
-            background-color: transparent;
-            font-size: 24px;
-            color: #333;
-            cursor: pointer;
-        }
-        .lyrics {
-            white-space: pre-wrap;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Music 스타일 음악 플레이어</title>
+  <style>
+    /* 기본 스타일 설정 */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #player-container {
+      background: #fff;
+      width: 350px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    #album-art {
+      width: 100%;
+      height: 350px;
+      background: #eee;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #album-art img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+    #track-info {
+      padding: 15px;
+      text-align: center;
+    }
+    #audioPlayer {
+      width: 100%;
+      outline: none;
+    }
+    #lyrics {
+      padding: 15px;
+      max-height: 150px;
+      overflow-y: auto;
+      background: #f0f0f0;
+      font-size: 0.9em;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Music Player</h1>
-    </header>
-    <main>
-        <img id="albumArt" class="album-art" src="" alt="Album Art">
-        <div class="song-info">
-            <h2 id="songTitle"></h2>
-            <p id="songArtist"></p>
-        </div>
-        <div class="player-controls">
-            <button id="prevButton"><i class="fas fa-step-backward"></i></button>
-            <button id="playButton"><i class="fas fa-play"></i></button>
-            <button id="nextButton"><i class="fas fa-step-forward"></i></button>
-        </div>
-        <audio id="audioPlayer" src=""></audio>
-        <div id="lyrics" class="lyrics"></div>
-    </main>
+  <div id="player-container">
+    <!-- 앨범 아트 영역 -->
+    <div id="album-art">
+      <img id="album-art-img" src="" alt="앨범 아트">
+    </div>
+    
+    <!-- 트랙 정보 및 오디오 플레이어 -->
+    <div id="track-info">
+      <h2 id="track-title">NewJeans - ETA</h2>
+      <audio id="audioPlayer" controls>
+        <!-- 제공된 m4a 파일 URL 입력 -->
+        <source src="https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.m4a" type="audio/mp4">
+        브라우저가 오디오를 지원하지 않습니다.
+      </audio>
+    </div>
+    
+    <!-- 가사 표시 영역 -->
+    <div id="lyrics">
+      Loading lyrics...
+    </div>
+  </div>
 
-    <script>
-        const songs = [
-            {
-                title: 'ETA',
-                artist: 'NewJeans',
-                audioSrc: 'https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP\'GetUp\'/ETA.m4a',
-                lyricsSrc: 'https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP\'GetUp\'/ETA.srt'
-            }
-            // Add more songs here
-        ];
+  <!-- music-metadata-browser 라이브러리 추가 (CDN 제공) -->
+  <script src="https://unpkg.com/music-metadata-browser/dist/music-metadata-browser.umd.js"></script>
+  <script>
+    // 음원 파일과 가사 파일의 URL 설정
+    const audioUrl = "https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.m4a";
+    const lyricsUrl = "https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.srt";
 
-        let currentSongIndex = 0;
-        const audioPlayer = document.getElementById('audioPlayer');
-        const songTitle = document.getElementById('songTitle');
-        const songArtist = document.getElementById('songArtist');
-        const albumArt = document.getElementById('albumArt');
-        const lyrics = document.getElementById('lyrics');
-        const playButton = document.getElementById('playButton');
-        const prevButton = document.getElementById('prevButton');
-        const nextButton = document.getElementById('nextButton');
-
-        function loadSong(song) {
-            songTitle.textContent = song.title;
-            songArtist.textContent = song.artist;
-            audioPlayer.src = song.audioSrc;
-
-            fetch(song.lyricsSrc)
-                .then(response => response.text())
-                .then(data => {
-                    lyrics.textContent = data;
-                });
-
-            const jsmediatags = window.jsmediatags;
-            jsmediatags.read(song.audioSrc, {
-                onSuccess: function(tag) {
-                    const picture = tag.tags.picture;
-                    if (picture) {
-                        const imageUrl = URL.createObjectURL(new Blob([picture.data], { type: picture.format }));
-                        albumArt.src = imageUrl;
-                    } else {
-                        albumArt.src = '';
-                    }
-                },
-                onError: function(error) {
-                    console.log('Error reading media tags:', error);
-                    albumArt.src = '';
-                }
-            });
+    // m4a 파일의 메타데이터를 파싱하여 앨범 아트 추출
+    async function loadAlbumArt(url) {
+      try {
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        // m4a 파일은 'audio/mp4' 형식으로 파싱
+        const metadata = await window.musicMetadata.parseBuffer(new Uint8Array(arrayBuffer), 'audio/mp4');
+        if (metadata.common.picture && metadata.common.picture.length) {
+          const pic = metadata.common.picture[0];
+          const blob = new Blob([pic.data], { type: pic.format });
+          const imageUrl = URL.createObjectURL(blob);
+          document.getElementById("album-art-img").src = imageUrl;
+        } else {
+          // 앨범 아트가 없는 경우 기본 이미지나 대체 텍스트를 표시
+          document.getElementById("album-art-img").alt = "앨범 아트 정보 없음";
         }
+      } catch (error) {
+        console.error("메타데이터 파싱 중 에러:", error);
+      }
+    }
 
-        function playPause() {
-            if (audioPlayer.paused) {
-                audioPlayer.play();
-                playButton.innerHTML = '<i class="fas fa-pause"></i>';
-            } else {
-                audioPlayer.pause();
-                playButton.innerHTML = '<i class="fas fa-play"></i>';
-            }
-        }
+    // SRT 형식의 가사를 불러와 화면에 출력
+    async function loadLyrics(url) {
+      try {
+        const response = await fetch(url);
+        const srtText = await response.text();
+        // SRT 파일을 단순 텍스트로 표시 (원하는 경우 더 정교하게 파싱 가능)
+        document.getElementById("lyrics").textContent = srtText;
+      } catch (error) {
+        console.error("가사 불러오기 에러:", error);
+        document.getElementById("lyrics").textContent = "가사를 불러오지 못했습니다.";
+      }
+    }
 
-        function prevSong() {
-            currentSongIndex--;
-            if (currentSongIndex < 0) {
-                currentSongIndex = songs.length - 1;
-            }
-            loadSong(songs[currentSongIndex]);
-            audioPlayer.play();
-            playButton.innerHTML = '<i class="fas fa-pause"></i>';
-        }
-
-        function nextSong() {
-            currentSongIndex++;
-            if (currentSongIndex >= songs.length) {
-                currentSongIndex = 0;
-            }
-            loadSong(songs[currentSongIndex]);
-            audioPlayer.play();
-            playButton.innerHTML = '<i class="fas fa-pause"></i>';
-        }
-
-        loadSong(songs[currentSongIndex]);
-        playButton.addEventListener('click', playPause);
-        prevButton.addEventListener('click', prevSong);
-        nextButton.addEventListener('click', nextSong);
-    </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
+    // 페이지 로딩 시 앨범 아트와 가사 정보를 가져옴
+    loadAlbumArt(audioUrl);
+    loadLyrics(lyricsUrl);
+  </script>
 </body>
 </html>
