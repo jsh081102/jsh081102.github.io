@@ -3,313 +3,728 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siri Music - musicOS 1.0</title>
+    <title>Siri Music</title>
     <style>
-        * {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
-        body {
-            background-color: #f0f0f0;
-        }
-
+        /* Main Screen Styles */
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 960px;
+            margin: 20px auto;
             padding: 20px;
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
+        h1 {
+            text-align: center;
+            color: #000;
+            margin-bottom: 20px;
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .main-content {
+        .artist-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 20px;
-            margin-top: 30px;
+            margin-bottom: 30px;
         }
 
-        .artist-card {
-            background: white;
+        .artist-item {
+            text-align: center;
+            cursor: pointer;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .artist-card:hover {
-            transform: scale(1.02);
-        }
-
-        .artist-image {
+        .artist-item img {
             width: 100%;
-            height: 200px;
+            height: 150px;
             object-fit: cover;
+            display: block;
         }
 
-        .artist-info {
-            padding: 15px;
-        }
-
-        .artist-name {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-
-        .mini-player {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 10px;
+        .artist-item p {
             padding: 10px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            margin: 0;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Artist Detail Styles */
+        .artist-detail {
+            display: none; /* 숨김 상태로 시작 */
+        }
+
+        .artist-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .artist-video-container {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .artist-video-container iframe,
+        .artist-video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .artist-title {
+            font-size: 2em;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .play-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-bottom: 20px;
+        }
+
+        .album-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .album-item {
+            cursor: pointer;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .album-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .album-item p {
+            padding: 10px;
+            margin: 0;
+            color: #000;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Album Detail Styles */
+        .album-detail {
+            display: none; /* 숨김 상태로 시작 */
+        }
+
+        .album-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .album-cover-container {
+            max-width: 300px;
+            margin: 0 auto 20px;
+        }
+
+        .album-cover-container img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .album-title {
+            font-size: 1.5em;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .song-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .song-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 15px;
-            cursor: pointer;
+        }
+
+        .song-item:last-child {
+            border-bottom: none;
+        }
+
+        .song-item .song-title {
+            margin-left: 10px;
+            color: #000;
+        }
+
+        /* Player Styles */
+        #music-player-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             z-index: 1000;
         }
 
-        .mini-player img {
-            width: 60px;
-            height: 60px;
-            border-radius: 5px;
+        #player-info {
+            display: flex;
+            align-items: center;
         }
 
-        .full-player {
+        #album-art-player {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
+        #song-details-player p {
+            margin: 0;
+            font-size: 0.9em;
+            color: #000;
+        }
+
+        #controls-player {
+            display: flex;
+            align-items: center;
+        }
+
+        #controls-player button {
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            margin: 0 10px;
+            cursor: pointer;
+            color: #000;
+        }
+
+        #progress-container {
+            width: 100%;
+            margin-top: 10px;
+            display: none; /* Initially hidden */
+        }
+
+        #progress-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #ddd;
+            cursor: pointer;
+        }
+
+        #progress {
+            height: 100%;
+            background-color: #007bff;
+            width: 0%;
+        }
+
+        #current-time, #duration {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+        }
+
+        #lyrics-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: none;
+            background-color: rgba(240, 240, 240, 0.95);
+            z-index: 1001;
+            display: none; /* 숨김 상태로 시작 */
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-        }
-
-        .album-art {
-            width: 300px;
-            height: 300px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .lyrics-container {
-            color: white;
-            text-align: center;
-            font-size: 24px;
-            height: 200px;
+            padding: 20px;
             overflow-y: auto;
-            width: 80%;
-            max-width: 600px;
+            -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
         }
 
-        .controls {
-            display: flex;
-            gap: 20px;
-            margin-top: 30px;
+        #lyrics-album-art {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
-        .control-btn {
+        #lyrics-display {
+            text-align: center;
+            font-size: 1.2em;
+            line-height: 1.8;
+            color: #000;
+            white-space: pre-line; /* 줄바꿈 유지 */
+        }
+
+        #lyrics-display p {
+            margin: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        #lyrics-display p.active-lyric {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        #close-lyrics {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5em;
+            color: #666;
             background: none;
             border: none;
-            color: white;
-            font-size: 24px;
             cursor: pointer;
         }
 
-        .progress-bar {
-            width: 80%;
-            max-width: 600px;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-            margin-top: 20px;
-            border-radius: 2px;
+        .pip-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            overflow: hidden;
             cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 999;
         }
 
-        .progress {
+        .pip-player img {
+            width: 100%;
             height: 100%;
-            background: white;
-            width: 0;
-            border-radius: 2px;
+            object-fit: cover;
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="logo">Siri Music</div>
-        </header>
-
-        <main class="main-content">
-            <!-- 아티스트 카드들이 여기에 동적으로 추가됨 -->
-        </main>
+    <div class="container" id="main-screen">
+        <h1>Siri Music</h1>
+        <div class="artist-list" id="artist-list">
+            </div>
     </div>
 
-    <div class="mini-player">
-        <img src="" alt="Current track" id="miniPlayerArt">
-        <div class="mini-player-info">
-            <div class="current-track"></div>
-            <div class="current-artist"></div>
+    <div class="container artist-detail hidden" id="artist-detail">
+        <div class="artist-header">
+            <div class="artist-video-container">
+                <video id="artist-video-player" controls></video>
+            </div>
+            <h2 class="artist-title" id="artist-name-detail"></h2>
+            <button class="play-button" id="artist-play-button">전체 재생</button>
+        </div>
+        <div class="album-list" id="album-list">
+            </div>
+    </div>
+
+    <div class="container album-detail hidden" id="album-detail">
+        <div class="album-header">
+            <div class="album-cover-container">
+                <img id="album-cover-detail" src="" alt="Album Cover">
+            </div>
+            <h2 class="album-title" id="album-name-detail"></h2>
+        </div>
+        <ul class="song-list" id="song-list">
+            </ul>
+    </div>
+
+    <div id="music-player-container" class="hidden">
+        <div id="player-info">
+            <div class="pip-player" id="pip-album-art-container">
+                <img id="pip-album-art" src="" alt="PIP Album Art">
+            </div>
+            <img id="album-art-player" src="" alt="Album Art">
+            <div id="song-details-player">
+                <p id="song-title-player">곡 제목</p>
+                <p id="artist-name-player">아티스트 이름</p>
+            </div>
+        </div>
+        <div id="controls-player">
+            <button id="prev-track">⏮</button>
+            <button id="play-pause">▶️</button>
+            <button id="next-track">⏭</button>
+        </div>
+        <div id="progress-container" class="hidden">
+            <div id="progress-bar">
+                <div id="progress"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span id="current-time">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
         </div>
     </div>
 
-    <div class="full-player">
-        <img src="" alt="Album art" class="album-art">
-        <div class="lyrics-container"></div>
-        <div class="controls">
-            <button class="control-btn" id="prevBtn">⏮</button>
-            <button class="control-btn" id="playPauseBtn">⏯</button>
-            <button class="control-btn" id="nextBtn">⏭</button>
-        </div>
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
+    <div id="lyrics-container" class="hidden">
+        <button id="close-lyrics">✕</button>
+        <img id="lyrics-album-art" src="" alt="Lyrics Album Art">
+        <div id="lyrics-display">
+            </div>
     </div>
+
+    <audio id="audio-player"></audio>
 
     <script>
-        // 음악 데이터 예시
         const musicData = {
             artists: [
                 {
-                    name: 'NewJeans',
-                    image: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg',
-                    video: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4',
+                    name: "NewJeans",
+                    artistPhoto: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg",
+                    artistVideo: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4",
                     albums: [
                         {
-                            name: "NewJeans2ndEP'GetUp'",
-                            image: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
+                            name: "NewJeans 2nd EP 'Get Up'",
+                            albumCover: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
                             songs: [
                                 {
-                                    title: 'ETA',
-                                    path: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
-                                    lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
-                                }
+                                    title: "ETA",
+                                    musicSrc: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
+                                    lyricsSrc: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
+                                },
+                                // Add more songs from the album here if available
                             ]
-                        }
+                        },
+                        // Add more albums here if available
                     ]
-                }
+                },
+                // Add more artists here (e.g., IVE) with similar structure
             ]
         };
 
-        let currentAudio = new Audio();
-        let currentLyrics = [];
-        let isPlaying = false;
+        const mainScreen = document.getElementById('main-screen');
+        const artistDetailScreen = document.getElementById('artist-detail');
+        const albumDetailScreen = document.getElementById('album-detail');
+        const artistListContainer = document.getElementById('artist-list');
+        const artistVideoPlayer = document.getElementById('artist-video-player');
+        const artistNameDetail = document.getElementById('artist-name-detail');
+        const artistPlayButton = document.getElementById('artist-play-button');
+        const albumListContainer = document.getElementById('album-list');
+        const albumCoverDetail = document.getElementById('album-cover-detail');
+        const albumNameDetail = document.getElementById('album-name-detail');
+        const songListContainer = document.getElementById('song-list');
+        const musicPlayerContainer = document.getElementById('music-player-container');
+        const albumArtPlayer = document.getElementById('album-art-player');
+        const pipAlbumArt = document.getElementById('pip-album-art');
+        const pipAlbumArtContainer = document.getElementById('pip-album-art-container');
+        const songTitlePlayer = document.getElementById('song-title-player');
+        const artistNamePlayer = document.getElementById('artist-name-player');
+        const playPauseButton = document.getElementById('play-pause');
+        const prevTrackButton = document.getElementById('prev-track');
+        const nextTrackButton = document.getElementById('next-track');
+        const progressBar = document.getElementById('progress');
+        const progressContainer = document.getElementById('progress-container');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const durationDisplay = document.getElementById('duration');
+        const lyricsContainer = document.getElementById('lyrics-container');
+        const lyricsAlbumArt = document.getElementById('lyrics-album-art');
+        const lyricsDisplay = document.getElementById('lyrics-display');
+        const closeLyricsButton = document.getElementById('close-lyrics');
+        const audioPlayer = document.getElementById('audio-player');
 
-        // 메인 화면 아티스트 카드 생성
-        function createArtistCards() {
-            const mainContent = document.querySelector('.main-content');
+        let currentArtist = null;
+        let currentAlbum = null;
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let lyricsParsed = [];
+        let lyricsActiveLine = -1;
+
+        function displayArtists() {
+            artistListContainer.innerHTML = '';
             musicData.artists.forEach(artist => {
-                const card = document.createElement('div');
-                card.className = 'artist-card';
-                card.innerHTML = `
-                    <img src="${artist.image}" alt="${artist.name}" class="artist-image">
-                    <div class="artist-info">
-                        <div class="artist-name">${artist.name}</div>
-                    </div>
+                const artistItem = document.createElement('div');
+                artistItem.classList.add('artist-item');
+                artistItem.innerHTML = `
+                    <img src="${artist.artistPhoto}" alt="${artist.name}">
+                    <p>${artist.name}</p>
                 `;
-                card.onclick = () => showArtistDetails(artist);
-                mainContent.appendChild(card);
+                artistItem.addEventListener('click', () => showArtistDetail(artist));
+                artistListContainer.appendChild(artistItem);
             });
         }
 
-        // 가사 파싱 함수
-        async function parseLyrics(lyricsUrl) {
-            try {
-                const response = await fetch(lyricsUrl);
-                const text = await response.text();
-                // SRT 파일 파싱 로직 구현
-                // 실제 구현에서는 더 복잡한 파싱 로직이 필요할 수 있습니다.
-                return text.split('\n\n').map(block => {
-                    const lines = block.split('\n');
-                    return {
-                        time: parseFloat(lines[1].split(' --> ')[0].replace(',', '.')),
-                        text: lines[2]
-                    };
-                });
-            } catch (error) {
-                console.error('가사를 불러오는데 실패했습니다:', error);
-                return [];
-            }
+        function showArtistDetail(artist) {
+            currentArtist = artist;
+            mainScreen.classList.add('hidden');
+            artistDetailScreen.classList.remove('hidden');
+            artistVideoPlayer.src = artist.artistVideo;
+            artistNameDetail.textContent = artist.name;
+            displayAlbums(artist);
         }
 
-        // 음악 재생 함수
-        async function playSong(song) {
-            currentAudio.src = song.path;
-            currentLyrics = await parseLyrics(song.lyrics);
-            currentAudio.play();
+        function displayAlbums(artist) {
+            albumListContainer.innerHTML = '';
+            artist.albums.forEach(album => {
+                const albumItem = document.createElement('div');
+                albumItem.classList.add('album-item');
+                albumItem.innerHTML = `
+                    <img src="${album.albumCover}" alt="${album.name}">
+                    <p>${album.name}</p>
+                `;
+                albumItem.addEventListener('click', () => showAlbumDetail(album));
+                albumListContainer.appendChild(albumItem);
+            });
+        }
+
+        function showAlbumDetail(album) {
+            currentAlbum = album;
+            artistDetailScreen.classList.add('hidden');
+            albumDetailScreen.classList.remove('hidden');
+            albumCoverDetail.src = album.albumCover;
+            albumNameDetail.textContent = album.name;
+            displaySongs(album);
+        }
+
+        function displaySongs(album) {
+            songListContainer.innerHTML = '';
+            album.songs.forEach((song, index) => {
+                const songItem = document.createElement('li');
+                songItem.classList.add('song-item');
+                songItem.innerHTML = `
+                    <div class="song-info">
+                        <span class="song-title">${song.title}</span>
+                    </div>
+                `;
+                songItem.addEventListener('click', () => loadSong(song, album.albumCover));
+                songListContainer.appendChild(songItem);
+            });
+        }
+
+        function loadSong(song, albumCover) {
+            audioPlayer.src = song.musicSrc;
+            songTitlePlayer.textContent = song.title;
+            artistNamePlayer.textContent = currentArtist.name;
+            albumArtPlayer.src = albumCover;
+            pipAlbumArt.src = albumCover;
+            lyricsAlbumArt.src = albumCover;
+            musicPlayerContainer.classList.remove('hidden');
+            progressContainer.classList.remove('hidden');
+            loadLyrics(song.lyricsSrc);
+            playMusic();
+        }
+
+        function playMusic() {
+            audioPlayer.play();
             isPlaying = true;
-            updateMiniPlayer(song);
-            
-            currentAudio.ontimeupdate = () => {
-                updateLyrics(currentAudio.currentTime);
-                updateProgress();
-            };
+            playPauseButton.textContent = '⏸️';
+            requestAnimationFrame(updateProgress);
         }
 
-        // 미니 플레이어 업데이트
-        function updateMiniPlayer(song) {
-            document.querySelector('#miniPlayerArt').src = song.albumArt;
-            document.querySelector('.current-track').textContent = song.title;
-            document.querySelector('.current-artist').textContent = song.artist;
+        function pauseMusic() {
+            audioPlayer.pause();
+            isPlaying = false;
+            playPauseButton.textContent = '▶️';
         }
 
-        // 가사 업데이트
-        function updateLyrics(currentTime) {
-            const currentLyric = currentLyrics.find(lyric => 
-                lyric.time <= currentTime && 
-                (!currentLyrics[currentLyrics.indexOf(lyric) + 1] || 
-                currentLyrics[currentLyrics.indexOf(lyric) + 1].time > currentTime)
-            );
-
-            if (currentLyric) {
-                document.querySelector('.lyrics-container').textContent = currentLyric.text;
-            }
-        }
-
-        // 진행바 업데이트
-        function updateProgress() {
-            const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
-            document.querySelector('.progress').style.width = `${progress}%`;
-        }
-
-        // 이벤트 리스너 설정
-        document.querySelector('.mini-player').onclick = () => {
-            document.querySelector('.full-player').style.display = 'flex';
-        };
-
-        document.querySelector('#playPauseBtn').onclick = () => {
+        playPauseButton.addEventListener('click', () => {
             if (isPlaying) {
-                currentAudio.pause();
-                isPlaying = false;
+                pauseMusic();
             } else {
-                currentAudio.play();
-                isPlaying = true;
+                playMusic();
             }
-        };
+        });
 
-        // 초기화
-        createArtistCards();
+        audioPlayer.addEventListener('loadedmetadata', () => {
+            const duration = formatTime(audioPlayer.duration);
+            durationDisplay.textContent = duration;
+        });
+
+        audioPlayer.addEventListener('timeupdate', () => {
+            updateProgress();
+            updateLyrics();
+        });
+
+        function updateProgress() {
+            const currentTime = audioPlayer.currentTime;
+            const duration = audioPlayer.duration;
+            if (isNaN(duration)) return; // duration이 NaN인지 확인
+
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            currentTimeDisplay.textContent = formatTime(currentTime);
+        }
+
+        function formatTime(time) {
+            const minutes = Math.floor(time / 60);
+            const seconds = Math.floor(time % 60);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        progressBar.addEventListener('click', (e) => {
+            const progressWidth = progressContainer.offsetWidth;
+            const clickedX = e.clientX - progressContainer.offsetLeft;
+            const progressTime = (clickedX / progressWidth) * audioPlayer.duration;
+            audioPlayer.currentTime = progressTime;
+        });
+
+        pipAlbumArtContainer.addEventListener('click', () => {
+            musicPlayerContainer.classList.remove('hidden');
+            lyricsContainer.classList.add('hidden');
+        });
+
+        albumArtPlayer.addEventListener('click', () => {
+            musicPlayerContainer.classList.add('hidden');
+            lyricsContainer.classList.remove('hidden');
+        });
+
+        closeLyricsButton.addEventListener('click', () => {
+            lyricsContainer.classList.add('hidden');
+            musicPlayerContainer.classList.remove('hidden');
+        });
+
+        async function loadLyrics(lyricsSrc) {
+            lyricsDisplay.innerHTML = '';
+            lyricsParsed = [];
+            lyricsActiveLine = -1;
+            try {
+                const response = await fetch(lyricsSrc);
+                const srtText = await response.text();
+                lyricsParsed = parseSRT(srtText);
+                displayParsedLyrics();
+            } catch (error) {
+                console.error('Error loading lyrics:', error);
+                lyricsDisplay.textContent = '가사를 불러올 수 없습니다.';
+            }
+        }
+
+        function parseSRT(srtText) {
+            const lines = srtText.trim().split('\n');
+            const cues = [];
+            let currentCue = {};
+            let lineNumber = 1;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                if (!line) {
+                    if (currentCue.startTime) {
+                        cues.push(currentCue);
+                    }
+                    currentCue = {};
+                    lineNumber = 1;
+                    continue;
+                }
+
+                switch (lineNumber) {
+                    case 1: // Sequence number (ignore for now)
+                        break;
+                    case 2: // Time codes
+                        const timeCodes = line.split('-->');
+                        currentCue.startTime = srtTimeToSeconds(timeCodes[0].trim());
+                        currentCue.endTime = srtTimeToSeconds(timeCodes[1].trim());
+                        break;
+                    default: // Text lines
+                        if (!currentCue.text) {
+                            currentCue.text = line;
+                        } else {
+                            currentCue.text += '\n' + line;
+                        }
+                        break;
+                }
+                lineNumber++;
+            }
+            if (currentCue.startTime) {
+                cues.push(currentCue); // 마지막 큐 처리
+            }
+            return cues;
+        }
+
+
+        function srtTimeToSeconds(srtTime) {
+            const parts = srtTime.replace(',', '.').split(':');
+            return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+        }
+
+        function displayParsedLyrics() {
+            lyricsDisplay.innerHTML = '';
+            lyricsParsed.forEach((cue, index) => {
+                const lyricLine = document.createElement('p');
+                lyricLine.textContent = cue.text;
+                lyricLine.dataset.startTime = cue.startTime;
+                lyricsDisplay.appendChild(lyricLine);
+            });
+        }
+
+        function updateLyrics() {
+            if (lyricsParsed.length === 0) return;
+
+            const currentTime = audioPlayer.currentTime;
+            let activeLineIndex = -1;
+
+            for (let i = 0; i < lyricsParsed.length; i++) {
+                const cue = lyricsParsed[i];
+                if (currentTime >= cue.startTime && currentTime < cue.endTime) {
+                    activeLineIndex = i;
+                    break;
+                }
+            }
+
+            if (activeLineIndex !== lyricsActiveLine) {
+                lyricsActiveLine = activeLineIndex;
+                highlightLyricLine(activeLineIndex);
+            }
+        }
+
+
+        function highlightLyricLine(index) {
+            const lyricLines = lyricsDisplay.querySelectorAll('p');
+            lyricLines.forEach((line, i) => {
+                if (i === index) {
+                    line.classList.add('active-lyric');
+                } else {
+                    line.classList.remove('active-lyric');
+                }
+            });
+
+            if (index >= 0 && lyricLines[index]) {
+                // Show active lyric in the middle
+                const containerHeight = lyricsContainer.offsetHeight;
+                const lineHeight = lyricLines[index].offsetHeight;
+                const lineOffsetTop = lyricLines[index].offsetTop;
+
+                lyricsDisplay.scrollTo({
+                    top: lineOffsetTop - containerHeight / 2 + lineHeight / 2,
+                    behavior: 'smooth' // Optional smooth scrolling
+                });
+            }
+        }
+
+
+        displayArtists();
     </script>
 </body>
 </html>
