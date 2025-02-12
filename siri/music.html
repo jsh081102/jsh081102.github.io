@@ -2,106 +2,91 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Streaming Service</title>
+    <title>Web Music Player</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #000;
             color: #fff;
         }
 
-        .container {
-            display: flex;
-            height: 100vh;
+        .player-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
         }
 
-        /* 사이드바 스타일링 */
-        .sidebar {
-            width: 250px;
-            background-color: #111;
-            padding: 20px;
-        }
-
-        .sidebar-menu {
-            list-style: none;
-        }
-
-        .sidebar-menu li {
-            padding: 10px 0;
-            cursor: pointer;
-        }
-
-        .sidebar-menu li:hover {
-            color: #1db954;
-        }
-
-        /* 메인 컨텐츠 영역 */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        /* 음악 카드 스타일링 */
-        .music-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px;
-        }
-
-        .music-card {
-            background-color: #282828;
-            padding: 15px;
+        .album-art {
+            width: 300px;
+            height: 300px;
+            margin: 0 auto;
             border-radius: 8px;
-            transition: background-color 0.3s;
-            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
         }
 
-        .music-card:hover {
-            background-color: #383838;
-        }
-
-        .music-card img {
+        .album-art img {
             width: 100%;
-            border-radius: 4px;
-        }
-
-        .music-card h3 {
-            margin: 10px 0 5px;
-            font-size: 16px;
-        }
-
-        .music-card p {
-            color: #b3b3b3;
-            font-size: 14px;
-        }
-
-        /* 플레이어 바 스타일링 */
-        .player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 90px;
-            background-color: #282828;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            justify-content: space-between;
+            height: 100%;
+            object-fit: cover;
         }
 
         .player-controls {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .song-info {
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .song-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .artist-name {
+            font-size: 1.1rem;
+            color: #888;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background-color: #333;
+            border-radius: 2px;
+            margin: 1rem 0;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #fff;
+            border-radius: 2px;
+            width: 0%;
+        }
+
+        .time-info {
             display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 2rem;
+            margin: 1rem 0;
         }
 
         .control-btn {
@@ -109,110 +94,261 @@
             border: none;
             color: #fff;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 2rem;
+            padding: 0.5rem;
         }
 
-        .progress-bar {
-            flex: 1;
-            height: 4px;
-            background-color: #4f4f4f;
-            margin: 0 20px;
-            border-radius: 2px;
-            position: relative;
+        .lyrics-container {
+            margin-top: 2rem;
+            text-align: center;
+            height: 150px;
+            overflow-y: auto;
+            padding: 1rem;
         }
 
-        .progress {
-            width: 30%;
-            height: 100%;
-            background-color: #1db954;
-            border-radius: 2px;
+        .lyrics-line {
+            margin: 0.5rem 0;
+            transition: all 0.3s;
+        }
+
+        .lyrics-line.active {
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .lyrics-line:not(.active) {
+            color: #666;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <nav class="sidebar">
-            <ul class="sidebar-menu">
-                <li>홈</li>
-                <li>검색하기</li>
-                <li>내 음악</li>
-                <li>플레이리스트</li>
-                <li>좋아요 표시한 곡</li>
-            </ul>
-        </nav>
-
-        <main class="main-content">
-            <h1>추천 음악</h1>
-            <div class="music-grid">
-                <!-- 음악 카드 반복 -->
-                <div class="music-card">
-                    <img src="https://via.placeholder.com/200" alt="앨범 커버">
-                    <h3>노래 제목</h3>
-                    <p>아티스트</p>
-                </div>
-                <!-- 추가 음악 카드들... -->
-            </div>
-        </main>
-    </div>
-
-    <div class="player-bar">
-        <div class="now-playing">
-            <h4>현재 재생 중</h4>
-            <p>아티스트 - 노래 제목</p>
+    <div class="player-container">
+        <div class="album-art">
+            <img id="albumArt" src="" alt="Album Art">
         </div>
+        
+        <div class="song-info">
+            <div class="song-title" id="songTitle">노래 제목</div>
+            <div class="artist-name" id="artistName">아티스트</div>
+        </div>
+
         <div class="player-controls">
-            <button class="control-btn">⏮</button>
-            <button class="control-btn">⏯</button>
-            <button class="control-btn">⏭</button>
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="time-info">
+                <span id="currentTime">0:00</span>
+                <span id="totalTime">0:00</span>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" id="prevBtn">⏮</button>
+                <button class="control-btn" id="playBtn">▶</button>
+                <button class="control-btn" id="nextBtn">⏭</button>
+            </div>
         </div>
-        <div class="progress-bar">
-            <div class="progress"></div>
-        </div>
-        <div class="volume-control">
-            <button class="control-btn">🔊</button>
-        </div>
+
+        <div class="lyrics-container" id="lyricsContainer"></div>
     </div>
 
     <script>
-        // 음악 카드 동적 생성
-        document.addEventListener('DOMContentLoaded', function() {
-            const musicGrid = document.querySelector('.music-grid');
-            const musicData = [
-                { title: '노래 1', artist: '아티스트 1' },
-                { title: '노래 2', artist: '아티스트 2' },
-                { title: '노래 3', artist: '아티스트 3' },
-                { title: '노래 4', artist: '아티스트 4' },
-                { title: '노래 5', artist: '아티스트 5' },
-                { title: '노래 6', artist: '아티스트 6' }
-            ];
+        class MusicPlayer {
+            constructor() {
+                this.audio = new Audio();
+                this.isPlaying = false;
+                this.currentSongIndex = 0;
+                this.lyrics = [];
+                this.lyricsTimings = [];
 
-            musicData.forEach(music => {
-                const card = document.createElement('div');
-                card.className = 'music-card';
-                card.innerHTML = `
-                    <img src="https://via.placeholder.com/200" alt="앨범 커버">
-                    <h3>${music.title}</h3>
-                    <p>${music.artist}</p>
-                `;
-                musicGrid.appendChild(card);
+                // Elements
+                this.playBtn = document.getElementById('playBtn');
+                this.prevBtn = document.getElementById('prevBtn');
+                this.nextBtn = document.getElementById('nextBtn');
+                this.progressContainer = document.getElementById('progressContainer');
+                this.progressBar = document.getElementById('progressBar');
+                this.currentTimeEl = document.getElementById('currentTime');
+                this.totalTimeEl = document.getElementById('totalTime');
+                this.lyricsContainer = document.getElementById('lyricsContainer');
 
-                // 클릭 이벤트 리스너 추가
-                card.addEventListener('click', () => {
-                    document.querySelector('.now-playing').innerHTML = `
-                        <h4>현재 재생 중</h4>
-                        <p>${music.artist} - ${music.title}</p>
-                    `;
+                this.playlist = [
+                    {
+                        title: 'ETA',
+                        artist: 'NewJeans',
+                        audioUrl: 'http://www.applesodam.kro.kr/music/NewJeans2ndEP\'GetUp\'/ETA.m4a',
+                        lyricsUrl: 'http://www.applesodam.kro.kr/music/NewJeans2ndEP\'GetUp\'/ETA.srt'
+                    }
+                    // 더 많은 곡을 여기에 추가할 수 있습니다
+                ];
+
+                this.initializeEvents();
+                this.loadSong(this.currentSongIndex);
+            }
+
+            initializeEvents() {
+                this.playBtn.addEventListener('click', () => this.togglePlay());
+                this.prevBtn.addEventListener('click', () => this.prevSong());
+                this.nextBtn.addEventListener('click', () => this.nextSong());
+                this.progressContainer.addEventListener('click', (e) => this.setProgress(e));
+                
+                this.audio.addEventListener('timeupdate', () => {
+                    this.updateProgress();
+                    this.updateLyrics();
                 });
-            });
-        });
+                
+                this.audio.addEventListener('ended', () => {
+                    this.nextSong();
+                });
 
-        // 재생 버튼 토글
-        let isPlaying = false;
-        const playButton = document.querySelector('.player-controls button:nth-child(2)');
-        playButton.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playButton.textContent = isPlaying ? '⏸' : '⏯';
-        });
+                this.audio.addEventListener('loadedmetadata', () => {
+                    this.totalTimeEl.textContent = this.formatTime(this.audio.duration);
+                });
+            }
+
+            async loadSong(index) {
+                const song = this.playlist[index];
+                this.audio.src = song.audioUrl;
+                document.getElementById('songTitle').textContent = song.title;
+                document.getElementById('artistName').textContent = song.artist;
+
+                // 메타데이터에서 앨범아트 로드
+                this.audio.addEventListener('loadedmetadata', () => {
+                    if ('mediaSession' in navigator) {
+                        const albumArt = document.getElementById('albumArt');
+                        if (navigator.mediaSession.metadata) {
+                            const artwork = navigator.mediaSession.metadata.artwork;
+                            if (artwork && artwork.length > 0) {
+                                albumArt.src = artwork[0].src;
+                            }
+                        }
+                    }
+                });
+
+                // 가사 로드
+                try {
+                    const response = await fetch(song.lyricsUrl);
+                    const text = await response.text();
+                    this.parseLyrics(text);
+                } catch (error) {
+                    console.error('가사를 불러오는데 실패했습니다:', error);
+                }
+            }
+
+            parseLyrics(srtContent) {
+                const lines = srtContent.trim().split('\n\n');
+                this.lyrics = [];
+                this.lyricsTimings = [];
+                
+                lines.forEach(line => {
+                    const parts = line.split('\n');
+                    if (parts.length >= 3) {
+                        const timeString = parts[1];
+                        const text = parts.slice(2).join('\n');
+                        
+                        const [start] = timeString.split(' --> ');
+                        const timing = this.timeToSeconds(start);
+                        
+                        this.lyrics.push(text);
+                        this.lyricsTimings.push(timing);
+                    }
+                });
+
+                this.renderLyrics();
+            }
+
+            renderLyrics() {
+                this.lyricsContainer.innerHTML = '';
+                this.lyrics.forEach((line, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'lyrics-line';
+                    div.textContent = line;
+                    div.dataset.index = index;
+                    this.lyricsContainer.appendChild(div);
+                });
+            }
+
+            updateLyrics() {
+                const currentTime = this.audio.currentTime;
+                let activeIndex = -1;
+
+                for (let i = 0; i < this.lyricsTimings.length; i++) {
+                    if (currentTime >= this.lyricsTimings[i]) {
+                        activeIndex = i;
+                    } else {
+                        break;
+                    }
+                }
+
+                const lines = this.lyricsContainer.getElementsByClassName('lyrics-line');
+                Array.from(lines).forEach((line, index) => {
+                    line.classList.toggle('active', index === activeIndex);
+                    if (index === activeIndex) {
+                        line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                });
+            }
+
+            timeToSeconds(timeString) {
+                const [hours, minutes, seconds] = timeString.split(':');
+                return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
+            }
+
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.audio.pause();
+                    this.playBtn.textContent = '▶';
+                } else {
+                    this.audio.play();
+                    this.playBtn.textContent = '⏸';
+                }
+                this.isPlaying = !this.isPlaying;
+            }
+
+            prevSong() {
+                this.currentSongIndex--;
+                if (this.currentSongIndex < 0) {
+                    this.currentSongIndex = this.playlist.length - 1;
+                }
+                this.loadSong(this.currentSongIndex);
+                if (this.isPlaying) {
+                    this.audio.play();
+                }
+            }
+
+            nextSong() {
+                this.currentSongIndex++;
+                if (this.currentSongIndex >= this.playlist.length) {
+                    this.currentSongIndex = 0;
+                }
+                this.loadSong(this.currentSongIndex);
+                if (this.isPlaying) {
+                    this.audio.play();
+                }
+            }
+
+            setProgress(e) {
+                const width = this.progressContainer.clientWidth;
+                const clickX = e.offsetX;
+                const duration = this.audio.duration;
+                this.audio.currentTime = (clickX / width) * duration;
+            }
+
+            updateProgress() {
+                const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                this.progressBar.style.width = `${progress}%`;
+                this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
+            }
+
+            formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // 플레이어 초기화
+        const player = new MusicPlayer();
     </script>
 </body>
 </html>
