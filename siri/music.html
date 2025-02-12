@@ -2,262 +2,178 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Music Player</title>
+    <title>Music Player - NewJeans</title>
     <style>
-        * {
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #000;
-            color: #fff;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .player {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .album-art {
-            width: 300px;
-            height: 300px;
+        .player-container {
+            width: 400px;
+            margin: 50px auto;
+            background-color: #fff;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-
-        .album-art img {
+        .album-art {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
         }
-
         .controls {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .play-btn, .prev-btn, .next-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            font-size: 24px;
-            padding: 10px;
-        }
-
-        .progress-container {
-            width: 100%;
-            max-width: 500px;
-            height: 5px;
-            background: #333;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: #fff;
-            border-radius: 5px;
-            width: 0%;
-        }
-
-        .song-info {
+            padding: 20px;
             text-align: center;
         }
-
-        .song-title {
+        .controls h2 {
+            margin: 0;
             font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
         }
-
-        .artist {
-            font-size: 18px;
-            color: #999;
+        .controls audio {
+            width: 100%;
+            margin-top: 15px;
+            outline: none;
         }
-
         .lyrics {
-            max-width: 500px;
-            margin: 20px auto;
-            text-align: center;
-            height: 100px;
+            padding: 20px;
+            height: 200px;
             overflow-y: auto;
+            background-color: #fafafa;
+            border-top: 1px solid #e6e6e6;
         }
-
-        .time {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 500px;
-            margin-top: 5px;
-            color: #999;
-            font-size: 14px;
+        .lyrics p {
+            margin: 5px 0;
+            font-size: 16px;
+            line-height: 1.5em;
+        }
+        .highlight {
+            color: #d0021b;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="player">
-            <div class="album-art">
-                <!-- 앨범 아트는 JavaScript로 동적 로드 -->
-            </div>
-            
-            <div class="song-info">
-                <div class="song-title">ETA</div>
-                <div class="artist">NewJeans</div>
-            </div>
 
-            <div class="progress-container">
-                <div class="progress-bar"></div>
-            </div>
-            
-            <div class="time">
-                <span class="current-time">0:00</span>
-                <span class="duration">0:00</span>
-            </div>
-
-            <div class="controls">
-                <button class="prev-btn">⏮</button>
-                <button class="play-btn">▶</button>
-                <button class="next-btn">⏭</button>
-            </div>
-
-            <div class="lyrics"></div>
-        </div>
+<div class="player-container">
+    <div class="album-art" id="albumArt"></div>
+    <div class="controls">
+        <h2 id="songTitle">NewJeans - ETA</h2>
+        <audio id="audioPlayer" controls>
+            <source src="https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.m4a" type="audio/mp4">
+            Your browser does not support the audio element.
+        </audio>
     </div>
+    <div class="lyrics" id="lyricsContainer">
+        <!-- 가사가 표시됩니다 -->
+    </div>
+</div>
 
-    <script>
-        class MusicPlayer {
-            constructor() {
-                this.audio = new Audio();
-                this.isPlaying = false;
-                this.currentLyrics = [];
-                this.currentLyricIndex = 0;
+<script>
+    // 앨범 아트 추출 및 표시
+    function loadAlbumArt() {
+        const audioSrc = "https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.m4a";
+        fetch(audioSrc)
+            .then(response => response.arrayBuffer())
+            .then(data => {
+                // m4a 파일에서 메타데이터 추출
+                const tags = {};
+                const reader = new FileReader();
+                reader.onloadend = function() {
+                    const uint8Array = new Uint8Array(reader.result);
+                    // 메타데이터 파싱 (라이브러리 사용 권장)
+                    // 여기서는 예시로 대체합니다.
+                    // 실제 구현 시 music-metadata-browser 등의 라이브러리를 사용하세요.
+                    // tags.picture = 추출된 이미지 데이터;
 
-                this.initializeElements();
-                this.setupEventListeners();
-                this.loadSong();
-            }
+                    // 예시로 기본 이미지 설정
+                    document.getElementById('albumArt').style.backgroundImage = 'url("default_album_art.jpg")';
+                };
+                reader.readAsArrayBuffer(new Blob([data]));
+            })
+            .catch(error => {
+                console.error('앨범 아트를 로드하는 중 오류 발생:', error);
+                // 오류 시 기본 이미지 표시
+                document.getElementById('albumArt').style.backgroundImage = 'url("default_album_art.jpg")';
+            });
+    }
 
-            initializeElements() {
-                this.playBtn = document.querySelector('.play-btn');
-                this.prevBtn = document.querySelector('.prev-btn');
-                this.nextBtn = document.querySelector('.next-btn');
-                this.progressContainer = document.querySelector('.progress-container');
-                this.progressBar = document.querySelector('.progress-bar');
-                this.currentTimeEl = document.querySelector('.current-time');
-                this.durationEl = document.querySelector('.duration');
-                this.lyricsContainer = document.querySelector('.lyrics');
-            }
+    // 가사 로드 및 동기화
+    function loadLyrics() {
+        fetch("https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.srt")
+            .then(response => response.text())
+            .then(data => {
+                const lyrics = parseSRT(data);
+                displayLyrics(lyrics);
+            })
+            .catch(error => {
+                console.error('가사를 로드하는 중 오류 발생:', error);
+            });
+    }
 
-            setupEventListeners() {
-                this.playBtn.addEventListener('click', () => this.togglePlay());
-                this.audio.addEventListener('timeupdate', () => this.updateProgress());
-                this.progressContainer.addEventListener('click', (e) => this.setProgress(e));
-                this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
-                this.audio.addEventListener('timeupdate', () => this.updateLyrics());
-            }
+    function parseSRT(data) {
+        const pattern = /(\d+)\s+(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})\s+([\s\S]*?)(?=\n\n|\n?$)/g;
+        let result;
+        const cues = [];
 
-            loadSong() {
-                this.audio.src = 'https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP\'GetUp\'/ETA.m4a';
-                this.loadLyrics();
-            }
-
-            async loadLyrics() {
-                try {
-                    const response = await fetch('https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP\'GetUp\'/ETA.srt');
-                    const text = await response.text();
-                    this.parseLyrics(text);
-                } catch (error) {
-                    console.error('가사를 불러오는데 실패했습니다:', error);
-                }
-            }
-
-            parseLyrics(text) {
-                const lines = text.trim().split('\n');
-                this.currentLyrics = [];
-                
-                for (let i = 0; i < lines.length; i += 4) {
-                    if (lines[i + 1]) {
-                        const times = lines[i + 1].split(' --> ');
-                        const startTime = this.timeToSeconds(times[0]);
-                        const endTime = this.timeToSeconds(times[1]);
-                        const text = lines[i + 2];
-
-                        this.currentLyrics.push({ startTime, endTime, text });
-                    }
-                }
-            }
-
-            timeToSeconds(timeString) {
-                const [hours, minutes, seconds] = timeString.split(':');
-                return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds.replace(',', '.'));
-            }
-
-            togglePlay() {
-                if (this.isPlaying) {
-                    this.audio.pause();
-                    this.playBtn.textContent = '▶';
-                } else {
-                    this.audio.play();
-                    this.playBtn.textContent = '⏸';
-                }
-                this.isPlaying = !this.isPlaying;
-            }
-
-            updateProgress() {
-                const { duration, currentTime } = this.audio;
-                const progressPercent = (currentTime / duration) * 100;
-                this.progressBar.style.width = `${progressPercent}%`;
-                this.currentTimeEl.textContent = this.formatTime(currentTime);
-            }
-
-            setProgress(e) {
-                const width = this.progressContainer.clientWidth;
-                const clickX = e.offsetX;
-                const duration = this.audio.duration;
-                this.audio.currentTime = (clickX / width) * duration;
-            }
-
-            updateDuration() {
-                this.durationEl.textContent = this.formatTime(this.audio.duration);
-            }
-
-            formatTime(seconds) {
-                const minutes = Math.floor(seconds / 60);
-                const remainingSeconds = Math.floor(seconds % 60);
-                return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-            }
-
-            updateLyrics() {
-                const currentTime = this.audio.currentTime;
-                
-                const currentLyric = this.currentLyrics.find(lyric => 
-                    currentTime >= lyric.startTime && currentTime <= lyric.endTime
-                );
-
-                if (currentLyric) {
-                    this.lyricsContainer.textContent = currentLyric.text;
-                }
-            }
+        while ((result = pattern.exec(data)) !== null) {
+            cues.push({
+                index: result[1],
+                startTime: timeToSeconds(result[2]),
+                endTime: timeToSeconds(result[3]),
+                text: result[4].trim()
+            });
         }
 
-        // 플레이어 인스턴스 생성
-        const player = new MusicPlayer();
-    </script>
+        return cues;
+    }
+
+    function timeToSeconds(time) {
+        const parts = time.split(':');
+        const seconds = parts[2].split(',');
+        return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(seconds[0]) + parseInt(seconds[1]) / 1000;
+    }
+
+    function displayLyrics(cues) {
+        const lyricsContainer = document.getElementById('lyricsContainer');
+        lyricsContainer.innerHTML = '';
+        cues.forEach(cue => {
+            const p = document.createElement('p');
+            p.textContent = cue.text;
+            p.dataset.startTime = cue.startTime;
+            p.dataset.endTime = cue.endTime;
+            lyricsContainer.appendChild(p);
+        });
+    }
+
+    function syncLyrics() {
+        const audio = document.getElementById('audioPlayer');
+        const lyricsContainer = document.getElementById('lyricsContainer');
+        const lyrics = lyricsContainer.getElementsByTagName('p');
+
+        for (let i = 0; i < lyrics.length; i++) {
+            const start = parseFloat(lyrics[i].dataset.startTime);
+            const end = parseFloat(lyrics[i].dataset.endTime);
+
+            if (audio.currentTime >= start && audio.currentTime <= end) {
+                lyrics[i].classList.add('highlight');
+                lyricsContainer.scrollTop = lyrics[i].offsetTop - lyricsContainer.offsetTop - 50;
+            } else {
+                lyrics[i].classList.remove('highlight');
+            }
+        }
+    }
+
+    // 이벤트 리스너 설정
+    document.addEventListener('DOMContentLoaded', () => {
+        loadAlbumArt();
+        loadLyrics();
+
+        const audio = document.getElementById('audioPlayer');
+        audio.addEventListener('timeupdate', syncLyrics);
+    });
+</script>
+
 </body>
 </html>
