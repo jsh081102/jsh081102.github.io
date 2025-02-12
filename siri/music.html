@@ -1,166 +1,281 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-  <meta charset="utf-8">
-  <title>Apple Music Style Streaming</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <title>Apple Music 스타일 음악 스트리밍</title>
   <style>
-    /* Overall layout and typography */
     body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f2f2f2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
+      background: #f2f2f2;
     }
-    /* Container styled like a modern music player card */
     .player-container {
+      max-width: 800px;
+      margin: 50px auto;
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 300px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .album-art {
+      width: 100%;
+      height: 400px;
+      background-size: cover;
+      background-position: center;
+    }
+    .track-info {
       padding: 20px;
       text-align: center;
     }
-    /* Album art covers full width with subtle rounding */
-    .album-art {
-      width: 100%;
-      border-radius: 8px;
+    .track-info h2 {
+      margin: 0;
+      font-size: 2em;
     }
-    /* Song and artist text styling */
-    .song-title {
-      font-size: 18px;
-      margin-top: 10px;
+    .track-info p {
+      color: #666;
+      margin-top: 5px;
+    }
+    .controls {
+      text-align: center;
+      padding: 20px;
+    }
+    .controls button {
+      background: none;
+      border: none;
+      font-size: 2em;
+      margin: 0 15px;
+      cursor: pointer;
       color: #333;
     }
-    .artist-name {
-      font-size: 14px;
-      color: #777;
-    }
-    /* Lyrics area styling */
-    .lyrics-display {
-      margin-top: 20px;
-      height: 150px;
-      overflow: hidden;
+    .progress-container {
       position: relative;
+      width: 80%;
+      margin: 0 auto 10px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: #1db954;
+    }
+    .lyrics {
+      padding: 20px;
+      height: 150px;
+      overflow-y: auto;
       background: #fafafa;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 14px;
-      line-height: 1.6;
-      text-align: left;
+      border-top: 1px solid #eee;
     }
-    .lyrics-line {
-      opacity: 0.5;
-      transition: opacity 0.3s;
+    .lyrics p {
+      margin: 5px 0;
+      font-size: 1em;
+      color: #333;
     }
-    .lyrics-line.active {
-      opacity: 1;
+    .lyrics p.active {
+      color: #1db954;
       font-weight: bold;
-      color: #000;
     }
   </style>
 </head>
 <body>
+
   <div class="player-container">
-    <!-- Album art image (will be set by JS after reading metadata) -->
-    <img id="albumArt" class="album-art" src="" alt="Album Art">
-    <!-- Song title and artist (to be populated from metadata) -->
-    <div class="song-title" id="songTitle">Song Title</div>
-    <div class="artist-name" id="artistName">Artist Name</div>
-    <!-- Audio player with source pointing to the MP3 file -->
-    <audio id="audioPlayer" controls style="width:100%; margin-top:10px;">
-      <source src="http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.mp3" type="audio/mpeg">
-    </audio>
-    <!-- Lyrics display container -->
-    <div class="lyrics-display" id="lyricsDisplay"></div>
+    <div class="album-art" id="albumArt" style="background-image: url('placeholder.jpg');"></div>
+    <div class="track-info">
+      <h2 id="trackTitle">ETA - NewJeans</h2>
+      <p id="trackArtist">NewJeans</p>
+    </div>
+    <div class="controls">
+      <button id="prevBtn">&#9664;&#9664;</button>
+      <button id="playPauseBtn">&#9658;</button>
+      <button id="nextBtn">&#9654;&#9654;</button>
+    </div>
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+    </div>
+    <div class="lyrics" id="lyrics"></div>
   </div>
 
-  <!-- Include jsmediatags library to extract MP3 metadata -->
+  <!-- The audio element (hidden) -->
+  <audio id="audio" preload="metadata"></audio>
+
+  <!-- jsmediatags library for reading mp3 metadata -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
   <script>
-    // Helper function to convert time string (e.g., "00:01:15,123" or "00:01:15.123") into seconds.
-    function parseTime(timeString) {
-      var parts = timeString.replace(',', '.').split(':');
-      return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
-    }
-
-    // Function to parse SRT content into an array of objects {start, end, text}
-    function parseSRT(data) {
-      var pattern = /(\d+)\s+([\d:,\.]+)\s*-->\s*([\d:,\.]+)\s+([\s\S]*?)(?=\n\s*\n|\s*$)/g;
-      var result = [];
-      var match;
-      while ((match = pattern.exec(data)) !== null) {
-        var start = parseTime(match[2].trim());
-        var end = parseTime(match[3].trim());
-        var text = match[4].trim().replace(/\n/g, ' ');
-        result.push({ start: start, end: end, text: text });
+    // Songs array: expandable for future support.
+    const songs = [
+      {
+        title: "ETA",
+        artist: "NewJeans",
+        // mp3 파일 경로 (예시)
+        audioSrc: "http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.mp3",
+        // 가사 SRT 파일 경로 (예시)
+        lyricsSrc: "http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.srt"
       }
-      return result;
-    }
-
-    // Function to update the displayed lyrics based on the current audio time.
-    function updateLyrics(lyrics, currentTime) {
-      var lyricsDisplay = document.getElementById('lyricsDisplay');
-      lyricsDisplay.innerHTML = ''; // Clear current lyrics
-      for (var i = 0; i < lyrics.length; i++) {
-        var lineElem = document.createElement('div');
-        lineElem.className = 'lyrics-line';
-        if (currentTime >= lyrics[i].start && currentTime <= lyrics[i].end) {
-          lineElem.classList.add('active');
-        }
-        lineElem.textContent = lyrics[i].text;
-        lyricsDisplay.appendChild(lineElem);
-      }
-    }
-
-    // Global variable for storing parsed lyrics
-    var lyricsArray = [];
+      // 추가 노래들을 이 배열에 포함시켜 확장 가능합니다.
+    ];
     
-    // Fetch the SRT file containing the lyrics.
-    fetch("http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.srt")
-      .then(response => response.text())
-      .then(data => {
-        lyricsArray = parseSRT(data);
-      })
-      .catch(error => console.error("Error loading SRT file:", error));
-
-    // Extract metadata (including album art, title, and artist) from the MP3 file.
-    jsmediatags.read("http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.mp3", {
-      onSuccess: function(tag) {
-        var tags = tag.tags;
-        // If album art is available, convert binary data to a Base64 image URL.
-        if (tags.picture) {
-          var data = tags.picture.data;
-          var format = tags.picture.format;
-          var base64String = "";
-          for (var i = 0; i < data.length; i++) {
-            base64String += String.fromCharCode(data[i]);
+    let currentSongIndex = 0;
+    
+    // DOM 요소 가져오기
+    const audio = document.getElementById("audio");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const progress = document.getElementById("progress");
+    const albumArt = document.getElementById("albumArt");
+    const trackTitle = document.getElementById("trackTitle");
+    const trackArtist = document.getElementById("trackArtist");
+    const lyricsContainer = document.getElementById("lyrics");
+    
+    // 변수: 파싱한 가사 데이터를 저장하는 배열
+    let lyricsData = [];
+    
+    // 노래 로드 함수
+    function loadSong(index) {
+      const song = songs[index];
+      audio.src = song.audioSrc;
+      trackTitle.innerText = song.title;
+      trackArtist.innerText = song.artist;
+      progress.style.width = "0%";
+      lyricsContainer.innerHTML = "";
+      lyricsData = [];
+      
+      // 가사 파일(SRT) 로드 및 파싱
+      fetch(song.lyricsSrc)
+        .then(response => response.text())
+        .then(data => {
+          lyricsData = parseSRT(data);
+          displayLyrics();
+        })
+        .catch(err => console.error("가사 로드 에러:", err));
+      
+      // mp3의 메타데이터에서 앨범아트 추출 (실패시 placeholder)
+      jsmediatags.read(song.audioSrc, {
+        onSuccess: function(tag) {
+          const pictures = tag.tags.picture;
+          if (pictures) {
+            let base64String = "";
+            for (let i = 0; i < pictures.data.length; i++) {
+              base64String += String.fromCharCode(pictures.data[i]);
+            }
+            const imageUri = "data:" + pictures.format + ";base64," + window.btoa(base64String);
+            albumArt.style.backgroundImage = "url(" + imageUri + ")";
+          } else {
+            albumArt.style.backgroundImage = "url('placeholder.jpg')";
           }
-          var imageUrl = "data:" + format + ";base64," + btoa(base64String);
-          document.getElementById('albumArt').src = imageUrl;
-        } else {
-          // Fallback image if album art is missing.
-          document.getElementById('albumArt').src = "https://via.placeholder.com/300";
+        },
+        onError: function(error) {
+          console.log("메타데이터 추출 에러:", error);
+          albumArt.style.backgroundImage = "url('placeholder.jpg')";
         }
-        // Populate song title and artist from metadata.
-        document.getElementById('songTitle').textContent = tags.title || "Unknown Title";
-        document.getElementById('artistName').textContent = tags.artist || "Unknown Artist";
-      },
-      onError: function(error) {
-        console.error("Error reading metadata:", error);
+      });
+    }
+    
+    // 재생 함수
+    function playSong() {
+      audio.play();
+      playPauseBtn.innerHTML = "&#10074;&#10074;"; // 일시정지 기호
+    }
+    
+    // 일시정지 함수
+    function pauseSong() {
+      audio.pause();
+      playPauseBtn.innerHTML = "&#9658;"; // 재생 기호
+    }
+    
+    // 재생/일시정지 토글
+    playPauseBtn.addEventListener("click", () => {
+      if (audio.paused) {
+        playSong();
+      } else {
+        pauseSong();
       }
     });
-
-    // Listen to audio time updates and synchronize the lyrics display.
-    var audioPlayer = document.getElementById('audioPlayer');
-    audioPlayer.addEventListener('timeupdate', function() {
-      if (lyricsArray.length > 0) {
-        updateLyrics(lyricsArray, audioPlayer.currentTime);
+    
+    // 다음, 이전 버튼 (확장 가능)
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      currentSongIndex = (currentSongIndex + 1) % songs.length;
+      loadSong(currentSongIndex);
+      playSong();
+    });
+    
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+      loadSong(currentSongIndex);
+      playSong();
+    });
+    
+    // 진행바 업데이트
+    audio.addEventListener("timeupdate", () => {
+      if (audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progress.style.width = percent + "%";
+        updateLyricsHighlight(audio.currentTime);
       }
     });
+    
+    // 진행바 클릭하여 이동
+    document.querySelector(".progress-bar").addEventListener("click", function(e) {
+      const clickX = e.offsetX;
+      const width = this.clientWidth;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    });
+    
+    // SRT 가사 파서: 각 블록의 시작시간, 종료시간, 텍스트 추출
+    function parseSRT(data) {
+      const lyrics = [];
+      // SRT의 번호, 시간, 텍스트 패턴 매칭:
+      const srtRegex = /(\d+)\s+([\d:,]+)\s+-->\s+([\d:,]+)\s+([\s\S]*?)(?=\n\n|\n*$)/g;
+      let match;
+      while ((match = srtRegex.exec(data)) !== null) {
+        const startTime = timeStringToSeconds(match[2]);
+        const endTime = timeStringToSeconds(match[3]);
+        const text = match[4].replace(/\n/g, " ");
+        lyrics.push({ startTime, endTime, text });
+      }
+      return lyrics;
+    }
+    
+    // "00:01:30,500" 형식을 초 단위로 변환
+    function timeStringToSeconds(timeStr) {
+      const parts = timeStr.split(/[:,]/);
+      return parseInt(parts[0], 10) * 3600 + parseInt(parts[1], 10) * 60 + parseFloat(parts[2].replace(",", "."));
+    }
+    
+    // 모든 가사 줄을 화면에 출력
+    function displayLyrics() {
+      lyricsContainer.innerHTML = "";
+      lyricsData.forEach((line, index) => {
+        const p = document.createElement("p");
+        p.innerText = line.text;
+        p.id = "lyric-" + index;
+        lyricsContainer.appendChild(p);
+      });
+    }
+    
+    // 현재 재생 시간에 맞춰 가사 줄 강조
+    function updateLyricsHighlight(currentTime) {
+      lyricsData.forEach((line, index) => {
+        const p = document.getElementById("lyric-" + index);
+        if (currentTime >= line.startTime && currentTime <= line.endTime) {
+          p.classList.add("active");
+          p.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          p.classList.remove("active");
+        }
+      });
+    }
+    
+    // 초기 로드
+    loadSong(currentSongIndex);
   </script>
 </body>
 </html>
