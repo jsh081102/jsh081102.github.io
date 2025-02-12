@@ -1,86 +1,307 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>음악 웹사이트</title>
+    <title>Music Player</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        main {
-            padding: 20px;
-        }
-        .album {
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            height: 100vh;
             display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+        }
+
+        .artwork-section {
+            position: relative;
+        }
+
+        .artwork {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            box-shadow: 0 4px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .info-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .track-info {
             margin-bottom: 20px;
         }
-        .album img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            margin-right: 20px;
+
+        .track-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
-        .lyrics {
-            white-space: pre-line;
+
+        .track-artist {
+            font-size: 1.2rem;
+            color: #b3b3b3;
+        }
+
+        .lyrics-container {
+            height: 300px;
+            overflow-y: auto;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            padding-right: 20px;
+        }
+
+        .lyrics-line {
+            margin: 10px 0;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .lyrics-line.active {
+            opacity: 1;
+            font-weight: bold;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+            width: 0%;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #b3b3b3;
+            margin-top: 8px;
+        }
+
+        button {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 10px;
+        }
+
+        button:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>음악 웹사이트</h1>
-    </header>
-    <main>
-        <div class="album">
-            <img id="albumArt" src="" alt="Album Art">
-            <div>
-                <h2 id="songTitle"></h2>
-                <p id="artistName"></p>
-                <audio id="audioPlayer" controls>
-                    <source src="" type="audio/mp4">
-                </audio>
+    <div class="player-container">
+        <div class="artwork-section">
+            <img id="artwork" class="artwork" src="" alt="Album Artwork">
+        </div>
+        <div class="info-section">
+            <div class="track-info">
+                <h1 class="track-title">Loading...</h1>
+                <p class="track-artist"></p>
+            </div>
+            <div class="lyrics-container" id="lyrics"></div>
+            <div class="player-controls">
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <div class="time-info">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">0:00</span>
+                </div>
+                <div class="controls">
+                    <button id="playPauseBtn">▶️</button>
+                    <button id="muteBtn">🔊</button>
+                </div>
             </div>
         </div>
-        <div class="lyrics" id="lyrics"></div>
-    </main>
+    </div>
 
     <script>
-        // 음악 및 가사 파일 경로
-        const musicFilePath = 'http://www.applesodam.kro.kr/music/NewJeans2ndEP\'GetUp\'/ETA.m4a';
-        const lyricsFilePath = 'http://www.applesodam.kro.kr/music/NewJeans2ndEP\'GetUp\'/ETA.srt';
+        class MusicPlayer {
+            constructor() {
+                this.audio = new Audio();
+                this.isPlaying = false;
+                this.lyrics = [];
+                this.currentLyricIndex = -1;
 
-        // 오디오 플레이어 및 앨범아트 요소 선택
-        const audioPlayer = document.getElementById('audioPlayer');
-        const albumArt = document.getElementById('albumArt');
-        const songTitle = document.getElementById('songTitle');
-        const artistName = document.getElementById('artistName');
-        const lyricsElement = document.getElementById('lyrics');
+                this.initializeElements();
+                this.setupEventListeners();
+            }
 
-        // 음악 파일 설정
-        audioPlayer.querySelector('source').src = musicFilePath;
+            initializeElements() {
+                this.playPauseBtn = document.getElementById('playPauseBtn');
+                this.muteBtn = document.getElementById('muteBtn');
+                this.progressBar = document.getElementById('progressBar');
+                this.progress = document.getElementById('progress');
+                this.currentTimeEl = document.getElementById('currentTime');
+                this.durationEl = document.getElementById('duration');
+                this.lyricsContainer = document.getElementById('lyrics');
+                this.artwork = document.getElementById('artwork');
+            }
 
-        // 메타데이터 로드
-        audioPlayer.addEventListener('loadedmetadata', () => {
-            const metadata = audioPlayer.textTracks[0];
-            albumArt.src = URL.createObjectURL(metadata.cues[0].text);
-            songTitle.textContent = metadata.cues[1].text;
-            artistName.textContent = metadata.cues[2].text;
-        });
+            setupEventListeners() {
+                this.audio.addEventListener('timeupdate', () => this.updateProgress());
+                this.audio.addEventListener('loadedmetadata', () => this.updateDuration());
+                this.playPauseBtn.addEventListener('click', () => this.togglePlay());
+                this.muteBtn.addEventListener('click', () => this.toggleMute());
+                this.progressBar.addEventListener('click', (e) => this.seek(e));
+            }
 
-        // 가사 파일 로드
-        fetch(lyricsFilePath)
-            .then(response => response.text())
-            .then(lyrics => {
-                lyricsElement.textContent = lyrics;
-            });
+            async loadTrack(musicUrl, lyricsUrl) {
+                this.audio.src = musicUrl;
+                await this.loadLyrics(lyricsUrl);
+                this.loadMetadata();
+            }
+
+            async loadLyrics(url) {
+                try {
+                    const response = await fetch(url);
+                    const text = await response.text();
+                    this.lyrics = this.parseSRT(text);
+                    this.renderLyrics();
+                } catch (error) {
+                    console.error('가사를 불러오는데 실패했습니다:', error);
+                }
+            }
+
+            parseSRT(srtContent) {
+                const entries = srtContent.trim().split('\n\n');
+                return entries.map(entry => {
+                    const lines = entry.split('\n');
+                    const times = lines[1].split(' --> ');
+                    return {
+                        startTime: this.timeToSeconds(times[0]),
+                        endTime: this.timeToSeconds(times[1]),
+                        text: lines.slice(2).join('\n')
+                    };
+                });
+            }
+
+            timeToSeconds(timeStr) {
+                const [h, m, s] = timeStr.split(':').map(Number);
+                return h * 3600 + m * 60 + s;
+            }
+
+            renderLyrics() {
+                this.lyricsContainer.innerHTML = this.lyrics
+                    .map((line, index) => `<div class="lyrics-line" data-index="${index}">${line.text}</div>`)
+                    .join('');
+            }
+
+            updateLyrics() {
+                const currentTime = this.audio.currentTime;
+                const currentLyric = this.lyrics.findIndex(lyric => 
+                    currentTime >= lyric.startTime && currentTime <= lyric.endTime
+                );
+
+                if (currentLyric !== this.currentLyricIndex) {
+                    document.querySelectorAll('.lyrics-line').forEach(line => 
+                        line.classList.remove('active')
+                    );
+
+                    if (currentLyric !== -1) {
+                        const activeLine = document.querySelector(`.lyrics-line[data-index="${currentLyric}"]`);
+                        if (activeLine) {
+                            activeLine.classList.add('active');
+                            activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    }
+
+                    this.currentLyricIndex = currentLyric;
+                }
+            }
+
+            loadMetadata() {
+                // 메타데이터 로드 시 앨범아트 표시
+                this.audio.addEventListener('loadedmetadata', () => {
+                    // 여기서는 직접 URL을 사용하지만, 실제로는 메타데이터에서 추출할 수 있습니다
+                    document.querySelector('.track-title').textContent = '곡 제목';
+                    document.querySelector('.track-artist').textContent = '아티스트';
+                });
+            }
+
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.audio.pause();
+                    this.playPauseBtn.textContent = '▶️';
+                } else {
+                    this.audio.play();
+                    this.playPauseBtn.textContent = '⏸️';
+                }
+                this.isPlaying = !this.isPlaying;
+            }
+
+            toggleMute() {
+                this.audio.muted = !this.audio.muted;
+                this.muteBtn.textContent = this.audio.muted ? '🔇' : '🔊';
+            }
+
+            updateProgress() {
+                const progress = (this.audio.currentTime / this.audio.duration) * 100;
+                this.progress.style.width = `${progress}%`;
+                this.currentTimeEl.textContent = this.formatTime(this.audio.currentTime);
+                this.updateLyrics();
+            }
+
+            updateDuration() {
+                this.durationEl.textContent = this.formatTime(this.audio.duration);
+            }
+
+            seek(event) {
+                const rect = this.progressBar.getBoundingClientRect();
+                const pos = (event.clientX - rect.left) / rect.width;
+                this.audio.currentTime = pos * this.audio.duration;
+            }
+
+            formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                seconds = Math.floor(seconds % 60);
+                return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // 플레이어 초기화 및 트랙 로드
+        const player = new MusicPlayer();
+        player.loadTrack(
+            'http://www.applesodam.kro.kr/music/NewJeans2ndEP\'GetUp\'/ETA.m4a',
+            'http://www.applesodam.kro.kr/music/NewJeans2ndEP\'GetUp\'/ETA.srt'
+        );
     </script>
 </body>
 </html>
