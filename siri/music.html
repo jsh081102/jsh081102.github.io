@@ -31,8 +31,8 @@
 
         .logo {
             font-size: 24px;
-            font-weight: bold;
-            color: #333;
+            font-weight: 700;
+            color: #000;
         }
 
         .main-content {
@@ -43,11 +43,10 @@
         }
 
         .artist-card {
-            background: white;
+            background: #fff;
             border-radius: 10px;
             overflow: hidden;
             transition: transform 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             cursor: pointer;
         }
 
@@ -66,7 +65,7 @@
         }
 
         .artist-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 5px;
         }
@@ -75,78 +74,66 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
-            padding: 10px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            z-index: 1000;
         }
 
         .player.expanded {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80vw;
-            height: 80vh;
-            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            bottom: 0;
+            right: 0;
+            border-radius: 0;
         }
 
         .album-art {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 5px;
-            object-fit: cover;
+            cursor: pointer;
         }
 
         .player.expanded .album-art {
             width: 300px;
             height: 300px;
+            margin: 0 auto;
+            display: block;
         }
 
         .lyrics-container {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
             height: 200px;
             overflow-y: auto;
-            text-align: center;
-            display: none;
         }
 
         .player.expanded .lyrics-container {
             display: block;
         }
 
-        .current-lyric {
-            font-size: 24px;
-            color: #333;
-            margin: 20px 0;
-        }
-
         .controls {
             display: flex;
-            gap: 20px;
             align-items: center;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        .play-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #ff2d55;
+        .play-pause {
+            background: none;
             border: none;
-            color: white;
+            font-size: 24px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .progress-bar {
             width: 100%;
             height: 4px;
-            background: #eee;
+            background: #ddd;
             border-radius: 2px;
             cursor: pointer;
         }
@@ -155,7 +142,7 @@
             height: 100%;
             background: #ff2d55;
             border-radius: 2px;
-            width: 0;
+            width: 0%;
         }
     </style>
 </head>
@@ -171,18 +158,12 @@
 
         <div class="player">
             <img src="" alt="Album Art" class="album-art">
-            <div class="song-info">
-                <div class="song-title"></div>
-                <div class="artist-name"></div>
-            </div>
+            <div class="lyrics-container"></div>
             <div class="controls">
-                <button class="play-button">▶</button>
+                <button class="play-pause">▶️</button>
                 <div class="progress-bar">
                     <div class="progress"></div>
                 </div>
-            </div>
-            <div class="lyrics-container">
-                <div class="current-lyric"></div>
             </div>
         </div>
     </div>
@@ -190,151 +171,162 @@
     <script>
         class MusicOS {
             constructor() {
-                this.artists = [
+                this.currentAudio = new Audio();
+                this.lyrics = [];
+                this.currentLyricIndex = 0;
+                this.isExpanded = false;
+
+                this.initializeUI();
+                this.bindEvents();
+            }
+
+            initializeUI() {
+                // 예시 아티스트 데이터
+                const artists = [
                     {
                         name: 'NewJeans',
                         image: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg',
-                        video: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4',
                         albums: [
                             {
                                 name: "NewJeans2ndEP'GetUp'",
-                                cover: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
-                                songs: [
-                                    {
-                                        title: 'ETA',
-                                        path: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
-                                        lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
-                                    }
-                                ]
+                                songs: ['ETA']
                             }
                         ]
                     }
                 ];
 
-                this.currentSong = null;
-                this.audio = new Audio();
-                this.lyrics = [];
-                this.currentLyricIndex = 0;
-
-                this.initializeUI();
-                this.setupEventListeners();
-            }
-
-            initializeUI() {
                 const mainContent = document.querySelector('.main-content');
-                
-                this.artists.forEach(artist => {
-                    const card = document.createElement('div');
-                    card.className = 'artist-card';
-                    card.innerHTML = `
-                        <img src="${artist.image}" alt="${artist.name}" class="artist-image">
-                        <div class="artist-info">
-                            <div class="artist-name">${artist.name}</div>
-                        </div>
-                    `;
+                artists.forEach(artist => {
+                    const card = this.createArtistCard(artist);
                     mainContent.appendChild(card);
-
-                    card.addEventListener('click', () => this.showArtistDetail(artist));
                 });
             }
 
-            async loadLyrics(url) {
-                try {
-                    const response = await fetch(url);
-                    const text = await response.text();
-                    this.lyrics = this.parseSRT(text);
-                } catch (error) {
-                    console.error('Failed to load lyrics:', error);
-                }
+            createArtistCard(artist) {
+                const card = document.createElement('div');
+                card.className = 'artist-card';
+                card.innerHTML = `
+                    <img src="${artist.image}" alt="${artist.name}" class="artist-image">
+                    <div class="artist-info">
+                        <div class="artist-name">${artist.name}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => this.handleArtistClick(artist));
+                return card;
+            }
+
+            handleArtistClick(artist) {
+                // 아티스트 상세 페이지로 전환하는 로직
+                const mainContent = document.querySelector('.main-content');
+                mainContent.innerHTML = `
+                    <video width="100%" autoplay muted>
+                        <source src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4" type="video/mp4">
+                    </video>
+                    <h2>${artist.name}</h2>
+                    ${artist.albums.map(album => `
+                        <div class="album-section" onclick="musicOS.handleAlbumClick('${album.name}')">
+                            <h3>${album.name}</h3>
+                        </div>
+                    `).join('')}
+                `;
+            }
+
+            async handleAlbumClick(albumName) {
+                // 앨범의 곡 목록을 표시하는 로직
+                const response = await fetch(`http://www.applesodam.kro.kr/music/NewJeans/${albumName}/songs.json`);
+                const songs = ['ETA']; // 실제로는 서버에서 받아와야 함
+
+                const mainContent = document.querySelector('.main-content');
+                mainContent.innerHTML = `
+                    <h2>${albumName}</h2>
+                    ${songs.map(song => `
+                        <div class="song-item" onclick="musicOS.playSong('${song}', '${albumName}')">
+                            ${song}
+                        </div>
+                    `).join('')}
+                `;
+            }
+
+            async playSong(songName, albumName) {
+                const audioPath = `http://www.applesodam.kro.kr/music/NewJeans/${albumName}/${songName}.mp3`;
+                const lyricsPath = `http://www.applesodam.kro.kr/music/NewJeans/${albumName}/${songName}.srt`;
+
+                this.currentAudio.src = audioPath;
+                await this.loadLyrics(lyricsPath);
+                this.currentAudio.play();
+
+                document.querySelector('.player').style.display = 'block';
+                this.updatePlayerUI();
+            }
+
+            async loadLyrics(path) {
+                const response = await fetch(path);
+                const text = await response.text();
+                this.lyrics = this.parseSRT(text);
             }
 
             parseSRT(srtContent) {
                 // SRT 파일 파싱 로직
-                const entries = srtContent.split('\n\n');
-                return entries.map(entry => {
-                    const lines = entry.split('\n');
-                    const timeData = lines[1].split(' --> ');
-                    return {
-                        start: this.timeToSeconds(timeData[0]),
-                        end: this.timeToSeconds(timeData[1]),
-                        text: lines[2]
-                    };
-                });
+                return srtContent.split('\n\n')
+                    .map(block => {
+                        const [id, time, ...lines] = block.split('\n');
+                        const [start] = time.split(' --> ');
+                        return {
+                            time: this.timeToSeconds(start),
+                            text: lines.join(' ')
+                        };
+                    });
             }
 
-            timeToSeconds(timeString) {
-                const [hours, minutes, seconds] = timeString.split(':');
-                return parseFloat(hours) * 3600 + parseFloat(minutes) * 60 + parseFloat(seconds);
+            timeToSeconds(timeStr) {
+                const [hours, minutes, seconds] = timeStr.split(':');
+                return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
             }
 
-            setupEventListeners() {
+            updatePlayerUI() {
                 const player = document.querySelector('.player');
-                const playButton = document.querySelector('.play-button');
-                const progressBar = document.querySelector('.progress-bar');
-
-                player.addEventListener('click', () => {
-                    player.classList.toggle('expanded');
-                });
-
-                playButton.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (this.audio.paused) {
-                        this.audio.play();
-                        playButton.textContent = '⏸';
-                    } else {
-                        this.audio.pause();
-                        playButton.textContent = '▶';
-                    }
-                });
-
-                this.audio.addEventListener('timeupdate', () => {
-                    const progress = (this.audio.currentTime / this.audio.duration) * 100;
-                    document.querySelector('.progress').style.width = `${progress}%`;
+                const progressBar = player.querySelector('.progress');
+                
+                this.currentAudio.addEventListener('timeupdate', () => {
+                    const progress = (this.currentAudio.currentTime / this.currentAudio.duration) * 100;
+                    progressBar.style.width = `${progress}%`;
                     this.updateLyrics();
-                });
-
-                progressBar.addEventListener('click', (e) => {
-                    const rect = progressBar.getBoundingClientRect();
-                    const percent = (e.clientX - rect.left) / rect.width;
-                    this.audio.currentTime = percent * this.audio.duration;
                 });
             }
 
             updateLyrics() {
-                const currentTime = this.audio.currentTime;
-                const lyric = this.lyrics.find(l => 
-                    currentTime >= l.start && currentTime <= l.end
-                );
+                const currentTime = this.currentAudio.currentTime;
+                const currentLyric = this.lyrics.find((lyric, index) => {
+                    const nextLyric = this.lyrics[index + 1];
+                    return currentTime >= lyric.time && (!nextLyric || currentTime < nextLyric.time);
+                });
 
-                if (lyric) {
-                    document.querySelector('.current-lyric').textContent = lyric.text;
+                if (currentLyric) {
+                    document.querySelector('.lyrics-container').textContent = currentLyric.text;
                 }
             }
 
-            async playSong(song, artistName) {
-                this.currentSong = song;
-                this.audio.src = song.path;
-                await this.loadLyrics(song.lyrics);
+            bindEvents() {
+                document.querySelector('.album-art').addEventListener('click', () => {
+                    const player = document.querySelector('.player');
+                    this.isExpanded = !this.isExpanded;
+                    player.classList.toggle('expanded', this.isExpanded);
+                });
 
-                document.querySelector('.song-title').textContent = song.title;
-                document.querySelector('.artist-name').textContent = artistName;
-                
-                const albumArt = document.querySelector('.album-art');
-                // 앨범 아트는 메타데이터에서 가져오는 것으로 가정
-                albumArt.src = song.albumArt || '';
-
-                this.audio.play();
-                document.querySelector('.play-button').textContent = '⏸';
-            }
-
-            showArtistDetail(artist) {
-                // 아티스트 상세 페이지 표시 로직
-                console.log('Showing details for:', artist.name);
+                document.querySelector('.play-pause').addEventListener('click', () => {
+                    if (this.currentAudio.paused) {
+                        this.currentAudio.play();
+                        document.querySelector('.play-pause').textContent = '⏸️';
+                    } else {
+                        this.currentAudio.pause();
+                        document.querySelector('.play-pause').textContent = '▶️';
+                    }
+                });
             }
         }
 
-        // Initialize the application
-        const app = new MusicOS();
+        const musicOS = new MusicOS();
     </script>
 </body>
 </html>
