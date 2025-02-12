@@ -1,228 +1,199 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apple Music 스타일 스트리밍 플레이어</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Music Style Streaming</title>
   <style>
-    /* 기본 리셋 */
-    * {
+    /* Global Styles */
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    body {
-      background: #f2f2f2;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
       color: #333;
-      padding: 20px;
     }
-    .music-player {
-      max-width: 600px;
-      margin: 0 auto;
+    h1, h2, h3 {
+      margin: 0;
+      padding: 0;
+    }
+    /* 메인 화면: 음악 그룹 카드 */
+    #music-groups {
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .group-card {
+      width: 180px;
+      margin: 10px;
       background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 1px solid #ddd;
+      border-radius: 10px;
       overflow: hidden;
-    }
-    .header {
-      background: #000;
-      padding: 20px;
+      cursor: pointer;
       text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
     }
-    .header h1 {
-      color: #fff;
-      font-size: 1.5em;
+    .group-card:hover {
+      transform: scale(1.05);
     }
-    .player-container {
+    .group-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .group-card .group-name {
+      padding: 10px;
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    /* 그룹 상세 화면 */
+    #group-details {
+      display: none;
       padding: 20px;
+    }
+    .group-header {
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-    .album-art img {
-      width: 300px;
-      height: 300px;
-      object-fit: cover;
+      background-color: #fff;
+      padding: 15px;
       border-radius: 10px;
-      background: #ddd;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .track-info {
-      margin-bottom: 15px;
-    }
-    .track-info h2 {
-      font-size: 1.2em;
-      text-align: center;
-    }
-    audio {
+    .video-placeholder {
       width: 100%;
-      outline: none;
+      max-width: 600px;
+      height: 300px;
+      background-color: #000;
+      margin-bottom: 10px;
+      position: relative;
     }
-    .lyrics-container {
-      padding: 15px;
-      background: #fafafa;
-      border-top: 1px solid #eee;
-      min-height: 80px;
-      text-align: center;
+    .video-placeholder span {
+      color: #fff;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.5em;
+    }
+    .group-header .header-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 600px;
+    }
+    .header-info h2 {
+      margin: 0;
+    }
+    .header-info button {
+      padding: 8px 12px;
+      background-color: #007aff;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      cursor: pointer;
       font-size: 1em;
-      line-height: 1.5;
     }
-    .playlist {
-      background: #fff;
-      padding: 15px;
-      border-top: 1px solid #eee;
+    /* 앨범 목록 */
+    .album-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .playlist ul {
-      list-style: none;
+    .album-card {
+      width: 150px;
+      margin: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
     }
-    .playlist li {
+    .album-card:hover {
+      transform: scale(1.05);
+    }
+    .album-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+    .album-card .album-name {
+      padding: 8px;
+      font-size: 0.9em;
+    }
+    /* 오디오 플레이어: PIP 스타일과 확장된 상태 */
+    #audio-player {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 60px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
       padding: 10px;
-      border-bottom: 1px solid #eee;
+      z-index: 1000;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    #audio-player.expanded {
+      width: 90%;
+      height: 80%;
+      bottom: 5%;
+      right: 5%;
+      flex-direction: column;
+      cursor: default;
+    }
+    #audio-player img {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+    }
+    #audio-player.expanded img {
+      width: 150px;
+      height: 150px;
+    }
+    #audio-player .track-info {
+      flex: 1;
+      margin-left: 10px;
+    }
+    #audio-player .track-info h3 {
+      margin: 0;
+      font-size: 1em;
+    }
+    #audio-player .track-info p {
+      margin: 5px 0 0;
+      font-size: 0.9em;
+    }
+    #audio-player .controls {
+      margin-left: auto;
+    }
+    #audio-player .controls button {
+      background: none;
+      border: none;
+      font-size: 1.2em;
       cursor: pointer;
     }
-    .playlist li:hover {
-      background: #f7f7f7;
+    #lyrics {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 20px;
+      font-size: 1.1em;
     }
-  </style>
-</head>
-<body>
-  <div class="music-player">
-    <div class="header">
-      <h1>Apple Music 스타일 플레이어</h1>
-    </div>
-    <div class="player-container">
-      <div class="album-art">
-        <img id="albumArt" src="" alt="앨범 아트" />
-      </div>
-      <div class="track-info">
-        <h2 id="trackTitle">트랙 제목</h2>
-      </div>
-      <audio id="audioPlayer" controls></audio>
-    </div>
-    <div class="lyrics-container">
-      <p id="lyricsDisplay">가사가 여기에 표시됩니다...</p>
-    </div>
-    <div class="playlist">
-      <ul id="playlist">
-        <!-- 플레이리스트 항목이 JavaScript로 채워짐 -->
-      </ul>
-    </div>
-  </div>
-
-  <!-- jsmediatags 라이브러리: mp3 메타데이터(앨범아트) 추출 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
-  <script>
-    // 예시 플레이리스트 (추후 다른 음악 추가 가능)
-    const playlist = [
-      {
-        title: "ETA - NewJeans",
-        audioUrl: "http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.mp3",
-        srtUrl: "http://www.applesodam.kro.kr/music/NewJeans2ndEP'GetUp'/ETA.srt"
-      }
-      // 향후 다른 트랙 객체들을 추가하면 메인 화면에서 다양한 음악을 재생할 수 있음.
-    ];
-
-    // 플레이리스트 UI 초기화
-    function initPlaylist() {
-      const playlistElement = document.getElementById('playlist');
-      playlist.forEach((track, index) => {
-        const li = document.createElement('li');
-        li.textContent = track.title;
-        li.setAttribute('data-index', index);
-        li.addEventListener('click', () => {
-          loadTrack(index);
-        });
-        playlistElement.appendChild(li);
-      });
-    }
-
-    let currentLyrics = [];  // 파싱된 가사 저장
-    // 트랙 로드 및 초기화
-    function loadTrack(index) {
-      const track = playlist[index];
-      const audioPlayer = document.getElementById('audioPlayer');
-      audioPlayer.src = track.audioUrl;
-      document.getElementById('trackTitle').textContent = track.title;
-
-      // jsmediatags를 이용한 mp3 앨범 아트 추출
-      jsmediatags.read(track.audioUrl, {
-        onSuccess: function(tag) {
-          const tags = tag.tags;
-          if (tags.picture) {
-            let data = tags.picture.data;
-            let format = tags.picture.format;
-            let base64String = "";
-            for (let i = 0; i < data.length; i++) {
-              base64String += String.fromCharCode(data[i]);
-            }
-            const imageUrl = "data:" + format + ";base64," + window.btoa(base64String);
-            document.getElementById('albumArt').src = imageUrl;
-          } else {
-            document.getElementById('albumArt').src = "";
-          }
-        },
-        onError: function(error) {
-          console.error("메타데이터 오류:", error);
-        }
-      });
-
-      // SRT 형식의 가사 파일 로드 및 파싱
-      fetch(track.srtUrl)
-        .then(response => response.text())
-        .then(srtText => {
-          currentLyrics = parseSRT(srtText);
-        })
-        .catch(error => console.error("가사 파일 로드 에러:", error));
-
-      audioPlayer.play();
-    }
-
-    // SRT 파일 파싱 함수
-    function parseSRT(data) {
-      // SRT 파일은 \r\n 또는 \n\n 단위로 구분됨
-      let entries = data.replace(/\r/g, '').split('\n\n');
-      let result = [];
-      entries.forEach(entry => {
-        let lines = entry.split('\n');
-        if (lines.length >= 3) {
-          // 첫 번째 줄은 번호, 두 번째 줄은 시간, 나머지는 가사 내용
-          let timeParts = lines[1].split(' --> ');
-          let start = srtTimeToSeconds(timeParts[0]);
-          let end = srtTimeToSeconds(timeParts[1]);
-          let text = lines.slice(2).join('<br>');
-          result.push({ start, end, text });
-        }
-      });
-      return result;
-    }
-
-    // "HH:MM:SS,ms" 형식을 초 단위로 변환
-    function srtTimeToSeconds(timeStr) {
-      const parts = timeStr.split(':');
-      const secondsParts = parts[2].split(',');
-      const hours = parseInt(parts[0], 10);
-      const minutes = parseInt(parts[1], 10);
-      const seconds = parseInt(secondsParts[0], 10);
-      const milliseconds = parseInt(secondsParts[1], 10);
-      return hours * 3600 + minutes * 60 + seconds + (milliseconds / 1000);
-    }
-
-    // 오디오 재생 시간에 따라 가사를 업데이트
-    document.getElementById('audioPlayer').addEventListener('timeupdate', function () {
-      const currentTime = this.currentTime;
-      let lyricToShow = "";
-      for (let i = 0; i < currentLyrics.length; i++) {
-        if (currentTime >= currentLyrics[i].start && currentTime <= currentLyrics[i].end) {
-          lyricToShow = currentLyrics[i].text;
-          break;
-        }
-      }
-      document.getElementById('lyricsDisplay').innerHTML = lyricToShow;
-    });
-
-    // 초기 플레이리스트 구성
-    initPlaylist();
-  </script>
-</body>
-</html>
+    /* 기본 오디오 엘
