@@ -1,285 +1,149 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Siri Music</title>
     <style>
-        /* CSS 스타일링 */
+        /* General Styles */
         body {
-            font-family: sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             margin: 0;
-            background-color: #f0f0f0;
-            color: #333;
+            padding: 0;
+            background-color: #f5f5f7;
+            color: #1c1c1e;
         }
 
-        /* 메인 화면 스타일 */
-        .main-container {
-            padding: 20px;
+        header {
+            background-color: #ffffff;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Main Screen */
+        #main-screen {
+            padding: 1rem;
         }
 
         .artist-list {
             display: flex;
+            gap: 1rem;
             flex-wrap: wrap;
-            justify-content: space-around;
         }
 
-        .artist-card {
-            width: 150px;
-            margin: 10px;
+        .artist {
             text-align: center;
-        }
-
-        .artist-card img {
-            width: 100%;
-            border-radius: 50%;
-            margin-bottom: 5px;
-        }
-
-        /* 아티스트 화면 스타일 */
-        .artist-detail {
-            padding: 20px;
-        }
-
-        .artist-header {
-            text-align: center;
-        }
-
-        .artist-header video {
-            width: 100%;
-            max-height: 300px;
-            object-fit: cover;
-        }
-
-        .album-list {
-            margin-top: 20px;
-        }
-
-        .album-card {
-            margin-bottom: 10px;
-        }
-
-        /* 앨범 화면 스타일 */
-        .album-detail {
-            padding: 20px;
-        }
-
-        .song-list {
-            margin-top: 20px;
-        }
-
-        .song-item {
-            margin-bottom: 10px;
             cursor: pointer;
         }
 
-        /* 플레이어 스타일 */
-        .player-container {
+        .artist img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .artist p {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Artist Details */
+        #artist-details {
+            padding: 1rem;
+        }
+
+        #artist-video {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .album-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .album {
+            padding: 0.5rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        /* Album Details */
+        #album-details {
+            padding: 1rem;
+        }
+
+        .track-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .track {
+            padding: 0.5rem;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        /* Music Player */
+        #music-player {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #fff;
-            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
-            padding: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 1rem;
         }
 
-        .player-album-art {
+        #album-art {
             width: 50px;
             height: 50px;
-            border-radius: 5px;
-            margin-right: 10px;
+            border-radius: 8px;
+            object-fit: cover;
         }
 
-        .player-controls {
-            display: flex;
-            align-items: center;
+        #audio-player {
+            flex-grow: 1;
         }
 
-        .player-controls button {
-            background: none;
-            border: none;
-            font-size: 20px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        .lyrics-container {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .lyrics-line {
-            margin-bottom: 10px;
-        }
+        #lyrics-display {
+            margin-top: 1rem;
+            font-size: 0.9rem; 
+			line-height :150%;
+			color:#6e6e73
+		}
     </style>
 </head>
 <body>
-    <!-- 메인 화면 -->
-    <div class="main-container" id="main">
-        <h1>Siri Music</h1>
-        <div class="artist-list">
-            <!-- 아티스트 목록 (예시) -->
-            <div class="artist-card" onclick="loadArtist('NewJeans')">
-                <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg" alt="NewJeans">
-                <span>NewJeans</span>
-            </div>
-            <!-- 다른 아티스트 카드 추가 가능 -->
-        </div>
-    </div>
-
-    <!-- 아티스트 화면 -->
-    <div class="artist-detail" id="artistDetail" style="display: none;">
-        <button onclick="loadMain()">돌아가기</button>
-        <div class="artist-header">
-            <video src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4" controls></video>
-            <h2>NewJeans</h2>
-            <button>재생</button> <!-- 재생 심볼로 대체 -->
-        </div>
-        <div class="album-list">
-            <!-- 앨범 목록 (예시) -->
-            <div class="album-card" onclick="loadAlbum('NewJeans2ndEPGetUp')">
-                <span>NewJeans2ndEP'GetUp'</span>
-            </div>
-            <!-- 다른 앨범 카드 추가 가능 -->
-        </div>
-    </div>
-
-    <!-- 앨범 화면 -->
-    <div class="album-detail" id="albumDetail" style="display: none;">
-        <button onclick="loadArtist('NewJeans')">돌아가기</button>
-        <h2>NewJeans2ndEP'GetUp'</h2>
-        <div class="song-list">
-            <!-- 노래 목록 (예시) -->
-            <div class="song-item" onclick="loadPlayer('ETA', 'NewJeans', 'NewJeans2ndEPGetUp')">
-                <span>ETA</span>
-            </div>
-            <!-- 다른 노래 아이템 추가 가능 -->
-        </div>
-    </div>
-
-    <!-- 플레이어 -->
-    <div class="player-container" id="player" style="display: none;">
-        <img src="" alt="앨범 아트" class="player-album-art" id="playerAlbumArt" onclick="showLyrics()">
-        <div class="player-controls">
-            <button>&#9664;&#9664;</button> <!-- 이전 곡 -->
-            <button>&#9658;</button> <!-- 재생/일시정지 심볼로 대체 -->
-            <button>&#9654;&#9654;</button> <!-- 다음 곡 -->
-        </div>
-    </div>
-
-    <!-- 가사 화면 -->
-    <div class="lyrics-container" id="lyrics" style="display: none;">
-        <button onclick="hideLyrics()">돌아가기</button>
-        <h2>ETA 가사</h2>
-        <div id="lyricsContent">
-            <!-- 가사 내용 -->
-        </div>
-    </div>
-
-    <audio id="audio" src=""></audio>
-
-    <script>
-        // JavaScript 로직
-        let currentSong = '';
-
-        function loadArtist(artist) {
-            document.getElementById('main').style.display = 'none';
-            document.getElementById('artistDetail').style.display = 'block';
-            // 아티스트 정보 로딩 로직 추가
-        }
-
-        function loadAlbum(album) {
-            document.getElementById('artistDetail').style.display = 'none';
-            document.getElementById('albumDetail').style.display = 'block';
-            // 앨범 정보 로딩 로직 추가
-        }
-
-        function loadPlayer(song, artist, album) {
-            currentSong = song;
-            document.getElementById('albumDetail').style.display = 'none';
-            document.getElementById('player').style.display = 'flex';
-            document.getElementById('playerAlbumArt').src = `http://www.applesodam.kro.kr/music/${artist}/${album}/${song}.jpg`; // 앨범 아트 경로
-            document.getElementById('audio').src = `http://www.applesodam.kro.kr/music/${artist}/${album}/${song}.mp3`;
-            document.getElementById('audio').play();
-            loadLyrics(song, artist, album);
-            // 플레이어 로딩 로직 추가
-        }
-
-        function loadLyrics(song, artist, album) {
-            fetch(`http://www.applesodam.kro.kr/music/${artist}/${album}/${song}.srt`)
-                .then(response => response.text())
-                .then(text => {
-                    const lyrics = parseSRT(text);
-                    displayLyrics(lyrics);
-                });
-        }
-
-        function parseSRT(srtText) {
-            const lines = srtText.split('\n');
-            const lyrics = [];
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-                if (line.includes('-->')) {
-                    const [times, ...textLines] = lines.slice(i, i + 2);
-                    const [startTime, endTime] = times.split('-->').map(time => time.trim());
-                    const text = textLines.join('\n').trim();
-                    lyrics.push({ startTime, endTime, text });
-                    i += 2;
-                }
-            }
-            return lyrics;
-        }
-
-        function displayLyrics(lyrics) {
-            const lyricsContent = document.getElementById('lyricsContent');
-            lyricsContent.innerHTML = '';
-            lyrics.forEach(line => {
-                const lyricLine = document.createElement('div');
-                lyricLine.classList.add('lyrics-line');
-                lyricLine.textContent = line.text;
-                lyricLine.dataset.startTime = line.startTime;
-                lyricsContent.appendChild(lyricLine);
-            });
-
-            document.getElementById('audio').ontimeupdate = () => {
-                const currentTime = document.getElementById('audio').currentTime;
-                const lyricLines = document.querySelectorAll('.lyrics-line');
-                lyricLines.forEach(line => {
-                    const startTime = parseTime(line.dataset.startTime);
-                    const endTime = lyrics[Array.from(lyricLines).indexOf(line) + 1] ? parseTime(lyrics[Array.from(lyricLines).indexOf(line) + 1].startTime) : Infinity;
-                    if (currentTime >= startTime && currentTime < endTime) {
-                        line.classList.add('active');
-                    } else {
-                        line.classList.remove('active');
-                    }
-                });
-            };
-        }
-
-        function parseTime(timeString) {
-            const [hours, minutes, seconds] = timeString.split(':');
-            const [sec, milliseconds] = seconds.split(',');
-            return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(sec) + parseInt(milliseconds) / 1000;
-        }
-
-        function showLyrics() {
-            document.getElementById('player').style.display = 'none';
-            document.getElementById('lyrics').style.display = 'block';
-        }
-
-        function hideLyrics() {
-            document.getElementById('lyrics').style.display = 'none';
-            document.getElementById('player').style.display = 'flex';
-        }
-
-        function loadMain() {
-            document.getElementById('artistDetail').style.display = 'none';
-            document.getElementById('main').style.display = 'block';
-        }
-    </script>
+    <header>
+      <h1>Siri Music</h1>
+    </header>
 </body>
 </html>
