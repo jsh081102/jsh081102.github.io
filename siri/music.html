@@ -31,8 +31,8 @@
 
         .logo {
             font-size: 24px;
-            font-weight: 700;
-            color: #000;
+            font-weight: bold;
+            color: #333;
         }
 
         .main-content {
@@ -43,9 +43,10 @@
         }
 
         .artist-card {
-            background: #fff;
+            background: white;
             border-radius: 10px;
             overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             transition: transform 0.3s ease;
             cursor: pointer;
         }
@@ -65,84 +66,92 @@
         }
 
         .artist-name {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 600;
             margin-bottom: 5px;
         }
 
-        .player {
+        .mini-player {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.95);
+            background: white;
             border-radius: 10px;
-            padding: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            padding: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
             z-index: 1000;
         }
 
-        .player.expanded {
-            width: 100%;
-            height: 100%;
-            bottom: 0;
-            right: 0;
-            border-radius: 0;
-        }
-
-        .album-art {
+        .mini-player img {
             width: 60px;
             height: 60px;
             border-radius: 5px;
-            cursor: pointer;
         }
 
-        .player.expanded .album-art {
+        .full-player {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .album-art {
             width: 300px;
             height: 300px;
-            margin: 0 auto;
-            display: block;
+            border-radius: 10px;
+            margin-bottom: 30px;
         }
 
         .lyrics-container {
-            display: none;
-            margin-top: 20px;
+            color: white;
             text-align: center;
+            font-size: 24px;
             height: 200px;
             overflow-y: auto;
-        }
-
-        .player.expanded .lyrics-container {
-            display: block;
+            width: 80%;
+            max-width: 600px;
         }
 
         .controls {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 20px;
+            margin-top: 30px;
         }
 
-        .play-pause {
+        .control-btn {
             background: none;
             border: none;
+            color: white;
             font-size: 24px;
             cursor: pointer;
         }
 
         .progress-bar {
-            width: 100%;
+            width: 80%;
+            max-width: 600px;
             height: 4px;
-            background: #ddd;
+            background: rgba(255,255,255,0.3);
+            margin-top: 20px;
             border-radius: 2px;
             cursor: pointer;
         }
 
         .progress {
             height: 100%;
-            background: #ff2d55;
+            background: white;
+            width: 0;
             border-radius: 2px;
-            width: 0%;
         }
     </style>
 </head>
@@ -153,56 +162,64 @@
         </header>
 
         <main class="main-content">
-            <!-- 아티스트 카드들이 동적으로 추가됨 -->
+            <!-- 아티스트 카드들이 여기에 동적으로 추가됨 -->
         </main>
+    </div>
 
-        <div class="player">
-            <img src="" alt="Album Art" class="album-art">
-            <div class="lyrics-container"></div>
-            <div class="controls">
-                <button class="play-pause">▶️</button>
-                <div class="progress-bar">
-                    <div class="progress"></div>
-                </div>
-            </div>
+    <div class="mini-player">
+        <img src="" alt="Current track" id="miniPlayerArt">
+        <div class="mini-player-info">
+            <div class="current-track"></div>
+            <div class="current-artist"></div>
+        </div>
+    </div>
+
+    <div class="full-player">
+        <img src="" alt="Album art" class="album-art">
+        <div class="lyrics-container"></div>
+        <div class="controls">
+            <button class="control-btn" id="prevBtn">⏮</button>
+            <button class="control-btn" id="playPauseBtn">⏯</button>
+            <button class="control-btn" id="nextBtn">⏭</button>
+        </div>
+        <div class="progress-bar">
+            <div class="progress"></div>
         </div>
     </div>
 
     <script>
-        class MusicOS {
-            constructor() {
-                this.currentAudio = new Audio();
-                this.lyrics = [];
-                this.currentLyricIndex = 0;
-                this.isExpanded = false;
+        // 음악 데이터 예시
+        const musicData = {
+            artists: [
+                {
+                    name: 'NewJeans',
+                    image: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg',
+                    video: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4',
+                    albums: [
+                        {
+                            name: "NewJeans2ndEP'GetUp'",
+                            image: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
+                            songs: [
+                                {
+                                    title: 'ETA',
+                                    path: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
+                                    lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
 
-                this.initializeUI();
-                this.bindEvents();
-            }
+        let currentAudio = new Audio();
+        let currentLyrics = [];
+        let isPlaying = false;
 
-            initializeUI() {
-                // 예시 아티스트 데이터
-                const artists = [
-                    {
-                        name: 'NewJeans',
-                        image: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg',
-                        albums: [
-                            {
-                                name: "NewJeans2ndEP'GetUp'",
-                                songs: ['ETA']
-                            }
-                        ]
-                    }
-                ];
-
-                const mainContent = document.querySelector('.main-content');
-                artists.forEach(artist => {
-                    const card = this.createArtistCard(artist);
-                    mainContent.appendChild(card);
-                });
-            }
-
-            createArtistCard(artist) {
+        // 메인 화면 아티스트 카드 생성
+        function createArtistCards() {
+            const mainContent = document.querySelector('.main-content');
+            musicData.artists.forEach(artist => {
                 const card = document.createElement('div');
                 card.className = 'artist-card';
                 card.innerHTML = `
@@ -211,122 +228,88 @@
                         <div class="artist-name">${artist.name}</div>
                     </div>
                 `;
+                card.onclick = () => showArtistDetails(artist);
+                mainContent.appendChild(card);
+            });
+        }
 
-                card.addEventListener('click', () => this.handleArtistClick(artist));
-                return card;
-            }
-
-            handleArtistClick(artist) {
-                // 아티스트 상세 페이지로 전환하는 로직
-                const mainContent = document.querySelector('.main-content');
-                mainContent.innerHTML = `
-                    <video width="100%" autoplay muted>
-                        <source src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4" type="video/mp4">
-                    </video>
-                    <h2>${artist.name}</h2>
-                    ${artist.albums.map(album => `
-                        <div class="album-section" onclick="musicOS.handleAlbumClick('${album.name}')">
-                            <h3>${album.name}</h3>
-                        </div>
-                    `).join('')}
-                `;
-            }
-
-            async handleAlbumClick(albumName) {
-                // 앨범의 곡 목록을 표시하는 로직
-                const response = await fetch(`http://www.applesodam.kro.kr/music/NewJeans/${albumName}/songs.json`);
-                const songs = ['ETA']; // 실제로는 서버에서 받아와야 함
-
-                const mainContent = document.querySelector('.main-content');
-                mainContent.innerHTML = `
-                    <h2>${albumName}</h2>
-                    ${songs.map(song => `
-                        <div class="song-item" onclick="musicOS.playSong('${song}', '${albumName}')">
-                            ${song}
-                        </div>
-                    `).join('')}
-                `;
-            }
-
-            async playSong(songName, albumName) {
-                const audioPath = `http://www.applesodam.kro.kr/music/NewJeans/${albumName}/${songName}.mp3`;
-                const lyricsPath = `http://www.applesodam.kro.kr/music/NewJeans/${albumName}/${songName}.srt`;
-
-                this.currentAudio.src = audioPath;
-                await this.loadLyrics(lyricsPath);
-                this.currentAudio.play();
-
-                document.querySelector('.player').style.display = 'block';
-                this.updatePlayerUI();
-            }
-
-            async loadLyrics(path) {
-                const response = await fetch(path);
+        // 가사 파싱 함수
+        async function parseLyrics(lyricsUrl) {
+            try {
+                const response = await fetch(lyricsUrl);
                 const text = await response.text();
-                this.lyrics = this.parseSRT(text);
-            }
-
-            parseSRT(srtContent) {
-                // SRT 파일 파싱 로직
-                return srtContent.split('\n\n')
-                    .map(block => {
-                        const [id, time, ...lines] = block.split('\n');
-                        const [start] = time.split(' --> ');
-                        return {
-                            time: this.timeToSeconds(start),
-                            text: lines.join(' ')
-                        };
-                    });
-            }
-
-            timeToSeconds(timeStr) {
-                const [hours, minutes, seconds] = timeStr.split(':');
-                return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseFloat(seconds);
-            }
-
-            updatePlayerUI() {
-                const player = document.querySelector('.player');
-                const progressBar = player.querySelector('.progress');
-                
-                this.currentAudio.addEventListener('timeupdate', () => {
-                    const progress = (this.currentAudio.currentTime / this.currentAudio.duration) * 100;
-                    progressBar.style.width = `${progress}%`;
-                    this.updateLyrics();
+                // SRT 파일 파싱 로직 구현
+                // 실제 구현에서는 더 복잡한 파싱 로직이 필요할 수 있습니다.
+                return text.split('\n\n').map(block => {
+                    const lines = block.split('\n');
+                    return {
+                        time: parseFloat(lines[1].split(' --> ')[0].replace(',', '.')),
+                        text: lines[2]
+                    };
                 });
-            }
-
-            updateLyrics() {
-                const currentTime = this.currentAudio.currentTime;
-                const currentLyric = this.lyrics.find((lyric, index) => {
-                    const nextLyric = this.lyrics[index + 1];
-                    return currentTime >= lyric.time && (!nextLyric || currentTime < nextLyric.time);
-                });
-
-                if (currentLyric) {
-                    document.querySelector('.lyrics-container').textContent = currentLyric.text;
-                }
-            }
-
-            bindEvents() {
-                document.querySelector('.album-art').addEventListener('click', () => {
-                    const player = document.querySelector('.player');
-                    this.isExpanded = !this.isExpanded;
-                    player.classList.toggle('expanded', this.isExpanded);
-                });
-
-                document.querySelector('.play-pause').addEventListener('click', () => {
-                    if (this.currentAudio.paused) {
-                        this.currentAudio.play();
-                        document.querySelector('.play-pause').textContent = '⏸️';
-                    } else {
-                        this.currentAudio.pause();
-                        document.querySelector('.play-pause').textContent = '▶️';
-                    }
-                });
+            } catch (error) {
+                console.error('가사를 불러오는데 실패했습니다:', error);
+                return [];
             }
         }
 
-        const musicOS = new MusicOS();
+        // 음악 재생 함수
+        async function playSong(song) {
+            currentAudio.src = song.path;
+            currentLyrics = await parseLyrics(song.lyrics);
+            currentAudio.play();
+            isPlaying = true;
+            updateMiniPlayer(song);
+            
+            currentAudio.ontimeupdate = () => {
+                updateLyrics(currentAudio.currentTime);
+                updateProgress();
+            };
+        }
+
+        // 미니 플레이어 업데이트
+        function updateMiniPlayer(song) {
+            document.querySelector('#miniPlayerArt').src = song.albumArt;
+            document.querySelector('.current-track').textContent = song.title;
+            document.querySelector('.current-artist').textContent = song.artist;
+        }
+
+        // 가사 업데이트
+        function updateLyrics(currentTime) {
+            const currentLyric = currentLyrics.find(lyric => 
+                lyric.time <= currentTime && 
+                (!currentLyrics[currentLyrics.indexOf(lyric) + 1] || 
+                currentLyrics[currentLyrics.indexOf(lyric) + 1].time > currentTime)
+            );
+
+            if (currentLyric) {
+                document.querySelector('.lyrics-container').textContent = currentLyric.text;
+            }
+        }
+
+        // 진행바 업데이트
+        function updateProgress() {
+            const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
+            document.querySelector('.progress').style.width = `${progress}%`;
+        }
+
+        // 이벤트 리스너 설정
+        document.querySelector('.mini-player').onclick = () => {
+            document.querySelector('.full-player').style.display = 'flex';
+        };
+
+        document.querySelector('#playPauseBtn').onclick = () => {
+            if (isPlaying) {
+                currentAudio.pause();
+                isPlaying = false;
+            } else {
+                currentAudio.play();
+                isPlaying = true;
+            }
+        };
+
+        // 초기화
+        createArtistCards();
     </script>
 </body>
 </html>
