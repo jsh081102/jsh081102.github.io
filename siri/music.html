@@ -1,213 +1,173 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siri Music</title>
+    <title>Siri Music - musicOS 1.0</title>
     <style>
-        /* General Styles */
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f0f0;
+        /* Reset CSS (optional, but recommended) */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            color: #333;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        h1,
-        h2,
-        h3 {
-            color: #0a84ff;
-        }
-
-        /* Navigation */
-        nav {
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #000;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            padding: 10px 20px;
-            background-color: #fff;
-            border-bottom: 1px solid #ddd;
+            padding-bottom: 20px; /* Player height 고려 */
         }
 
-        nav .logo {
-            font-size: 1.5em;
+        h1, h2, h3 {
             font-weight: bold;
-            cursor: pointer;
-            /* Make logo clickable */
+            margin-bottom: 15px;
         }
 
-        nav .os-version {
-            font-size: 1em;
-            color: #666;
+        h1 {
+            font-size: 2em;
+            margin-top: 20px;
         }
 
-        /* Back Button */
-        .back-button {
+        h2 {
+            font-size: 1.5em;
+        }
+
+        h3 {
+            font-size: 1.2em;
+        }
+
+        button {
             background: none;
             border: none;
-            font-size: 1em;
-            color: #0a84ff;
             cursor: pointer;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.2s;
+            color: #0a84ff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
         }
 
-        .back-button:hover {
-            background-color: rgba(10, 132, 255, 0.1);
+        button:hover {
+            background-color: rgba(10, 132, 255, 0.1); /* 하이라이트 색상 연하게 */
         }
 
+        button.primary {
+            background-color: #0a84ff;
+            color: white;
+        }
+
+        button.primary:hover {
+            background-color: rgba(10, 132, 255, 0.8);
+        }
+
+        /* Main Content */
+        main {
+            width: 95%;
+            max-width: 800px;
+            padding: 20px;
+            text-align: center;
+        }
 
         /* Artist List */
-        .artist-list {
-            display: flex;
-            flex-wrap: wrap;
+        #artist-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 20px;
-            padding: 20px 0;
+            margin-bottom: 30px;
         }
 
         .artist-item {
-            width: 150px;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             cursor: pointer;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 12px;
+            overflow: hidden; /* 이미지 둥글게 */
+            transition: transform 0.2s ease;
         }
 
         .artist-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: scale(1.05);
         }
-
 
         .artist-item img {
             width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 10px;
+            height: auto;
+            display: block; /* 이미지 아래 여백 제거 */
+        }
+
+        .artist-item span {
+            padding: 10px;
+            text-align: center;
         }
 
         /* Artist Detail */
-        .artist-detail {
-            display: none;
-            /* Hidden by default */
+        #artist-detail {
+            display: none; /* Initially hidden */
         }
 
-        .artist-header {
-            display: flex;
-            flex-direction: column;
-            /* Stack video and info vertically */
-            align-items: center;
-            /* Center items horizontally */
-            gap: 10px;
-            /* Reduced gap */
+        #artist-header {
             margin-bottom: 20px;
+        }
+
+        #artist-header video, #artist-header img {
             width: 100%;
-            /* Ensure header takes full width */
+            max-height: 300px;
+            object-fit: cover; /* 꽉 채우기 */
+            border-radius: 12px;
+            margin-bottom: 15px;
         }
 
-        .artist-header video {
-            width: 95%;
-            /* Almost fill the width, leave some margin */
-            max-height: 50vh;
-            /* Limit height, make it responsive */
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-
-        .artist-info {
-            width: 95%;
-            /* Match video width */
-            display: flex;
-            justify-content: space-between;
-            /* Align items on opposite ends */
-            align-items: center;
-            /* Vertically center items */
-        }
-
-        .artist-info h2 {
-            margin: 0;
-            color: #0a84ff;
-            white-space: nowrap;
-            /* Prevent artist name from wrapping */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            /* Add ellipsis if name is too long */
-        }
-
-
-        .artist-albums {
-            display: flex;
-            flex-wrap: wrap;
+        #album-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 20px;
+            margin-top: 20px;
         }
 
         .album-item {
-            width: 120px;
-            /* Smaller album items */
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             cursor: pointer;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease;
         }
 
         .album-item:hover {
-            transform: translateY(-3px);
-            /* Slightly less lift */
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transform: scale(1.03);
         }
 
         .album-item img {
             width: 100%;
-            height: 120px;
-            /* Square images */
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 5px;
-            /* Less margin */
+            height: auto;
+            display: block;
         }
 
-        .album-item p {
-            margin: 0;
-            font-size: 0.9em;
-            /* Smaller font */
+        .album-item span {
+            padding: 10px;
+            text-align: center;
         }
 
-
-        /* Album Detail */
-        .album-detail {
-            display: none;
-        }
-
-        .song-list {
-            list-style: none;
-            padding: 0;
+        /* Song List */
+        #song-list {
+            display: none; /* Initially hidden */
+            margin-top: 20px;
         }
 
         .song-item {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 10px;
             border-bottom: 1px solid #eee;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s ease;
         }
 
         .song-item:last-child {
@@ -215,569 +175,611 @@
         }
 
         .song-item:hover {
-            background-color: #f9f9f9;
+            background-color: rgba(0, 0, 0, 0.03);
         }
 
-        .song-item img {
-            width: 50px;
-            height: 50px;
-            border-radius: 4px;
-            margin-right: 10px;
+        .song-info {
+            flex-grow: 1;
+            text-align: left;
+            margin-left: 10px;
         }
 
-        /* Player (PIP) */
-        .player-pip {
+        .song-title {
+            font-weight: bold;
+        }
+
+        .song-artist {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Music Player (PIP) */
+        #music-player {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 300px;
+            bottom: 0;
+            left: 0;
+            width: 100%;
             background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-            display: none;
-            /* Initially hidden */
+            box-shadow: 0px -2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            justify-content: space-between;
             z-index: 1000;
+            transition: transform 0.3s ease, height 0.3s ease, padding 0.3s ease;
+            transform: translateY(0); /* Initially visible */
+            height: auto; /* Auto height initially */
         }
 
-        .player-pip.active {
+        #music-player.minimized {
+            transform: translateY(0%); /* Show player */
+            height: 80px;
+            padding: 10px;
+            cursor: pointer; /* Minimize 상태에서 클릭 가능하도록 */
+        }
+
+        #music-player.expanded {
+            transform: translateY(0);
+            height: 100vh; /* Expand to full viewport height */
+            padding: 20px;
+            flex-direction: column; /* Stack elements vertically in expanded view */
+            align-items: center; /* Center elements in expanded view */
+            overflow-y: auto; /* Lyrics scrollable if needed */
+        }
+
+        #player-album-art {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-right: 15px;
+            flex-shrink: 0; /* Prevent shrinking in minimized state */
+        }
+
+        #music-player.expanded #player-album-art {
+            width: 200px;
+            height: 200px;
+            margin-bottom: 20px;
+        }
+
+        #player-album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
 
-
-        .player-pip-content {
+        #player-controls {
             display: flex;
             align-items: center;
-            padding: 10px;
+            flex-grow: 1;
+            justify-content: space-between;
+            margin-right: 15px;
         }
 
-        .player-pip img {
-            width: 80px;
-            height: 80px;
-            border-radius: 5px;
-            margin-right: 10px;
-        }
-
-        .player-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .player-controls button {
-            background-color: #0a84ff;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .player-controls button:hover {
-            background-color: #0768c7;
-        }
-
-        /* Full Player */
-        .full-player {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9);
-            z-index: 1001;
-            display: none;
+        #music-player.expanded #player-controls {
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
+            margin-right: 0;
+            margin-bottom: 20px; /* Spacing for lyrics */
         }
 
-        .full-player.active {
-            display: flex;
+        #player-track-info {
+            text-align: left;
+            flex-grow: 1;
+            margin-right: 10px;
+            min-width: 0; /* for text-overflow: ellipsis */
         }
 
-        .full-player-content {
+        #music-player.expanded #player-track-info {
             text-align: center;
-            position: relative;
-            /* For positioning close button */
+            margin-right: 0;
+            margin-bottom: 15px;
         }
 
-        .full-player-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: #fff;
-            font-size: 2em;
-            cursor: pointer;
-            z-index: 1003;
-            /* Above other content */
-        }
-
-        .full-player img {
-            max-width: 80%;
-            max-height: 60vh;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            /* Space for lyrics */
-        }
-
-        .lyrics-container {
-            color: #fff;
-            font-size: 1.2em;
-            max-height: 20vh;
-            /* Limit lyrics height */
-            overflow-y: auto;
-            /* Scrollable lyrics */
-            padding: 10px;
-            border-radius: 5px;
-            background-color: rgba(0, 0, 0, 0.5);
-            /* Semi-transparent background */
-        }
-
-
-        .lyrics-line {
-            margin-bottom: 0.5em;
-            /* Space between lines */
-            opacity: 0.6;
-            /* Dimmed out by default */
-            transition: opacity 0.3s;
-            /* Smooth transition */
-        }
-
-        .lyrics-line.active {
-            opacity: 1;
-            /* Fully visible */
+        #player-track-title {
             font-weight: bold;
-            /* Highlight current line */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* 긴 제목 ... 처리 */
         }
 
-        .play-button {
-            background-color: #0a84ff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+        #player-track-artist {
+            color: #666;
+            font-size: 0.9em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        .player-button {
+            font-size: 1.5em;
+            padding: 5px;
+            color: #333;
+        }
+
+        .player-button:hover {
+            color: #0a84ff;
+        }
+
+        #progress-container {
+            width: 100%;
+            height: 5px;
+            background-color: #eee;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 10px; /* Spacing in expanded view */
         }
 
-        .play-button:hover {
-            background-color: #0768c7;
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #0a84ff;
+            border-radius: 3px;
         }
 
-        .play-button .icon {
-            font-size: 24px;
-            /* Icon size */
+        #current-time, #duration {
+            font-size: 0.8em;
+            color: #666;
+            margin: 0 5px;
         }
+
+        #lyrics-container {
+            text-align: center;
+            padding: 20px;
+            overflow-y: auto; /* Lyrics scroll if too long */
+            max-height: 40vh; /* Max height for lyrics in expanded view */
+        }
+
+        .lyric-line {
+            margin-bottom: 10px;
+            opacity: 0.5; /* 기본적으로 흐리게 */
+            transition: opacity 0.2s ease;
+        }
+
+        .lyric-line.active {
+            opacity: 1; /* 현재 가사 강조 */
+            font-weight: bold;
+        }
+
+        /* Hidden elements initially */
+        #album-list, #song-list, #music-player {
+            display: none; /* JavaScript로 display:block 처리 */
+        }
+
+        #music-player {
+            display: flex; /* Player는 flex로 시작 */
+        }
+
     </style>
 </head>
-
 <body>
-    <nav>
-        <div class="logo" onclick="goToMainPage()">Siri Music</div>
-        <div class="os-version">musicOS 1.0</div>
-    </nav>
+    <h1>Siri Music</h1>
+    <h2>musicOS 1.0</h2>
 
-    <div class="container">
-        <button class="back-button" onclick="goBack()">← Back</button> 
-        <h1>Featured Artists</h1>
-        <div class="artist-list">
-            <!-- Artist items will be dynamically added here -->
+    <main>
+        <section id="artist-list-section">
+            <h3>주요 아티스트</h3>
+            <div id="artist-list">
+                <!-- Artist List will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="artist-detail" style="display: none;">
+            <div id="artist-header">
+                <!-- Artist Header (Video/Image, Name, Play Button) -->
+            </div>
+            <h3>앨범</h3>
+            <div id="album-list">
+                <!-- Album List will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <section id="song-list-section" style="display: none;">
+            <h3>노래 목록</h3>
+            <div id="song-list">
+                <!-- Song List will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <div id="music-player" class="minimized">
+        <div id="player-album-art">
+            <img src="" alt="앨범 아트">
         </div>
+        <div id="player-controls">
+            <div id="player-track-info">
+                <div id="player-track-title">곡 제목</div>
+                <div id="player-track-artist">아티스트</div>
+            </div>
+            <div>
+                <button class="player-button" id="prev-track-btn">⏮</button>
+                <button class="player-button" id="play-pause-btn"> 재생 </button>
+                <button class="player-button" id="next-track-btn">⏭</button>
+            </div>
+        </div>
+        <audio id="audio" src=""></audio>
+    </div>
 
-        <div class="artist-detail">
-            <div class="artist-header">
-                <video autoplay loop muted></video>
-                <div class="artist-info">
-                    <h2></h2>
-                    <button class="play-button" onclick="playFirstSong()">
-                        <span class="icon">▶</span>
-                        <!-- Play icon -->
-                        Play All
-                    </button>
+    <div id="expanded-player" style="display: none;">
+        <div id="music-player" class="expanded">
+            <div id="player-album-art">
+                <img src="" alt="앨범 아트 (확장)">
+            </div>
+            <div id="player-controls">
+                <div id="player-track-info">
+                    <div id="player-track-title">곡 제목 (확장)</div>
+                    <div id="player-track-artist">아티스트 (확장)</div>
+                </div>
+                <div id="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+                    <span id="current-time">0:00</span>
+                    <div>
+                        <button class="player-button" id="expanded-prev-track-btn">⏮</button>
+                        <button class="player-button" id="expanded-play-pause-btn"> 재생 </button>
+                        <button class="player-button" id="expanded-next-track-btn">⏭</button>
+                    </div>
+                    <span id="duration">0:00</span>
                 </div>
             </div>
-            <h3>Albums</h3>
-            <div class="artist-albums">
-                <!-- Album items will be dynamically added here -->
-            </div>
-        </div>
-
-        <div class="album-detail">
-            <h2></h2>
-            <ul class="song-list">
-                <!-- Song items will be dynamically added here -->
-            </ul>
-        </div>
-    </div>
-
-    <!-- Player (PIP) -->
-    <div class="player-pip">
-        <div class="player-pip-content">
-            <img src="" alt="Album Art">
-            <div class="player-controls">
-                <button onclick="togglePlayPause()">
-                    <span id="playPauseIcon">▶</span><!-- Play/Pause icon -->
-                </button>
-            </div>
-        </div>
-        <audio id="audioPlayer" ontimeupdate="updateProgress()"></audio>
-    </div>
-
-    <!-- Full Player -->
-    <div class="full-player">
-
-        <div class="full-player-content">
-            <span class="full-player-close" onclick="closeFullPlayer()">×</span>
-            <img src="" alt="Album Art">
-            <div class="lyrics-container">
-                <!-- Lyrics will be displayed here -->
+            <div id="lyrics-container">
+                <!-- Lyrics will be populated by JavaScript -->
             </div>
         </div>
     </div>
 
 
     <script>
-        // Data (replace with your actual data)
-        const artistsData = {
-            "NewJeans": {
+        const artistListData = [
+            {
                 name: "NewJeans",
-                photo: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg",
-                video: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4",
-                albums: {
-                    "NewJeans2ndEP'GetUp'": {
+                artistImg: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg",
+                artistVideo: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4",
+                albums: [
+                    {
                         name: "NewJeans 2nd EP 'Get Up'",
-                        cover: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
-                        songs: {
-                            "ETA": {
+                        albumArt: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
+                        songs: [
+                            {
                                 title: "ETA",
-                                file: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
-                                lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
-                            }
-                        }
-                    }
-                }
+                                artist: "NewJeans",
+                                mp3: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
+                                srt: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt",
+                                albumArt: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" // 앨범 아트 재활용
+                            },
+                            // ... other songs in the album if any
+                        ]
+                    },
+                    // ... other albums by NewJeans if any
+                ]
+            },
+            {
+                name: "아이브",
+                artistImg: "http://www.applesodam.kro.kr/music/IVE/IVE.jpg", // 예시 이미지 URL 필요
+                artistVideo: "http://www.applesodam.kro.kr/music/IVE/IVE.mp4", // 예시 비디오 URL 필요
+                albums: [
+                    {
+                        name: "I'VE MINE", // 예시 앨범명
+                        albumArt: "http://www.applesodam.kro.kr/music/IVE/IVEMINE/IVEMINE.jpg", // 예시 앨범아트 URL 필요
+                        songs: [
+                            {
+                                title: "Baddie", // 예시 곡 제목
+                                artist: "IVE",
+                                mp3: "http://www.applesodam.kro.kr/music/IVE/IVEMINE/Baddie.mp3", // 예시 mp3 URL 필요
+                                srt: "http://www.applesodam.kro.kr/music/IVE/IVEMINE/Baddie.srt", // 예시 srt URL 필요
+                                albumArt: "http://www.applesodam.kro.kr/music/IVE/IVEMINE/IVEMINE.jpg" // 예시 앨범아트 URL 필요
+                            },
+                            // ... other songs in the album
+                        ]
+                    },
+                    // ... other albums by IVE
+                ]
+            },
+            // ... more artists can be added here
+        ];
 
-            }
-        };
-
-        let currentAudio = null;
-        let currentLyrics = null;
-        let currentLyricIndex = 0;
-        let isPlaying = false;
-        let previousView = null; // Keep track of the previously shown view
-
-
-        // --- DOM Element References ---
-        const artistListEl = document.querySelector('.artist-list');
-        const artistDetailEl = document.querySelector('.artist-detail');
-        const artistVideoEl = document.querySelector('.artist-detail video');
-        const artistNameEl = document.querySelector('.artist-info h2');
-        const artistAlbumsEl = document.querySelector('.artist-albums');
-        const albumDetailEl = document.querySelector('.album-detail');
-        const albumNameEl = document.querySelector('.album-detail h2');
-        const songListEl = document.querySelector('.song-list');
-
-        const playerPipEl = document.querySelector('.player-pip');
-        const pipAlbumArtEl = document.querySelector('.player-pip img');
-        const audioPlayer = document.getElementById('audioPlayer');
-        const playPauseIcon = document.getElementById('playPauseIcon');
-
-        const fullPlayerEl = document.querySelector('.full-player');
-        const fullPlayerAlbumArtEl = document.querySelector('.full-player img');
-        const lyricsContainerEl = document.querySelector('.lyrics-container');
+        const artistListDiv = document.getElementById('artist-list');
+        const artistDetailSection = document.getElementById('artist-detail');
+        const artistHeaderDiv = document.getElementById('artist-header');
+        const albumListDiv = document.getElementById('album-list');
+        const songListSection = document.getElementById('song-list-section');
+        const songListDiv = document.getElementById('song-list');
+        const musicPlayerDiv = document.getElementById('music-player');
+        const playerAlbumArtImg = musicPlayerDiv.querySelector('#player-album-art img');
+        const playerTrackTitleElem = musicPlayerDiv.querySelector('#player-track-title');
+        const playerTrackArtistElem = musicPlayerDiv.querySelector('#player-track-artist');
+        const playPauseButton = musicPlayerDiv.querySelector('#play-pause-btn');
+        const prevTrackButton = musicPlayerDiv.querySelector('#prev-track-btn');
+        const nextTrackButton = musicPlayerDiv.querySelector('#next-track-btn');
+        const audioPlayer = document.getElementById('audio');
+        const lyricsContainer = document.getElementById('lyrics-container');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const currentTimeElem = document.getElementById('current-time');
+        const durationElem = document.getElementById('duration');
+        const expandedPlayerDiv = document.getElementById('expanded-player');
+        const expandedPlayPauseButton = document.getElementById('expanded-play-pause-btn');
+        const expandedPrevTrackButton = document.getElementById('expanded-prev-track-btn');
+        const expandedNextTrackButton = document.getElementById('expanded-next-track-btn');
+        const expandedAlbumArtImg = expandedPlayerDiv.querySelector('#player-album-art img');
+        const expandedTrackTitleElem = expandedPlayerDiv.querySelector('#player-track-title');
+        const expandedTrackArtistElem = expandedPlayerDiv.querySelector('#player-track-artist');
 
 
-        // --- Function Definitions ---
+        let currentArtistData = null;
+        let currentAlbumData = null;
+        let currentTrackIndex = 0;
+        let currentLyrics = [];
+        let isPlayerExpanded = false;
 
-        // --- UI Update Functions ---
-        // Function to render the list of artists
-        function renderArtistList() {
-            artistListEl.innerHTML = ''; // Clear any existing content
-            for (const artistId in artistsData) {
-                const artist = artistsData[artistId];
+
+        function displayArtists() {
+            artistListDiv.innerHTML = ''; // Clear previous artist list
+            artistListData.forEach(artist => {
                 const artistItem = document.createElement('div');
                 artistItem.classList.add('artist-item');
                 artistItem.innerHTML = `
-                    <img src="${artist.photo}" alt="${artist.name}">
-                    <p>${artist.name}</p>
+                    <img src="${artist.artistImg}" alt="${artist.name}">
+                    <span>${artist.name}</span>
                 `;
-                artistItem.addEventListener('click', () => showArtistDetail(artistId));
-                artistListEl.appendChild(artistItem);
-            }
-            artistListEl.style.display = 'flex'; // Ensure artist list is visible
-            artistDetailEl.style.display = 'none';
-            albumDetailEl.style.display = 'none';
+                artistItem.addEventListener('click', () => showArtistDetail(artist));
+                artistListDiv.appendChild(artistItem);
+            });
+            document.getElementById('artist-list-section').style.display = 'block';
+            artistDetailSection.style.display = 'none';
+            songListSection.style.display = 'none';
         }
 
-        function showArtistDetail(artistId) {
-            const artist = artistsData[artistId];
+        function showArtistDetail(artist) {
+            currentArtistData = artist;
+            artistHeaderDiv.innerHTML = ''; // Clear previous header
+            albumListDiv.innerHTML = ''; // Clear previous album list
 
-            artistVideoEl.src = artist.video;
-            artistNameEl.textContent = artist.name;
-            artistAlbumsEl.innerHTML = ''; // Clear previous albums
+            // 아티스트 비디오 또는 이미지 표시
+            if (artist.artistVideo) {
+                artistHeaderDiv.innerHTML += `<video src="${artist.artistVideo}" controls loop muted poster="${artist.artistImg}" style="object-fit: contain;"></video>`; // muted 추가, poster 속성 추가
+            } else if (artist.artistImg) {
+                artistHeaderDiv.innerHTML += `<img src="${artist.artistImg}" alt="${artist.name}">`;
+            }
 
-            for (const albumId in artist.albums) {
-                const album = artist.albums[albumId];
+            artistHeaderDiv.innerHTML += `<h2>${artist.name}</h2>
+                                         <button class="primary" onclick="playArtistRandomSong()">전체 재생 <span style="font-size: 1.2em;">▶️</span></button>`; // 재생 심볼 추가
+
+
+            artist.albums.forEach(album => {
                 const albumItem = document.createElement('div');
                 albumItem.classList.add('album-item');
                 albumItem.innerHTML = `
-                    <img src="${album.cover}" alt="${album.name}">
-                    <p>${album.name}</p>
+                    <img src="${album.albumArt}" alt="${album.name}">
+                    <span>${album.name}</span>
                 `;
-                albumItem.addEventListener('click', () => showAlbumDetail(artistId, albumId));
-                artistAlbumsEl.appendChild(albumItem);
-            }
-
-            // Show the artist detail view and hide others
-            previousView = 'artistList';
-            artistListEl.style.display = 'none';
-            artistDetailEl.style.display = 'block';
-            albumDetailEl.style.display = 'none';
-        }
-
-        function showAlbumDetail(artistId, albumId) {
-            const album = artistsData[artistId].albums[albumId];
-            albumNameEl.textContent = album.name;
-            songListEl.innerHTML = ''; // Clear previous songs
-
-
-            for (const songId in album.songs) {
-                const song = album.songs[songId];
-                const songItem = document.createElement('li');
-                songItem.classList.add('song-item');
-                songItem.innerHTML = `
-                    <img src="${album.cover}" alt="${album.name}">
-                    <span>${song.title}</span>
-                `;
-                songItem.addEventListener('click', () => playSong(song.file, album.cover, song.lyrics));
-                songListEl.appendChild(songItem);
-            }
-
-            //Show album details
-            previousView = 'artistDetail';
-            artistListEl.style.display = 'none';
-            artistDetailEl.style.display = 'none';
-            albumDetailEl.style.display = 'block';
-        }
-
-
-        // --- Player Functions ---
-
-        function playSong(songFile, albumCover, lyricsFile) {
-            if (currentAudio) {
-                currentAudio.pause(); // Stop currently playing song
-                currentAudio.currentTime = 0; // Reset playback to the beginning
-            }
-
-            currentAudio = new Audio(); // Create a new Audio object
-            currentAudio.src = songFile; // Set the source
-
-            currentAudio.play().then(() => {
-                // Playback started successfully
-                isPlaying = true;
-                pipAlbumArtEl.src = albumCover;
-                playerPipEl.classList.add('active'); // Show PIP
-                playPauseIcon.innerHTML = '❚❚'; // Change to pause icon
-                fullPlayerAlbumArtEl.src = albumCover;  // Set full player album art
-
-            }).catch(error => {
-                 console.error("Error playing audio:", error);
+                albumItem.addEventListener('click', () => showAlbumSongs(album));
+                albumListDiv.appendChild(albumItem);
             });
 
-            currentAudio.ontimeupdate = updateProgress;
+            document.getElementById('artist-list-section').style.display = 'none';
+            artistDetailSection.style.display = 'block';
+            songListSection.style.display = 'none';
+            albumListDiv.style.display = 'grid'; // 앨범 목록 표시
+        }
+
+        function showAlbumSongs(album) {
+            currentAlbumData = album;
+            songListDiv.innerHTML = ''; // Clear previous song list
+
+            album.songs.forEach((song, index) => {
+                const songItem = document.createElement('div');
+                songItem.classList.add('song-item');
+                songItem.innerHTML = `
+                    <div class="song-info">
+                        <div class="song-title">${song.title}</div>
+                        <div class="song-artist">${song.artist}</div>
+                    </div>
+                    <button onclick="playTrack(${index})"> <span style="font-size: 1.2em;">▶️</span> </button>
+                `;
+                songListDiv.appendChild(songItem);
+            });
+
+            document.getElementById('artist-list-section').style.display = 'none';
+            artistDetailSection.style.display = 'none';
+            songListSection.style.display = 'block';
+            songListDiv.style.display = 'block'; // 노래 목록 표시
+        }
+
+        function playArtistRandomSong() {
+            if (!currentArtistData || !currentArtistData.albums || currentArtistData.albums.length === 0) return;
+
+            const albumIndex = Math.floor(Math.random() * currentArtistData.albums.length);
+            const album = currentArtistData.albums[albumIndex];
+
+            if (!album.songs || album.songs.length === 0) return;
+
+            const songIndex = Math.floor(Math.random() * album.songs.length);
+            showAlbumSongs(album); // 먼저 노래 목록 표시 (UX 개선)
+            setTimeout(() => { playTrack(songIndex); }, 300); // 약간의 딜레이 후 재생 시작
+        }
 
 
-            currentAudio.onended = () => {
-                isPlaying = false;
-                playPauseIcon.innerHTML = '▶'; // Change back to play icon
-            }
+        function playTrack(trackIndex) {
+            if (!currentAlbumData || !currentAlbumData.songs || !currentAlbumData.songs[trackIndex]) return;
 
-            if (lyricsFile) {
-                loadLyrics(lyricsFile);
-            } else {
-                currentLyrics = null;
-                lyricsContainerEl.innerHTML = ''; // Clear lyrics if none
+            currentTrackIndex = trackIndex;
+            const track = currentAlbumData.songs[trackIndex];
+
+            audioPlayer.src = track.mp3;
+            playerAlbumArtImg.src = track.albumArt;
+            playerTrackTitleElem.textContent = track.title;
+            playerTrackArtistElem.textContent = track.artist;
+            expandedAlbumArtImg.src = track.albumArt;
+            expandedTrackTitleElem.textContent = track.title;
+            expandedTrackArtistElem.textContent = track.artist;
+
+
+            audioPlayer.load(); // Load audio data
+            audioPlayer.play();
+            playPauseButton.textContent = ' ⏸️ ';
+            expandedPlayPauseButton.textContent = ' ⏸️ ';
+            musicPlayerDiv.style.display = 'flex'; // Show player if hidden
+            expandedPlayerDiv.style.display = 'none'; // Ensure expanded player is hidden initially when playing from song list
+            musicPlayerDiv.classList.remove('expanded'); // Minimize player when starting new track from song list
+            musicPlayerDiv.classList.add('minimized');
+            isPlayerExpanded = false;
+
+
+            loadLyrics(track.srt);
+        }
+
+        function loadLyrics(srtUrl) {
+            lyricsContainer.innerHTML = ''; // Clear previous lyrics
+            currentLyrics = []; // Clear previous lyrics data
+
+            fetch(srtUrl)
+                .then(response => response.text())
+                .then(srtText => {
+                    const lines = srtText.split('\n').filter(line => line.trim() !== '');
+                    let lyricLinesHTML = '';
+                    for (let i = 0; i < lines.length; i += 3) {
+                        if (i + 2 < lines.length) {
+                            const timeCodeLine = lines[i + 1];
+                            const lyricLine = lines[i + 2];
+                            const timeCodes = timeCodeLine.split('-->');
+                            if (timeCodes.length === 2) {
+                                const startTime = parseTime(timeCodes[0].trim());
+                                const endTime = parseTime(timeCodes[1].trim());
+                                currentLyrics.push({ start: startTime, end: endTime, text: lyricLine });
+                                lyricLinesHTML += `<div class="lyric-line" data-start="${startTime}">${lyricLine}</div>`;
+                            }
+                        }
+                    }
+                    lyricsContainer.innerHTML = lyricLinesHTML;
+                })
+                .catch(error => {
+                    console.error('Error loading lyrics:', error);
+                    lyricsContainer.innerHTML = '가사를 불러올 수 없습니다.';
+                    currentLyrics = [];
+                });
+        }
+
+        function parseTime(timeString) {
+            const parts = timeString.split(/:|,/);
+            return parseInt(parts[0]) * 60 * 60 + parseInt(parts[1]) * 60 + parseInt(parts[2]) + parseInt(parts[3]) / 1000;
+        }
+
+        function updateLyricsDisplay() {
+            if (currentLyrics.length === 0 || !isPlayerExpanded) return;
+
+            const currentTime = audioPlayer.currentTime;
+            const lyricLineElements = lyricsContainer.querySelectorAll('.lyric-line');
+            let activeLyricIndex = -1;
+
+            lyricLineElements.forEach((line, index) => {
+                const startTime = currentLyrics[index].start;
+                const endTime = (index < currentLyrics.length - 1) ? currentLyrics[index + 1].start : Infinity; // 다음 가사 시작 시간 또는 무한대
+                if (currentTime >= startTime && currentTime < endTime) {
+                    line.classList.add('active');
+                    activeLyricIndex = index;
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+
+            // 활성 가사가 있고, expanded player && lyrics 컨테이너가 스크롤 가능한 경우 스크롤 조정
+            if (activeLyricIndex !== -1 && isPlayerExpanded && lyricsContainer.scrollHeight > lyricsContainer.clientHeight) {
+                const activeLyricElement = lyricLineElements[activeLyricIndex];
+                const scrollPosition = activeLyricElement.offsetTop - lyricsContainer.clientHeight / 2 + activeLyricElement.clientHeight / 2; // 중앙 정렬
+                lyricsContainer.scrollTo({
+                    top: scrollPosition,
+                    behavior: 'smooth' // 부드러운 스크롤 (선택 사항)
+                });
             }
         }
 
-        function togglePlayPause() {
-            if (!currentAudio) return;
 
-            if (isPlaying) {
-                currentAudio.pause();
-                playPauseIcon.innerHTML = '▶'; // Play icon
-            } else {
-                currentAudio.play();
-                playPauseIcon.innerHTML = '❚❚'; // Pause icon
-            }
-            isPlaying = !isPlaying;
+        function formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = Math.floor(timeInSeconds % 60);
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
         function updateProgress() {
-            if (currentLyrics && currentAudio) {
-                const currentTime = currentAudio.currentTime;
-                // Find the lyric line to display
-                let nextLyricIndex = 0;
+            const currentTime = audioPlayer.currentTime;
+            const duration = audioPlayer.duration;
 
-                for (let i = 0; i < currentLyrics.length; i++) {
-                    if (currentLyrics[i].time <= currentTime) {
-                        nextLyricIndex = i;
-                    } else {
-                        break; // Stop searching once we find a future time
-                    }
-                }
+            currentTimeElem.textContent = formatTime(currentTime);
+            durationElem.textContent = isNaN(duration) ? '0:00' : formatTime(duration); // NaN 처리
 
-
-                if (nextLyricIndex !== currentLyricIndex) {
-                    // Update the active lyric line
-                    const lyricLines = lyricsContainerEl.querySelectorAll('.lyrics-line');
-
-                    if (lyricLines[currentLyricIndex]) {
-                        lyricLines[currentLyricIndex].classList.remove('active');
-                    }
-
-                    currentLyricIndex = nextLyricIndex;
-
-                    if (lyricLines[currentLyricIndex]) {
-                        lyricLines[currentLyricIndex].classList.add('active');
-                    }
-
-
-                    // Scroll the lyrics container to keep active line in view.
-                    const activeLine = lyricLines[currentLyricIndex];
-                    if (activeLine) {
-                        const containerHeight = lyricsContainerEl.offsetHeight;
-                        const lineTop = activeLine.offsetTop;
-                        const lineHeight = activeLine.offsetHeight;
-                        const scrollOffset = lineTop - (containerHeight / 2) + (lineHeight / 2);
-
-                        lyricsContainerEl.scrollTo({
-                            top: scrollOffset,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            }
-        }
-
-        function playFirstSong() {
-            // Find the first song in the first album and play it
-            for (const artistId in artistsData) {
-                const artist = artistsData[artistId];
-                for (const albumId in artist.albums) {
-                    const album = artist.albums[albumId];
-                    for (const songId in album.songs) {
-                        const song = album.songs[songId];
-                        playSong(song.file, album.cover, song.lyrics);
-                        return; // Stop after finding the first song
-                    }
-                }
-            }
-        }
-
-        // --- Lyrics Functions ---
-        async function loadLyrics(lyricsFile) {
-            try {
-                const response = await fetch(lyricsFile);
-                const srtData = await response.text();
-                currentLyrics = parseSRT(srtData); // Parse and store lyrics
-                renderLyrics(); // Display lyrics
-            } catch (error) {
-                console.error("Error loading or parsing lyrics:", error);
-                currentLyrics = null;
-                lyricsContainerEl.innerHTML = '<div class="lyrics-line">Lyrics not available.</div>';
-            }
-        }
-
-        function renderLyrics() {
-            lyricsContainerEl.innerHTML = ''; // Clear existing lyrics
-
-            if (currentLyrics) {
-                currentLyrics.forEach((lyric) => {
-                    const lyricLine = document.createElement('div');
-                    lyricLine.classList.add('lyrics-line');
-                    lyricLine.textContent = lyric.text;
-                    lyricsContainerEl.appendChild(lyricLine);
-                });
-            }
-            currentLyricIndex = 0;
-        }
-
-        // Function to parse SRT data
-        function parseSRT(srtData) {
-            const lines = srtData.trim().split('\n\n');
-            const lyrics = [];
-
-            lines.forEach(line => {
-                const parts = line.trim().split('\n');
-                if (parts.length >= 3) {
-                    const time = parts[1];
-                    const text = parts.slice(2).join('<br>');
-                    const [start, end] = time.split(' --> ');
-                    lyrics.push({
-                        time: srtTimeToSeconds(start),
-                        text: text
-                    });
-                }
-            });
-            return lyrics;
-        }
-
-
-        function srtTimeToSeconds(timeStr) {
-            const [hours, minutes, seconds] = timeStr.split(':');
-            const [sec, ms] = seconds.split(',');
-            return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(sec) + parseInt(ms) / 1000;
-        }
-
-        // --- Navigation Functions ---
-
-        function goBack() {
-            if (previousView === 'artistDetail') {
-                showArtistDetail(Object.keys(artistsData)[0]); // Assuming you want to go back to the first artist
-            } else if (previousView === 'artistList') {
-                renderArtistList();
-            }
-            // Add more conditions if you have more nested views
-             else {
-                renderArtistList(); // Default: go back to the main artist list
+            if (duration > 0) { // duration이 valid할 때만 progress bar 업데이트
+                const progressPercent = (currentTime / duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            } else {
+                progressBar.style.width = '0%'; // duration이 없으면 0%
             }
         }
 
 
-        function goToMainPage() {
-            renderArtistList();
+        function togglePlayPause() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playPauseButton.textContent = ' ⏸️ ';
+                expandedPlayPauseButton.textContent = ' ⏸️ ';
+            } else {
+                audioPlayer.pause();
+                playPauseButton.textContent = ' 재생 ';
+                expandedPlayPauseButton.textContent = ' 재생 ';
+            }
         }
 
+        function nextTrack() {
+            if (!currentAlbumData || !currentAlbumData.songs) return;
+            currentTrackIndex = (currentTrackIndex + 1) % currentAlbumData.songs.length;
+            playTrack(currentTrackIndex);
+        }
 
-        // --- Event Listeners ---
+        function prevTrack() {
+            if (!currentAlbumData || !currentAlbumData.songs) return;
+            currentTrackIndex = (currentTrackIndex - 1 + currentAlbumData.songs.length) % currentAlbumData.songs.length;
+            playTrack(currentTrackIndex);
+        }
 
-        // Open full player when PIP album art is clicked
-        pipAlbumArtEl.addEventListener('click', () => {
-            if (currentAudio) {
-                fullPlayerEl.classList.add('active');
-            }
+        function setProgress(event) {
+            const width = progressContainer.clientWidth;
+            const clickX = event.offsetX;
+            const duration = audioPlayer.duration;
+            audioPlayer.currentTime = (clickX / width) * duration;
+        }
+
+        function togglePlayerSize() {
+            isPlayerExpanded = !isPlayerExpanded;
+            musicPlayerDiv.classList.toggle('minimized', !isPlayerExpanded);
+            musicPlayerDiv.classList.toggle('expanded', isPlayerExpanded);
+            expandedPlayerDiv.style.display = isPlayerExpanded ? 'block' : 'none'; // Show/hide expanded player container
+            musicPlayerDiv.style.display = 'flex'; // Ensure minimized player remains flex
+        }
+
+        // Event Listeners
+        playPauseButton.addEventListener('click', togglePlayPause);
+        expandedPlayPauseButton.addEventListener('click', togglePlayPause);
+        nextTrackButton.addEventListener('click', nextTrack);
+        expandedNextTrackButton.addEventListener('click', nextTrack);
+        prevTrackButton.addEventListener('click', prevTrack);
+        expandedPrevTrackButton.addEventListener('click', prevTrack);
+        audioPlayer.addEventListener('timeupdate', () => {
+            updateProgress();
+            updateLyricsDisplay();
         });
+        audioPlayer.addEventListener('loadedmetadata', updateProgress); // duration 초기화
+        audioPlayer.addEventListener('ended', nextTrack);
+        progressContainer.addEventListener('click', setProgress);
+        musicPlayerDiv.addEventListener('click', togglePlayerSize); // minimized player 클릭 시 확장
 
-        function closeFullPlayer() {
-            fullPlayerEl.classList.remove('active');
-        }
 
-
-        // --- Initialization ---
-        renderArtistList();
+        // Initial Display
+        displayArtists();
+        musicPlayerDiv.style.display = 'none'; // 초기 플레이어 숨김
 
     </script>
 </body>
-
 </html>
