@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Apple SD Gothic Neo', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         body {
@@ -22,7 +22,7 @@
             height: 100vh;
         }
 
-        /* 사이드바 스타일 */
+        /* 사이드바 스타일링 */
         .sidebar {
             width: 250px;
             background-color: #111;
@@ -34,49 +34,71 @@
         }
 
         .sidebar-menu li {
-            padding: 10px;
-            margin: 5px 0;
+            padding: 10px 0;
             cursor: pointer;
         }
 
         .sidebar-menu li:hover {
-            background-color: #333;
-            border-radius: 5px;
+            color: #1db954;
         }
 
-        /* 메인 콘텐츠 영역 */
+        /* 메인 컨텐츠 영역 */
         .main-content {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
         }
 
-        /* 음악 플레이어 */
-        .player {
+        /* 음악 카드 스타일링 */
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .music-card {
+            background-color: #282828;
+            padding: 15px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+
+        .music-card:hover {
+            background-color: #383838;
+        }
+
+        .music-card img {
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        .music-card h3 {
+            margin: 10px 0 5px;
+            font-size: 16px;
+        }
+
+        .music-card p {
+            color: #b3b3b3;
+            font-size: 14px;
+        }
+
+        /* 플레이어 바 스타일링 */
+        .player-bar {
             position: fixed;
             bottom: 0;
-            width: 100%;
+            left: 0;
+            right: 0;
             height: 90px;
-            background-color: #222;
-            padding: 20px;
+            background-color: #282828;
             display: flex;
             align-items: center;
+            padding: 0 20px;
             justify-content: space-between;
         }
 
-        .song-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .album-art {
-            width: 50px;
-            height: 50px;
-            background-color: #333;
-            margin-right: 15px;
-        }
-
-        .controls {
+        .player-controls {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -90,109 +112,106 @@
             font-size: 24px;
         }
 
-        /* 앨범 그리드 */
-        .album-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 20px 0;
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #4f4f4f;
+            margin: 0 20px;
+            border-radius: 2px;
+            position: relative;
         }
 
-        .album-card {
-            background-color: #222;
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .album-card:hover {
-            background-color: #333;
-        }
-
-        .album-image {
-            width: 100%;
-            aspect-ratio: 1;
-            background-color: #333;
-            margin-bottom: 10px;
-            border-radius: 5px;
+        .progress {
+            width: 30%;
+            height: 100%;
+            background-color: #1db954;
+            border-radius: 2px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 사이드바 -->
-        <div class="sidebar">
+        <nav class="sidebar">
             <ul class="sidebar-menu">
                 <li>홈</li>
                 <li>검색하기</li>
-                <li>보관함</li>
+                <li>내 음악</li>
                 <li>플레이리스트</li>
                 <li>좋아요 표시한 곡</li>
             </ul>
-        </div>
+        </nav>
 
-        <!-- 메인 콘텐츠 -->
-        <div class="main-content">
-            <h1>추천 앨범</h1>
-            <div class="album-grid">
-                <div class="album-card">
-                    <div class="album-image"></div>
-                    <h3>앨범 제목</h3>
+        <main class="main-content">
+            <h1>추천 음악</h1>
+            <div class="music-grid">
+                <!-- 음악 카드 반복 -->
+                <div class="music-card">
+                    <img src="https://via.placeholder.com/200" alt="앨범 커버">
+                    <h3>노래 제목</h3>
                     <p>아티스트</p>
                 </div>
-                <!-- 추가 앨범 카드들 -->
+                <!-- 추가 음악 카드들... -->
             </div>
-        </div>
+        </main>
     </div>
 
-    <!-- 플레이어 -->
-    <div class="player">
-        <div class="song-info">
-            <div class="album-art"></div>
-            <div>
-                <h4>노래 제목</h4>
-                <p>아티스트</p>
-            </div>
+    <div class="player-bar">
+        <div class="now-playing">
+            <h4>현재 재생 중</h4>
+            <p>아티스트 - 노래 제목</p>
         </div>
-        <div class="controls">
+        <div class="player-controls">
             <button class="control-btn">⏮</button>
             <button class="control-btn">⏯</button>
             <button class="control-btn">⏭</button>
         </div>
-        <div class="volume">
-            <input type="range" min="0" max="100" value="50">
+        <div class="progress-bar">
+            <div class="progress"></div>
+        </div>
+        <div class="volume-control">
+            <button class="control-btn">🔊</button>
         </div>
     </div>
 
     <script>
-        // 기본적인 플레이어 기능
-        const playButton = document.querySelector('.control-btn:nth-child(2)');
-        let isPlaying = false;
+        // 음악 카드 동적 생성
+        document.addEventListener('DOMContentLoaded', function() {
+            const musicGrid = document.querySelector('.music-grid');
+            const musicData = [
+                { title: '노래 1', artist: '아티스트 1' },
+                { title: '노래 2', artist: '아티스트 2' },
+                { title: '노래 3', artist: '아티스트 3' },
+                { title: '노래 4', artist: '아티스트 4' },
+                { title: '노래 5', artist: '아티스트 5' },
+                { title: '노래 6', artist: '아티스트 6' }
+            ];
 
+            musicData.forEach(music => {
+                const card = document.createElement('div');
+                card.className = 'music-card';
+                card.innerHTML = `
+                    <img src="https://via.placeholder.com/200" alt="앨범 커버">
+                    <h3>${music.title}</h3>
+                    <p>${music.artist}</p>
+                `;
+                musicGrid.appendChild(card);
+
+                // 클릭 이벤트 리스너 추가
+                card.addEventListener('click', () => {
+                    document.querySelector('.now-playing').innerHTML = `
+                        <h4>현재 재생 중</h4>
+                        <p>${music.artist} - ${music.title}</p>
+                    `;
+                });
+            });
+        });
+
+        // 재생 버튼 토글
+        let isPlaying = false;
+        const playButton = document.querySelector('.player-controls button:nth-child(2)');
         playButton.addEventListener('click', () => {
             isPlaying = !isPlaying;
             playButton.textContent = isPlaying ? '⏸' : '⏯';
-        });
-
-        // 앨범 카드 동적 생성
-        const albumGrid = document.querySelector('.album-grid');
-        const albums = [
-            { title: '앨범 1', artist: '아티스트 1' },
-            { title: '앨범 2', artist: '아티스트 2' },
-            { title: '앨범 3', artist: '아티스트 3' },
-            // 더 많은 앨범 추가 가능
-        ];
-
-        albums.forEach(album => {
-            const albumCard = document.createElement('div');
-            albumCard.className = 'album-card';
-            albumCard.innerHTML = `
-                <div class="album-image"></div>
-                <h3>${album.title}</h3>
-                <p>${album.artist}</p>
-            `;
-            albumGrid.appendChild(albumCard);
         });
     </script>
 </body>
