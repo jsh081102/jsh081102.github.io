@@ -1,179 +1,165 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Music Player - NewJeans</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
-            background-color: #f2f2f2;
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
-        .player-container {
-            width: 400px;
-            margin: 50px auto;
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .album-art {
-            width: 100%;
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-        }
-        .controls {
+        header {
+            background-color: #333;
+            color: white;
             padding: 20px;
             text-align: center;
         }
-        .controls h2 {
-            margin: 0;
-            font-size: 24px;
+        main {
+            padding: 20px;
         }
-        .controls audio {
-            width: 100%;
-            margin-top: 15px;
-            outline: none;
+        .album-art {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .song-info {
+            margin-bottom: 20px;
+        }
+        .song-info h2 {
+            margin: 0;
+        }
+        .song-info p {
+            margin: 0;
+            color: #666;
+        }
+        .player-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .player-controls button {
+            border: none;
+            background-color: transparent;
+            font-size: 24px;
+            color: #333;
+            cursor: pointer;
         }
         .lyrics {
-            padding: 20px;
-            height: 200px;
-            overflow-y: auto;
-            background-color: #fafafa;
-            border-top: 1px solid #e6e6e6;
-        }
-        .lyrics p {
-            margin: 5px 0;
-            font-size: 16px;
-            line-height: 1.5em;
-        }
-        .highlight {
-            color: #d0021b;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Music Player</h1>
+    </header>
+    <main>
+        <img id="albumArt" class="album-art" src="" alt="Album Art">
+        <div class="song-info">
+            <h2 id="songTitle"></h2>
+            <p id="songArtist"></p>
+        </div>
+        <div class="player-controls">
+            <button id="prevButton"><i class="fas fa-step-backward"></i></button>
+            <button id="playButton"><i class="fas fa-play"></i></button>
+            <button id="nextButton"><i class="fas fa-step-forward"></i></button>
+        </div>
+        <audio id="audioPlayer" src=""></audio>
+        <div id="lyrics" class="lyrics"></div>
+    </main>
 
-<div class="player-container">
-    <div class="album-art" id="albumArt"></div>
-    <div class="controls">
-        <h2 id="songTitle">NewJeans - ETA</h2>
-        <audio id="audioPlayer" controls>
-            <source src="https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.m4a" type="audio/mp4">
-            Your browser does not support the audio element.
-        </audio>
-    </div>
-    <div class="lyrics" id="lyricsContainer">
-        <!-- 가사가 표시됩니다 -->
-    </div>
-</div>
+    <script>
+        const songs = [
+            {
+                title: 'ETA',
+                artist: 'NewJeans',
+                audioSrc: 'https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP\'GetUp\'/ETA.m4a',
+                lyricsSrc: 'https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP\'GetUp\'/ETA.srt'
+            }
+            // Add more songs here
+        ];
 
-<script>
-    // 앨범 아트 추출 및 표시
-    function loadAlbumArt() {
-        const audioSrc = "https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.m4a";
-        fetch(audioSrc)
-            .then(response => response.arrayBuffer())
-            .then(data => {
-                // m4a 파일에서 메타데이터 추출
-                const tags = {};
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    const uint8Array = new Uint8Array(reader.result);
-                    // 메타데이터 파싱 (라이브러리 사용 권장)
-                    // 여기서는 예시로 대체합니다.
-                    // 실제 구현 시 music-metadata-browser 등의 라이브러리를 사용하세요.
-                    // tags.picture = 추출된 이미지 데이터;
+        let currentSongIndex = 0;
+        const audioPlayer = document.getElementById('audioPlayer');
+        const songTitle = document.getElementById('songTitle');
+        const songArtist = document.getElementById('songArtist');
+        const albumArt = document.getElementById('albumArt');
+        const lyrics = document.getElementById('lyrics');
+        const playButton = document.getElementById('playButton');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
 
-                    // 예시로 기본 이미지 설정
-                    document.getElementById('albumArt').style.backgroundImage = 'url("default_album_art.jpg")';
-                };
-                reader.readAsArrayBuffer(new Blob([data]));
-            })
-            .catch(error => {
-                console.error('앨범 아트를 로드하는 중 오류 발생:', error);
-                // 오류 시 기본 이미지 표시
-                document.getElementById('albumArt').style.backgroundImage = 'url("default_album_art.jpg")';
-            });
-    }
+        function loadSong(song) {
+            songTitle.textContent = song.title;
+            songArtist.textContent = song.artist;
+            audioPlayer.src = song.audioSrc;
 
-    // 가사 로드 및 동기화
-    function loadLyrics() {
-        fetch("https://github.com/jsh081102/jsh081102.github.io/raw/refs/heads/main/misic/NewJeans2ndEP'GetUp'/ETA.srt")
-            .then(response => response.text())
-            .then(data => {
-                const lyrics = parseSRT(data);
-                displayLyrics(lyrics);
-            })
-            .catch(error => {
-                console.error('가사를 로드하는 중 오류 발생:', error);
-            });
-    }
+            fetch(song.lyricsSrc)
+                .then(response => response.text())
+                .then(data => {
+                    lyrics.textContent = data;
+                });
 
-    function parseSRT(data) {
-        const pattern = /(\d+)\s+(\d{2}:\d{2}:\d{2},\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2},\d{3})\s+([\s\S]*?)(?=\n\n|\n?$)/g;
-        let result;
-        const cues = [];
-
-        while ((result = pattern.exec(data)) !== null) {
-            cues.push({
-                index: result[1],
-                startTime: timeToSeconds(result[2]),
-                endTime: timeToSeconds(result[3]),
-                text: result[4].trim()
+            const jsmediatags = window.jsmediatags;
+            jsmediatags.read(song.audioSrc, {
+                onSuccess: function(tag) {
+                    const picture = tag.tags.picture;
+                    if (picture) {
+                        const imageUrl = URL.createObjectURL(new Blob([picture.data], { type: picture.format }));
+                        albumArt.src = imageUrl;
+                    } else {
+                        albumArt.src = '';
+                    }
+                },
+                onError: function(error) {
+                    console.log('Error reading media tags:', error);
+                    albumArt.src = '';
+                }
             });
         }
 
-        return cues;
-    }
-
-    function timeToSeconds(time) {
-        const parts = time.split(':');
-        const seconds = parts[2].split(',');
-        return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(seconds[0]) + parseInt(seconds[1]) / 1000;
-    }
-
-    function displayLyrics(cues) {
-        const lyricsContainer = document.getElementById('lyricsContainer');
-        lyricsContainer.innerHTML = '';
-        cues.forEach(cue => {
-            const p = document.createElement('p');
-            p.textContent = cue.text;
-            p.dataset.startTime = cue.startTime;
-            p.dataset.endTime = cue.endTime;
-            lyricsContainer.appendChild(p);
-        });
-    }
-
-    function syncLyrics() {
-        const audio = document.getElementById('audioPlayer');
-        const lyricsContainer = document.getElementById('lyricsContainer');
-        const lyrics = lyricsContainer.getElementsByTagName('p');
-
-        for (let i = 0; i < lyrics.length; i++) {
-            const start = parseFloat(lyrics[i].dataset.startTime);
-            const end = parseFloat(lyrics[i].dataset.endTime);
-
-            if (audio.currentTime >= start && audio.currentTime <= end) {
-                lyrics[i].classList.add('highlight');
-                lyricsContainer.scrollTop = lyrics[i].offsetTop - lyricsContainer.offsetTop - 50;
+        function playPause() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
             } else {
-                lyrics[i].classList.remove('highlight');
+                audioPlayer.pause();
+                playButton.innerHTML = '<i class="fas fa-play"></i>';
             }
         }
-    }
 
-    // 이벤트 리스너 설정
-    document.addEventListener('DOMContentLoaded', () => {
-        loadAlbumArt();
-        loadLyrics();
+        function prevSong() {
+            currentSongIndex--;
+            if (currentSongIndex < 0) {
+                currentSongIndex = songs.length - 1;
+            }
+            loadSong(songs[currentSongIndex]);
+            audioPlayer.play();
+            playButton.innerHTML = '<i class="fas fa-pause"></i>';
+        }
 
-        const audio = document.getElementById('audioPlayer');
-        audio.addEventListener('timeupdate', syncLyrics);
-    });
-</script>
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex >= songs.length) {
+                currentSongIndex = 0;
+            }
+            loadSong(songs[currentSongIndex]);
+            audioPlayer.play();
+            playButton.innerHTML = '<i class="fas fa-pause"></i>';
+        }
 
+        loadSong(songs[currentSongIndex]);
+        playButton.addEventListener('click', playPause);
+        prevButton.addEventListener('click', prevSong);
+        nextButton.addEventListener('click', nextSong);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.5/jsmediatags.min.js"></script>
 </body>
 </html>
