@@ -43,12 +43,31 @@
         nav .logo {
             font-size: 1.5em;
             font-weight: bold;
+            cursor: pointer;
+            /* Make logo clickable */
         }
 
         nav .os-version {
             font-size: 1em;
             color: #666;
         }
+
+        /* Back Button */
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 1em;
+            color: #0a84ff;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+        }
+
+        .back-button:hover {
+            background-color: rgba(10, 132, 255, 0.1);
+        }
+
 
         /* Artist List */
         .artist-list {
@@ -90,22 +109,47 @@
 
         .artist-header {
             display: flex;
+            flex-direction: column;
+            /* Stack video and info vertically */
             align-items: center;
-            gap: 20px;
+            /* Center items horizontally */
+            gap: 10px;
+            /* Reduced gap */
             margin-bottom: 20px;
+            width: 100%;
+            /* Ensure header takes full width */
         }
 
         .artist-header video {
-            width: 300px;
-            height: 200px;
+            width: 95%;
+            /* Almost fill the width, leave some margin */
+            max-height: 50vh;
+            /* Limit height, make it responsive */
             object-fit: cover;
             border-radius: 10px;
+        }
+
+
+        .artist-info {
+            width: 95%;
+            /* Match video width */
+            display: flex;
+            justify-content: space-between;
+            /* Align items on opposite ends */
+            align-items: center;
+            /* Vertically center items */
         }
 
         .artist-info h2 {
             margin: 0;
             color: #0a84ff;
+            white-space: nowrap;
+            /* Prevent artist name from wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* Add ellipsis if name is too long */
         }
+
 
         .artist-albums {
             display: flex;
@@ -339,11 +383,12 @@
 
 <body>
     <nav>
-        <div class="logo">Siri Music</div>
+        <div class="logo" onclick="goToMainPage()">Siri Music</div>
         <div class="os-version">musicOS 1.0</div>
     </nav>
 
     <div class="container">
+        <button class="back-button" onclick="goBack()">← Back</button> 
         <h1>Featured Artists</h1>
         <div class="artist-list">
             <!-- Artist items will be dynamically added here -->
@@ -351,7 +396,7 @@
 
         <div class="artist-detail">
             <div class="artist-header">
-                <video controls autoplay loop muted></video>
+                <video autoplay loop muted></video>
                 <div class="artist-info">
                     <h2></h2>
                     <button class="play-button" onclick="playFirstSong()">
@@ -429,6 +474,7 @@
         let currentLyrics = null;
         let currentLyricIndex = 0;
         let isPlaying = false;
+        let previousView = null; // Keep track of the previously shown view
 
 
         // --- DOM Element References ---
@@ -456,6 +502,7 @@
         // --- UI Update Functions ---
         // Function to render the list of artists
         function renderArtistList() {
+            artistListEl.innerHTML = ''; // Clear any existing content
             for (const artistId in artistsData) {
                 const artist = artistsData[artistId];
                 const artistItem = document.createElement('div');
@@ -467,6 +514,9 @@
                 artistItem.addEventListener('click', () => showArtistDetail(artistId));
                 artistListEl.appendChild(artistItem);
             }
+            artistListEl.style.display = 'flex'; // Ensure artist list is visible
+            artistDetailEl.style.display = 'none';
+            albumDetailEl.style.display = 'none';
         }
 
         function showArtistDetail(artistId) {
@@ -489,6 +539,7 @@
             }
 
             // Show the artist detail view and hide others
+            previousView = 'artistList';
             artistListEl.style.display = 'none';
             artistDetailEl.style.display = 'block';
             albumDetailEl.style.display = 'none';
@@ -513,6 +564,7 @@
             }
 
             //Show album details
+            previousView = 'artistDetail';
             artistListEl.style.display = 'none';
             artistDetailEl.style.display = 'none';
             albumDetailEl.style.display = 'block';
@@ -524,15 +576,26 @@
         function playSong(songFile, albumCover, lyricsFile) {
             if (currentAudio) {
                 currentAudio.pause(); // Stop currently playing song
+                currentAudio.currentTime = 0; // Reset playback to the beginning
             }
-            currentAudio = new Audio(songFile);
-            currentAudio.play();
-            isPlaying = true;
-            pipAlbumArtEl.src = albumCover;
-            playerPipEl.classList.add('active'); // Show PIP
-            playPauseIcon.innerHTML = '❚❚'; // Change to pause icon
 
-            fullPlayerAlbumArtEl.src = albumCover;  // Set full player album art
+            currentAudio = new Audio(); // Create a new Audio object
+            currentAudio.src = songFile; // Set the source
+
+            currentAudio.play().then(() => {
+                // Playback started successfully
+                isPlaying = true;
+                pipAlbumArtEl.src = albumCover;
+                playerPipEl.classList.add('active'); // Show PIP
+                playPauseIcon.innerHTML = '❚❚'; // Change to pause icon
+                fullPlayerAlbumArtEl.src = albumCover;  // Set full player album art
+
+            }).catch(error => {
+                 console.error("Error playing audio:", error);
+            });
+
+            currentAudio.ontimeupdate = updateProgress;
+
 
             currentAudio.onended = () => {
                 isPlaying = false;
@@ -675,6 +738,25 @@
             const [hours, minutes, seconds] = timeStr.split(':');
             const [sec, ms] = seconds.split(',');
             return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(sec) + parseInt(ms) / 1000;
+        }
+
+        // --- Navigation Functions ---
+
+        function goBack() {
+            if (previousView === 'artistDetail') {
+                showArtistDetail(Object.keys(artistsData)[0]); // Assuming you want to go back to the first artist
+            } else if (previousView === 'artistList') {
+                renderArtistList();
+            }
+            // Add more conditions if you have more nested views
+             else {
+                renderArtistList(); // Default: go back to the main artist list
+            }
+        }
+
+
+        function goToMainPage() {
+            renderArtistList();
         }
 
 
