@@ -15,6 +15,7 @@
             background-color: #f0f0f0;
         }
 
+        /* Siri Music 부분을 항상 보이도록 수정 */
         .brand {
             position: fixed;
             top: 20px;
@@ -51,7 +52,9 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 80px 20px 20px;
+            /*padding: 80px 20px 20px;  상단 패딩 제거*/
+            padding: 20px; /* 모든 면에 20px 패딩, 컨테이너 내용을 화면 가장자리에서 조금 떨어뜨림 */
+
         }
 
         .artists-grid {
@@ -89,11 +92,13 @@
             position: relative;
             margin-bottom: 40px;
         }
+
+        /* 비디오 위에 오버레이 되는 그라데이션 스타일 조정 */
       .artist-video {
             width: 100%;
             height: 400px;
             object-fit: cover;
-            clip-path: inset(10% 0 10% 0); /* 위아래 10% 자르기 */
+            clip-path: inset(0% 0 0% 0);
         }
 
         .artist-video-overlay {
@@ -102,8 +107,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.8)); /* 검은색 그라데이션 */
+            /* 그라데이션 강도 및 범위 조정 */
+            background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4));
             pointer-events: none; /* 마우스 이벤트 무시 */
+        }
+
+        /* 아티스트 이름 흰색으로 변경 */
+        .artist-section .artist-info h2 {
+            color: white;
         }
 
         .albums-grid {
@@ -131,6 +142,11 @@
             width: 100%;
             aspect-ratio: 1; /* 앨범 아트 비율을 1:1로 설정 */
             object-fit: cover;
+        }
+
+        /* 앨범 목록 글자 여유 조정 */
+        .album-info {
+            padding: 10px 20px; /* 상하 패딩 10px, 좌우 패딩 20px */
         }
         .tracks-list {
             display: none;
@@ -205,13 +221,16 @@
             transform: scale(1.1);
         }
 
+        /* Full Player 배경 블러 처리 */
         .full-player {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(240,240,240,0.95);
+            /* 반투명 배경 대신 블러 효과 적용 */
+            backdrop-filter: blur(20px); /* 유리 효과 */
+            background-color: rgba(255, 255, 255, 0.1); /* 블러와 함께 약간의 투명도 적용 */
             display: none;
             flex-direction: column;
             align-items: center;
@@ -278,6 +297,7 @@
     </style>
 </head>
 <body>
+    <!-- Siri Music 브랜드, 항상 보이도록 수정 -->
     <div class="brand">
         <a href="#" class="brand-title">Siri Music</a>
         <span class="os-version">musicOS 1.0</span>
@@ -286,6 +306,7 @@
     <button class="back-button">← 뒤로가기</button>
 
     <div class="container">
+      <!--padding-top을 없애서 스크롤하여도 Siri Music 부분이 잘보이도록 처리-->
         <div class="artists-grid">
             <!-- Artists will be dynamically added here -->
         </div>
@@ -295,8 +316,10 @@
               <video class="artist-video" autoplay muted loop>
                   <source src="" type="video/mp4">
               </video>
+              <!-- 아티스트 비디오 오버레이, 그라데이션 조정 -->
               <div class="artist-video-overlay"></div>
           </div>
+          <!-- 아티스트 이름 흰색으로 표시 -->
           <div class="artist-info">
               <h2></h2>
           </div>
@@ -324,6 +347,7 @@
         </div>
     </div>
 
+    <!-- Full Player, 블러 배경 적용 -->
     <div class="full-player">
         <button class="back-button">← 뒤로가기</button>
         <img src="" alt="Album art" style="width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px;">
@@ -475,7 +499,7 @@
             miniPlayer.querySelector('img').src = currentAlbum.cover;
             miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
             miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
-            
+
             document.querySelectorAll('.play-pause-button').forEach(button => {
                 button.textContent = isPlaying ? '⏸' : '▶';
             });
@@ -522,7 +546,7 @@
 
         function displayLyrics(lyrics) {
             const container = document.querySelector('.lyrics-container');
-            container.innerHTML = lyrics.map(line => 
+            container.innerHTML = lyrics.map(line =>
                 `<div class="lyrics-line" data-start="${line.startTime}" data-end="${line.endTime}">${line.text}</div>`
             ).join('');
         }
@@ -531,18 +555,18 @@
             document.querySelector('.back-button').addEventListener('click', handleBack);
             document.querySelector('.brand-title').addEventListener('click', goToHome);
             document.querySelector('.mini-player').addEventListener('click', showFullPlayer);
-            
+
             const controls = document.querySelectorAll('.player-controls');
             controls.forEach(control => {
                 control.addEventListener('click', e => e.stopPropagation());
-                
+
                 control.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
                 control.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
                 control.querySelector('.next-button').addEventListener('click', playNextTrack);
             });
 
             document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
-            
+
             document.querySelector('.progress-container').addEventListener('click', seekAudio);
         }
 
@@ -624,17 +648,17 @@
             const progress = document.querySelectorAll('.progress');
             const currentTimeDisplays = document.querySelectorAll('.current-time');
             const totalTimeDisplays = document.querySelectorAll('.total-time');
-            
+
             const percentage = (audio.currentTime / audio.duration) * 100;
             progress.forEach(p => p.style.width = `${percentage}%`);
-            
-            currentTimeDisplays.forEach(display => 
+
+            currentTimeDisplays.forEach(display =>
                 display.textContent = formatTime(audio.currentTime)
             );
-            totalTimeDisplays.forEach(display => 
+            totalTimeDisplays.forEach(display =>
                 display.textContent = formatTime(audio.duration)
             );
-            
+
             updateLyrics();
         }
 
@@ -650,7 +674,7 @@
             lines.forEach(line => {
                 const startTime = parseFloat(line.dataset.start);
                 const endTime = parseFloat(line.dataset.end);
-                
+
                 if (audio.currentTime >= startTime && audio.currentTime <= endTime) {
                     line.classList.add('active');
                     line.scrollIntoView({ behavior: 'smooth', block: 'center' });
