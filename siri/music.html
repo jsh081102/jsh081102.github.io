@@ -37,7 +37,7 @@
 
         .back-button {
             position: fixed;
-            top: 20px;
+            top: 70px;
             left: 20px;
             background: rgba(255, 255, 255, 0.9);
             border: none;
@@ -163,17 +163,25 @@
             object-fit: cover;
         }
 
-        .mini-player-controls {
+        .player-controls {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 20px;
+            margin: 20px 0;
         }
 
         .control-button {
             background: none;
             border: none;
             cursor: pointer;
-            padding: 5px;
+            padding: 10px;
+            font-size: 24px;
+            color: #0a84ff;
+            transition: transform 0.2s;
+        }
+
+        .control-button:hover {
+            transform: scale(1.1);
         }
 
         .full-player {
@@ -191,13 +199,22 @@
             padding: 20px;
         }
 
+        .full-player .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: block;
+        }
+
         .progress-container {
             width: 80%;
+            max-width: 600px;
             height: 4px;
             background: #ddd;
             border-radius: 2px;
             margin: 20px 0;
             cursor: pointer;
+            position: relative;
         }
 
         .progress {
@@ -211,16 +228,16 @@
             display: flex;
             justify-content: space-between;
             width: 80%;
+            max-width: 600px;
             color: #666;
             font-size: 14px;
         }
 
         .lyrics-container {
-            height: 300px;
+            margin-top: 30px;
+            height: 200px;
             overflow-y: auto;
             text-align: center;
-            margin-top: 20px;
-            padding: 20px;
             width: 80%;
             max-width: 600px;
         }
@@ -229,15 +246,13 @@
             padding: 10px;
             transition: all 0.3s;
             opacity: 0.5;
-            font-size: 16px;
-            line-height: 1.5;
         }
 
         .lyrics-line.active {
-            font-size: 18px;
+            font-size: 1.2em;
             opacity: 1;
             color: #0a84ff;
-            font-weight: 500;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -278,7 +293,7 @@
             <div class="track-name"></div>
             <div class="artist-name"></div>
         </div>
-        <div class="mini-player-controls">
+        <div class="player-controls">
             <button class="control-button prev-button">⏮</button>
             <button class="control-button play-pause-button">▶</button>
             <button class="control-button next-button">⏭</button>
@@ -286,9 +301,15 @@
     </div>
 
     <div class="full-player">
+        <button class="back-button">← 뒤로가기</button>
         <img src="" alt="Album art" style="width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px;">
         <h2 class="track-name"></h2>
         <p class="artist-name"></p>
+        <div class="player-controls">
+            <button class="control-button prev-button">⏮</button>
+            <button class="control-button play-pause-button">▶</button>
+            <button class="control-button next-button">⏭</button>
+        </div>
         <div class="progress-container">
             <div class="progress"></div>
         </div>
@@ -311,7 +332,6 @@
                     tracks: [{
                         number: 1,
                         title: 'ETA',
-                        artist: 'NewJeans',
                         audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
                         lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
                     }]
@@ -414,142 +434,13 @@
             return item;
         }
 
-        async function playTrack(track) {
-            try {
-                currentTrack = track;
-
-                // 오디오 로드 전에 이전 오디오 정지
-                audio.pause();
-                audio.currentTime = 0;
-
-                // 새 오디오 소스 설정 및 로드
-                audio.src = track.audio;
-
-                // 오디오 로드 완료 대기
-                await audio.load();
-
-                // 재생 시작
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        isPlaying = true;
-                        updateMiniPlayer();
-                    }).catch(error => {
-                        console.error("Audio playback error:", error);
-                        isPlaying = false;
-                        updateMiniPlayer();
-                    });
-                }
-
-                // 가사 로드
-                await loadAndDisplayLyrics(track.lyrics);
-
-                // UI 업데이트
-                updateMiniPlayer();
-                updateFullPlayer();
-            } catch (error) {
-                console.error("Error playing track:", error);
-            }
-        }
-
-        async function loadAndDisplayLyrics(lyricsUrl) {
-            try {
-                const response = await fetch(lyricsUrl);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const text = await response.text();
-                const lyrics = parseSRT(text);
-                displayLyrics(lyrics);
-            } catch (error) {
-                console.error('Error loading lyrics:', error);
-                // 가사 로드 실패 시 빈 가사 표시
-                displayLyrics([]);
-            }
-        }
-
-        function parseSRT(srtContent) {
-            try {
-                const srtLines = srtContent.trim().split('\n\n');
-                const lyrics = [];
-
-                srtLines.forEach(block => {
-                    const lines = block.split('\n');
-                    if (lines.length >= 3) {
-                        const timeData = lines[1].split(' --> ')[0];
-                        const text = lines.slice(2).join('\n');
-
-                        // 시간을 초 단위로 변환
-                        const time = timeToSeconds(timeData);
-
-                        lyrics.push({
-                            time: time,
-                            text: text
-                        });
-                    }
-                });
-
-                return lyrics;
-            } catch (error) {
-                console.error('Error parsing SRT:', error);
-                return [];
-            }
-        }
-
-        function timeToSeconds(timeStr) {
-            const [hours, minutes, seconds] = timeStr.split(':');
-            const [secs, ms] = seconds.split(',');
-            return (parseInt(hours) * 3600) +
-                   (parseInt(minutes) * 60) +
-                   parseInt(secs) +
-                   (parseInt(ms) / 1000);
-        }
-
-        function displayLyrics(lyrics) {
-            const container = document.querySelector('.lyrics-container');
-            if (!container) return;
-
-            container.innerHTML = '';
-
-            if (lyrics.length === 0) {
-                container.innerHTML = '<div class="lyrics-line">가사를 불러올 수 없습니다.</div>';
-                return;
-            }
-
-            lyrics.forEach(line => {
-                const div = document.createElement('div');
-                div.className = 'lyrics-line';
-                div.textContent = line.text;
-                div.dataset.time = line.time;
-                container.appendChild(div);
-            });
-        }
-
-        function updateLyrics() {
-            if (!audio.duration) return;
-
-            const lines = document.querySelectorAll('.lyrics-line');
-            let activeLine = null;
-
-            lines.forEach(line => {
-                const time = parseFloat(line.dataset.time);
-                const nextLine = line.nextElementSibling;
-                const nextTime = nextLine ? parseFloat(nextLine.dataset.time) : Infinity;
-
-                if (audio.currentTime >= time && audio.currentTime < nextTime) {
-                    line.classList.add('active');
-                    activeLine = line;
-                } else {
-                    line.classList.remove('active');
-                }
-            });
-
-            if (activeLine) {
-                activeLine.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
+        function playTrack(track) {
+            currentTrack = track;
+            audio.src = track.audio;
+            audio.play();
+            isPlaying = true;
+            updateMiniPlayer();
+            loadAndDisplayLyrics(track.lyrics);
         }
 
         function updateMiniPlayer() {
@@ -558,39 +449,70 @@
             miniPlayer.querySelector('img').src = currentAlbum.cover;
             miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
             miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
-            miniPlayer.querySelector('.play-pause-button').textContent = isPlaying ? '⏸' : '▶';
+            
+            document.querySelectorAll('.play-pause-button').forEach(button => {
+                button.textContent = isPlaying ? '⏸' : '▶';
+            });
+        }
+
+        async function loadAndDisplayLyrics(lyricsUrl) {
+            try {
+                const response = await fetch(lyricsUrl);
+                const text = await response.text();
+                const lyrics = parseSRT(text);
+                displayLyrics(lyrics);
+            } catch (error) {
+                console.error('Error loading lyrics:', error);
+            }
+        }
+
+        function parseSRT(srtContent) {
+            const lines = srtContent.trim().split('\n\n');
+            return lines.map(block => {
+                const parts = block.split('\n');
+                const times = parts[1].split(' --> ');
+                return {
+                    startTime: timeToSeconds(times[0]),
+                    endTime: timeToSeconds(times[1]),
+                    text: parts.slice(2).join('\n')
+                };
+            });
+        }
+
+        function timeToSeconds(timeStr) {
+            const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+            return hours * 3600 + minutes * 60 + parseFloat(seconds);
+        }
+
+        function displayLyrics(lyrics) {
+            const container = document.querySelector('.lyrics-container');
+            container.innerHTML = lyrics.map(line => 
+                `<div class="lyrics-line" data-start="${line.startTime}" data-end="${line.endTime}">${line.text}</div>`
+            ).join('');
         }
 
         function setupEventListeners() {
             document.querySelector('.back-button').addEventListener('click', handleBack);
             document.querySelector('.brand-title').addEventListener('click', goToHome);
             document.querySelector('.mini-player').addEventListener('click', showFullPlayer);
+            
+            const controls = document.querySelectorAll('.player-controls');
+            controls.forEach(control => {
+                control.addEventListener('click', e => e.stopPropagation());
+                
+                control.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
+                control.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
+                control.querySelector('.next-button').addEventListener('click', playNextTrack);
+            });
 
-            const controls = document.querySelector('.mini-player-controls');
-            controls.addEventListener('click', e => e.stopPropagation());
-
-            controls.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
-            controls.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
-            controls.querySelector('.next-button').addEventListener('click', playNextTrack);
-
-            document.querySelector('.progress-container').addEventListener('click', setProgressBar);
+            document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
+            
+            document.querySelector('.progress-container').addEventListener('click', seekAudio);
         }
 
         function setupAudioEventListeners() {
-            audio.addEventListener('timeupdate', () => {
-                updateProgress();
-                updateLyrics();
-            });
-
-            audio.addEventListener('ended', () => {
-                playNextTrack();
-            });
-
-            audio.addEventListener('error', (e) => {
-                console.error('Audio error:', e);
-                isPlaying = false;
-                updateMiniPlayer();
-            });
+            audio.addEventListener('timeupdate', updateProgress);
+            audio.addEventListener('ended', () => playNextTrack());
         }
 
         function handleBack() {
@@ -621,6 +543,10 @@
             document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
         }
 
+        function hideFullPlayer() {
+            document.querySelector('.full-player').style.display = 'none';
+        }
+
         function togglePlayPause() {
             if (isPlaying) {
                 audio.pause();
@@ -629,8 +555,6 @@
             }
             isPlaying = !isPlaying;
             updateMiniPlayer();
-            document.querySelector('.mini-player .play-pause-button').textContent = isPlaying ? '⏸' : '▶';
-            document.querySelector('.full-player .play-pause-button').textContent = isPlaying ? '⏸' : '▶';
         }
 
         function playPreviousTrack() {
@@ -646,21 +570,32 @@
             const currentIndex = tracks.findIndex(track => track === currentTrack);
             if (currentIndex < tracks.length - 1) {
                 playTrack(tracks[currentIndex + 1]);
-            } else {
-                playTrack(tracks[0]); // Loop to the first track if at the end
             }
         }
 
+        function seekAudio(e) {
+            const container = document.querySelector('.progress-container');
+            const rect = container.getBoundingClientRect();
+            const percent = (e.clientX - rect.left) / rect.width;
+            audio.currentTime = percent * audio.duration;
+        }
+
         function updateProgress() {
-            const progress = document.querySelector('.progress');
-            const currentTimeDisplay = document.querySelector('.current-time');
-            const totalTimeDisplay = document.querySelector('.total-time');
-
+            const progress = document.querySelectorAll('.progress');
+            const currentTimeDisplays = document.querySelectorAll('.current-time');
+            const totalTimeDisplays = document.querySelectorAll('.total-time');
+            
             const percentage = (audio.currentTime / audio.duration) * 100;
-            progress.style.width = `${percentage}%`;
-
-            currentTimeDisplay.textContent = formatTime(audio.currentTime);
-            totalTimeDisplay.textContent = formatTime(audio.duration);
+            progress.forEach(p => p.style.width = `${percentage}%`);
+            
+            currentTimeDisplays.forEach(display => 
+                display.textContent = formatTime(audio.currentTime)
+            );
+            totalTimeDisplays.forEach(display => 
+                display.textContent = formatTime(audio.duration)
+            );
+            
+            updateLyrics();
         }
 
         function formatTime(seconds) {
@@ -670,16 +605,22 @@
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
-        function setProgressBar(event) {
-            const progressContainer = document.querySelector('.progress-container');
-            const progressWidth = progressContainer.offsetWidth;
-            const clickedX = event.offsetX;
-            const clickPercentage = (clickedX / progressWidth);
-            audio.currentTime = clickPercentage * audio.duration;
+        function updateLyrics() {
+            const lines = document.querySelectorAll('.lyrics-line');
+            lines.forEach(line => {
+                const startTime = parseFloat(line.dataset.start);
+                const endTime = parseFloat(line.dataset.end);
+                
+                if (audio.currentTime >= startTime && audio.currentTime <= endTime) {
+                    line.classList.add('active');
+                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } else {
+                    line.classList.remove('active');
+                }
+            });
         }
 
-
-        // 페이지 로드 시 초기화
+        // Initialize the music player when the page loads
         document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
     </script>
 </body>
