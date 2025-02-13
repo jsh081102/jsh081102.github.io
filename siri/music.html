@@ -214,6 +214,31 @@
             color: #666;
             font-size: 14px;
         }
+
+        .lyrics-container {
+            height: 300px;
+            overflow-y: auto;
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .lyrics-line {
+            padding: 10px;
+            transition: all 0.3s;
+            opacity: 0.5;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .lyrics-line.active {
+            font-size: 18px;
+            opacity: 1;
+            color: #0a84ff;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -286,6 +311,7 @@
                     tracks: [{
                         number: 1,
                         title: 'ETA',
+                        artist: 'NewJeans',
                         audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
                         lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
                     }]
@@ -388,13 +414,142 @@
             return item;
         }
 
-        function playTrack(track) {
-            currentTrack = track;
-            audio.src = track.audio;
-            audio.play();
-            isPlaying = true;
-            updateMiniPlayer();
-            loadAndDisplayLyrics(track.lyrics);
+        async function playTrack(track) {
+            try {
+                currentTrack = track;
+
+                // 오디오 로드 전에 이전 오디오 정지
+                audio.pause();
+                audio.currentTime = 0;
+
+                // 새 오디오 소스 설정 및 로드
+                audio.src = track.audio;
+
+                // 오디오 로드 완료 대기
+                await audio.load();
+
+                // 재생 시작
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        isPlaying = true;
+                        updateMiniPlayer();
+                    }).catch(error => {
+                        console.error("Audio playback error:", error);
+                        isPlaying = false;
+                        updateMiniPlayer();
+                    });
+                }
+
+                // 가사 로드
+                await loadAndDisplayLyrics(track.lyrics);
+
+                // UI 업데이트
+                updateMiniPlayer();
+                updateFullPlayer();
+            } catch (error) {
+                console.error("Error playing track:", error);
+            }
+        }
+
+        async function loadAndDisplayLyrics(lyricsUrl) {
+            try {
+                const response = await fetch(lyricsUrl);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+                const lyrics = parseSRT(text);
+                displayLyrics(lyrics);
+            } catch (error) {
+                console.error('Error loading lyrics:', error);
+                // 가사 로드 실패 시 빈 가사 표시
+                displayLyrics([]);
+            }
+        }
+
+        function parseSRT(srtContent) {
+            try {
+                const srtLines = srtContent.trim().split('\n\n');
+                const lyrics = [];
+
+                srtLines.forEach(block => {
+                    const lines = block.split('\n');
+                    if (lines.length >= 3) {
+                        const timeData = lines[1].split(' --> ')[0];
+                        const text = lines.slice(2).join('\n');
+
+                        // 시간을 초 단위로 변환
+                        const time = timeToSeconds(timeData);
+
+                        lyrics.push({
+                            time: time,
+                            text: text
+                        });
+                    }
+                });
+
+                return lyrics;
+            } catch (error) {
+                console.error('Error parsing SRT:', error);
+                return [];
+            }
+        }
+
+        function timeToSeconds(timeStr) {
+            const [hours, minutes, seconds] = timeStr.split(':');
+            const [secs, ms] = seconds.split(',');
+            return (parseInt(hours) * 3600) +
+                   (parseInt(minutes) * 60) +
+                   parseInt(secs) +
+                   (parseInt(ms) / 1000);
+        }
+
+        function displayLyrics(lyrics) {
+            const container = document.querySelector('.lyrics-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (lyrics.length === 0) {
+                container.innerHTML = '<div class="lyrics-line">가사를 불러올 수 없습니다.</div>';
+                return;
+            }
+
+            lyrics.forEach(line => {
+                const div = document.createElement('div');
+                div.className = 'lyrics-line';
+                div.textContent = line.text;
+                div.dataset.time = line.time;
+                container.appendChild(div);
+            });
+        }
+
+        function updateLyrics() {
+            if (!audio.duration) return;
+
+            const lines = document.querySelectorAll('.lyrics-line');
+            let activeLine = null;
+
+            lines.forEach(line => {
+                const time = parseFloat(line.dataset.time);
+                const nextLine = line.nextElementSibling;
+                const nextTime = nextLine ? parseFloat(nextLine.dataset.time) : Infinity;
+
+                if (audio.currentTime >= time && audio.currentTime < nextTime) {
+                    line.classList.add('active');
+                    activeLine = line;
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+
+            if (activeLine) {
+                activeLine.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
         }
 
         function updateMiniPlayer() {
@@ -406,38 +561,36 @@
             miniPlayer.querySelector('.play-pause-button').textContent = isPlaying ? '⏸' : '▶';
         }
 
-        async function loadAndDisplayLyrics(lyricsUrl) {
-            try {
-                const response = await fetch(lyricsUrl);
-                const text = await response.text();
-                const lyrics = parseSRT(text);
-                displayLyrics(lyrics);
-            } catch (error) {
-                console.error('Error loading lyrics:', error);
-            }
-        }
-
-        function parseSRT(srtContent) {
-            // SRT parsing logic here
-            return [];
-        }
-
         function setupEventListeners() {
             document.querySelector('.back-button').addEventListener('click', handleBack);
             document.querySelector('.brand-title').addEventListener('click', goToHome);
             document.querySelector('.mini-player').addEventListener('click', showFullPlayer);
-            
+
             const controls = document.querySelector('.mini-player-controls');
             controls.addEventListener('click', e => e.stopPropagation());
-            
+
             controls.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
             controls.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
             controls.querySelector('.next-button').addEventListener('click', playNextTrack);
+
+            document.querySelector('.progress-container').addEventListener('click', setProgressBar);
         }
 
         function setupAudioEventListeners() {
-            audio.addEventListener('timeupdate', updateProgress);
-            audio.addEventListener('ended', () => playNextTrack());
+            audio.addEventListener('timeupdate', () => {
+                updateProgress();
+                updateLyrics();
+            });
+
+            audio.addEventListener('ended', () => {
+                playNextTrack();
+            });
+
+            audio.addEventListener('error', (e) => {
+                console.error('Audio error:', e);
+                isPlaying = false;
+                updateMiniPlayer();
+            });
         }
 
         function handleBack() {
@@ -476,6 +629,8 @@
             }
             isPlaying = !isPlaying;
             updateMiniPlayer();
+            document.querySelector('.mini-player .play-pause-button').textContent = isPlaying ? '⏸' : '▶';
+            document.querySelector('.full-player .play-pause-button').textContent = isPlaying ? '⏸' : '▶';
         }
 
         function playPreviousTrack() {
@@ -491,6 +646,8 @@
             const currentIndex = tracks.findIndex(track => track === currentTrack);
             if (currentIndex < tracks.length - 1) {
                 playTrack(tracks[currentIndex + 1]);
+            } else {
+                playTrack(tracks[0]); // Loop to the first track if at the end
             }
         }
 
@@ -498,14 +655,12 @@
             const progress = document.querySelector('.progress');
             const currentTimeDisplay = document.querySelector('.current-time');
             const totalTimeDisplay = document.querySelector('.total-time');
-            
+
             const percentage = (audio.currentTime / audio.duration) * 100;
             progress.style.width = `${percentage}%`;
-            
+
             currentTimeDisplay.textContent = formatTime(audio.currentTime);
             totalTimeDisplay.textContent = formatTime(audio.duration);
-            
-            updateLyrics();
         }
 
         function formatTime(seconds) {
@@ -515,20 +670,16 @@
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
-        function updateLyrics() {
-            const lines = document.querySelectorAll('.lyrics-line');
-            lines.forEach(line => {
-                const time = parseFloat(line.dataset.time);
-                if (audio.currentTime >= time && audio.currentTime < time + 0.5) {
-                    line.classList.add('active');
-                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                } else {
-                    line.classList.remove('active');
-                }
-            });
+        function setProgressBar(event) {
+            const progressContainer = document.querySelector('.progress-container');
+            const progressWidth = progressContainer.offsetWidth;
+            const clickedX = event.offsetX;
+            const clickPercentage = (clickedX / progressWidth);
+            audio.currentTime = clickPercentage * audio.duration;
         }
 
-        // Initialize the music player when the page loads
+
+        // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
     </script>
 </body>
