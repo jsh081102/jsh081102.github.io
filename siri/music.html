@@ -5,746 +5,356 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Siri Music</title>
     <style>
-        /* Reset CSS */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+        /* Reset & 기본 스타일 */
+        body, html { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f0f0f0; color: #000; }
+        *, ::before, ::after { box-sizing: border-box; }
+        button { background: none; color: inherit; border: none; padding: 0; font: inherit; cursor: pointer; outline: none; }
+        ul, ol { list-style: none; padding: 0; margin: 0; }
+        a { text-decoration: none; color: inherit; }
 
-        body {
-            background-color: #f0f0f0;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            height: 100vh; /* Full viewport height */
-            overflow: hidden; /* Prevent scrollbars */
-        }
+        /* 전체 레이아웃 */
+        .container { display: flex; flex-direction: column; height: 100vh; }
+        header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+        main { flex-grow: 1; overflow-y: auto; padding: 20px; }
+        footer { background-color: #fff; border-top: 1px solid #ddd; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; }
 
-        /* Top Bar (Status Bar) */
-        .status-bar {
-            height: 24px;
-            background-color: #e0e0e0;
-            text-align: center;
-            font-size: 14px;
-            padding: 2px 0;
-            color: #666;
-            position: sticky; /* Keeps it at the top */
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10; /* Make sure it's above other elements */
-        }
+        /* 탭 메뉴 */
+        .tab-menu { display: flex; justify-content: space-around; padding: 10px 0; border-bottom: 1px solid #ddd; }
+        .tab-button { padding: 10px 15px; border-radius: 8px; color: #888; }
+        .tab-button.active { color: #0a84ff; font-weight: bold; }
 
+        /* 검색 바 */
+        .search-bar { display: flex; align-items: center; background-color: #fff; border-radius: 10px; padding: 8px 15px; margin-bottom: 20px; border: 1px solid #eee; }
+        .search-bar input { border: none; outline: none; flex-grow: 1; margin-left: 10px; font-size: 16px; }
+        .search-bar button { color: #888; }
 
-        /* Main Content Area */
-        .main-content {
-            flex-grow: 1; /* Take up remaining space */
-            overflow-y: auto; /* Scrollable content */
-            padding: 20px;
-            display: flex; /* Use flexbox for layout */
-            flex-direction: column; /* Stack elements vertically */
-        }
+        /* 아티스트 목록 */
+        .artist-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; }
+        .artist-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .artist-item img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 10px; }
+        .artist-item span { font-size: 14px; }
 
-        /* Navigation Bar (Bottom) */
-        .navigation-bar {
-            background-color: #fff;
-            border-top: 1px solid #ccc;
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-around;
-            position: sticky; /* Fixed at the bottom */
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 10; /* Make sure it's above other elements */
-        }
-        .navigation-bar button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px; /* Icon size */
-            color: #0a84ff; /* Highlight color */
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center icon and text */
-            padding: 5px;
-            border-radius: 8px; /* Rounded corners */
-        }
-        .navigation-bar button span {
-             font-size: 12px; /* Text size below icon */
-             margin-top: 2px; /* Space between icon and text */
-         }
+        /* 아티스트 상세 정보 */
+        .artist-detail { display: none; } /* Initially hidden */
+        .artist-header { position: relative; height: 200px; overflow: hidden; border-radius: 15px; margin-bottom: 20px; }
+        .artist-header img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(10px) brightness(0.7); }
+        .artist-header-content { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: #fff; }
+        .artist-header-content h2 { font-size: 2.5em; margin-bottom: 5px; }
+        .artist-header-content p { font-size: 1.2em; }
+        .popular-songs { margin-top: 20px; }
+        .popular-songs h3 { margin-bottom: 15px; font-weight: bold; }
+        .song-item { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .song-item:last-child { border-bottom: none; }
+        .song-item img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; margin-right: 15px; }
+        .song-info { flex-grow: 1; }
+        .song-title { font-weight: bold; }
+        .song-artist { color: #777; font-size: 14px; }
+        .song-actions button { margin-left: 10px; color: #777; font-size: 1.2em; }
 
-        .navigation-bar button:hover, .navigation-bar button:focus {
-            background-color: rgba(10, 132, 255, 0.1); /* Lighter highlight on hover/focus */
-        }
+        /* 플레이어 */
+        #audio-player { display: flex; align-items: center; }
+        #album-cover-mini { width: 40px; height: 40px; border-radius: 5px; object-fit: cover; margin-right: 10px; }
+        #player-info { flex-grow: 1; }
+        #player-title { font-weight: bold; font-size: 14px; }
+        #player-artist { color: #777; font-size: 12px; }
+        #player-controls button { font-size: 1.5em; color: #555; margin: 0 8px; }
+        #player-controls button.play-pause { font-size: 2em; color: #000; }
 
-        /* Artist List */
-        .artist-list {
-            display: flex;
-            flex-wrap: wrap; /* Allow items to wrap */
-            gap: 20px; /* Space between items */
-            margin-bottom: 20px; /* Space below the list */
-        }
+        /* 가사 영역 */
+        #lyrics-container { text-align: center; margin-top: 20px; }
+        #lyrics-container p { line-height: 1.8; color: #555; }
+        #lyrics-container p.current-lyric { color: #000; font-weight: bold; font-size: 1.1em; }
 
-        .artist-item {
-            width: 100px; /* Fixed width */
-            text-align: center;
-            cursor: pointer;
-            border-radius: 12px; /* Rounded corners */
-            overflow: hidden; /* Clip image to rounded corners */
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-            transition: transform 0.2s ease; /* Smooth transform on hover */
-        }
-
-        .artist-item:hover {
-            transform: translateY(-3px); /* Slight lift on hover */
-        }
-
-        .artist-item img {
-            width: 100%; /* Make image fill the container */
-            height: 100px;
-            object-fit: cover; /* Cover the area, maintaining aspect ratio */
-            border-bottom: 1px solid #eee; /* Separator */
-        }
-
-        .artist-item p {
-            padding: 8px;
-            font-size: 14px;
-            background-color: #fff;
-            white-space: nowrap;  /* Prevent text wrapping */
-            overflow: hidden;      /* Hide overflow */
-            text-overflow: ellipsis; /* Show ellipsis for long names */
-        }
-
-
-       /* Album List (Initially hidden) */
-        .album-list {
-            display: none; /* Hidden by default */
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .album-item {
-            width: 150px; /* Larger than artist items */
-            text-align: center;
-            cursor: pointer;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-            transition: transform 0.2s ease;
-        }
-
-        .album-item:hover {
-            transform: scale(1.05); /* Slightly enlarge on hover */
-        }
-
-        .album-item img {
-            width: 100%;
-            height: 150px; /* Matching width */
-            object-fit: cover;
-            border-bottom: 1px solid #eee;
-        }
-
-        .album-item p {
-            padding: 10px;
-            font-size: 15px;
-            background-color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Now Playing Bar (Initially hidden) */
-        .now-playing-bar {
-            background-color: #fff;
-            border-top: 1px solid #ccc;
-            padding: 10px;
-            display: none; /* Hidden by default */
-            position: fixed; /* Fixed positioning */
-            bottom: 49px;     /* Place just above the navigation bar */
-            left: 0;
-            width: 100%;
-            z-index: 5; /* Below the navigation bar, above other content */
-            flex-direction: row; /* Horizontal layout */
-            align-items: center; /* Vertically center items */
-            gap: 10px; /* Space between elements */
-        }
-
-
-        .now-playing-bar img {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px; /* Rounded corners */
-            object-fit: cover; /* Ensure the image covers the space */
-        }
-
-        .now-playing-info {
-            flex-grow: 1; /* Take up available space */
-            overflow: hidden; /* Hide overflow */
-            margin-right: 15px;
-        }
-
-        .now-playing-info p {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 14px;
-        }
-
-        .now-playing-info p:first-child {
-            font-weight: bold; /* Song title is bold */
-        }
-        .now-playing-controls {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .now-playing-controls button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 24px; /* Larger icons */
-            color: #0a84ff;
-            padding: 5px; /* Add some padding */
-            border-radius: 50%; /* Circular buttons */
-
-        }
-
-         .now-playing-controls button:hover, .now-playing-controls button:focus {
-            background-color: rgba(10, 132, 255, 0.1);
-         }
-
-
-        /*  Lyrics Display */
-        #lyrics-display {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
-            border-radius: 10px;
-            text-align: center;
-            font-size: 16px;
-            line-height: 1.5;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden; /* Prevents overflow initially */
-            max-height: 200px; /* Limit the height */
-            transition: max-height 0.5s ease;
-       }
-
-       #lyrics-display.expanded {
-            max-height: 500px; /* Or whatever the maximum you want */
-            overflow-y: auto; /* Scrollable if content overflows */
-       }
-
-
-       /*  Back Button */
-        .back-button {
-            position: absolute; /* Position it absolutely */
-            top: 30px;       /* Just below status bar */
-            left: 10px;      /* Left edge */
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #0a84ff;
-            z-index: 10; /* Make sure it's above the content */
-            display: none; /* Hidden by default */
-       }
-
-       /* Loading Overlay */
-        #loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100; /* Very high z-index */
-            color: white;
-            font-size: 20px;
-        }
-
-       /* Album view styles */
-        #album-view {
-            display: none;  /* Hidden by default */
-            padding-top: 20px; /* Add space for back button */
-            text-align: center; /* Center-align content */
-        }
-        #album-view img {
-            width: 200px; /* Larger album art */
-            height: 200px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-bottom: 20px;
-        }
-        #album-view h2 { /* Album title */
-            font-size: 22px;
-            margin-bottom: 10px;
-            color: #222;
-        }
-        #album-view p {  /* Artist name */
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 20px;
-        }
-        .track-list {
-            list-style: none; /* Remove bullet points */
-            padding: 0;
-            margin: 0;
-        }
-        .track-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .track-item:last-child {
-            border-bottom: none; /* No border on the last track */
-        }
-        .track-item:hover {
-            background-color: rgba(10, 132, 255, 0.1);
-        }
-        .track-number {
-            margin-right: 15px;
-            color: #777;
-            font-size: 14px;
-            width: 25px; /* Fixed width */
-            text-align: right; /* Right-align the number */
-        }
-        .track-title {
-            flex-grow: 1; /* Title takes remaining space */
-            font-size: 16px;
-            color: #333;
-             white-space: nowrap; /* Prevent wrapping */
-            overflow: hidden;
-            text-overflow: ellipsis; /* Add ellipsis for long titles */
-        }
-
-
+        /* 유틸리티 클래스 */
+        .hidden { display: none !important; }
+        .highlight { color: #0a84ff; }
     </style>
 </head>
 <body>
-    <div class="status-bar" id="status-bar">12:00</div>
-    <button class="back-button" id="back-button">← Back</button>
+    <div class="container">
+        <header>
+            <div><button class="back-button" onclick="history.back()" style="font-size: 1.2em;"><</button> 보관함</div>
+            <button class="menu-button" style="font-size: 1.5em;">☰</button>
+        </header>
 
-    <div class="main-content">
-        <div class="artist-list" id="artist-list">
-            <!-- Artist items will be added here -->
-        </div>
+        <main>
+            <section id="artist-list-section">
+                <div class="search-bar">
+                    <span style="color: #888;"></span>
+                    <input type="text" placeholder="검색">
+                    <button><span style="color: #888;"></span></button>
+                </div>
 
-        <div class="album-list" id="album-list">
-              <!-- Album items will be added here -->
-        </div>
+                <div class="artist-list">
+                    <div class="artist-item" onclick="showArtistDetail('newjeans')">
+                        <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg" alt="NewJeans">
+                        <span>뉴진스</span>
+                    </div>
+                    </div>
+            </section>
 
-         <div id="album-view">
-            <!-- Album details and track list -->
-            <img id="album-view-image" src="" alt="Album Cover">
-            <h2 id="album-view-title"></h2>
-            <p id="album-view-artist"></p>
-            <ul class="track-list" id="album-track-list">
-            <!-- Tracks will be added here -->
-            </ul>
-        </div>
+            <section id="artist-detail-section" class="artist-detail hidden">
+                <div class="artist-header">
+                    <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" alt="NewJeans Album Art">
+                    <div class="artist-header-content">
+                        <h2>뉴진스</h2>
+                        <p>NewJeans</p>
+                    </div>
+                </div>
 
-        <div id="lyrics-display"></div>
+                <div class="popular-songs">
+                    <h3>인기곡</h3>
+                    <ul id="song-list">
+                        <li class="song-item" data-song-id="eta">
+                            <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" alt="ETA Album Art">
+                            <div class="song-info">
+                                <div class="song-title">ETA</div>
+                                <div class="song-artist">NewJeans</div>
+                            </div>
+                            <div class="song-actions">
+                                <button><span style="color: #888;">⋯</span></button>
+                            </div>
+                        </li>
+                        <li class="song-item" data-song-id="supernatural">
+                            <img src="http://www.applesodam.kro.kr/music/NewJeans/Supernatural-Single/Supernatural-Single.jpg" alt="Supernatural Album Art">
+                            <div class="song-info">
+                                <div class="song-title">Supernatural</div>
+                                <div class="song-artist">NewJeans</div>
+                            </div>
+                            <div class="song-actions">
+                                <button><span style="color: #888;">⋯</span></button>
+                            </div>
+                        </li>
+                        <li class="song-item" data-song-id="howsweet">
+                            <img src="http://www.applesodam.kro.kr/music/NewJeans/HowSweet-EP/HowSweet-EP.jpg" alt="How Sweet Album Art">
+                            <div class="song-info">
+                                <div class="song-title">How Sweet</div>
+                                <div class="song-artist">NewJeans</div>
+                            </div>
+                            <div class="song-actions">
+                                <button><span style="color: #888;">⋯</span></button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section id="lyrics-view" class="hidden">
+                <div id="lyrics-container">
+                    <p id="current-lyric-text"></p>
+                    <p id="next-lyric-text"></p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div id="audio-player">
+                <img id="album-cover-mini" src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" alt="Album Cover">
+                <div id="player-info">
+                    <div id="player-title">곡 제목</div>
+                    <div id="player-artist">아티스트</div>
+                </div>
+                <div id="player-controls">
+                    <button><span class="material-symbols-rounded">skip_previous</span></button>
+                    <button class="play-pause" onclick="togglePlayPause()"><span class="material-symbols-rounded">play_arrow</span></button>
+                    <button><span class="material-symbols-rounded">skip_next</span></button>
+                </div>
+            </div>
+        </footer>
     </div>
 
-     <div class="now-playing-bar" id="now-playing-bar">
-        <img id="now-playing-image" src="" alt="Now Playing">
-        <div class="now-playing-info">
-            <p id="now-playing-title"></p>
-            <p id="now-playing-artist"></p>
-        </div>
-        <div class="now-playing-controls">
-            <button id="prev-button">⏮</button>
-            <button id="play-pause-button">▶</button>
-            <button id="next-button">⏭</button>
-        </div>
-    </div>
-
-    <div class="navigation-bar">
-        <button id="home-button">
-            <span class="material-symbols-outlined">
-                home
-            </span>
-            <span>홈</span>
-        </button>
-        <button id="browse-button">
-             <span class="material-symbols-outlined">
-                search
-             </span>
-            <span>검색</span>
-        </button>
-        <button id="library-button">
-             <span class="material-symbols-outlined">
-                library_music
-             </span>
-            <span>보관함</span>
-        </button>
-    </div>
-
-    <div id="loading-overlay">
-        Loading...
-    </div>
-
-    <audio id="audio-player"></audio>
+    <audio id="audio" preload="metadata"></audio>
 
     <script>
-        // Data for artists, albums, and songs
-        const musicData = {
-            artists: [
-                {
-                    name: "NewJeans",
-                    image: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg",
-                    albums: [
-                        {
-                            title: "NewJeans 2nd EP 'Get Up'",
-                            image: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
-                            songs: [
-                                {
-                                    title: "ETA",
-                                    file: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
-                                    lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
-                                },
-                                {
-                                    title: "Super Shy",
-                                    file: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/SuperShy.mp3",
-                                    lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/SuperShy.srt"
-                                },
-                                 {
-                                    title: "New Jeans",
-                                    file: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans.mp3",
-                                    lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans.srt"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+        const audio = document.getElementById('audio');
+        const albumCoverMini = document.getElementById('album-cover-mini');
+        const playerTitle = document.getElementById('player-title');
+        const playerArtist = document.getElementById('player-artist');
+        const playPauseButton = document.querySelector('#player-controls .play-pause span');
+        const songList = document.getElementById('song-list');
+        const lyricsContainer = document.getElementById('lyrics-container');
+        const currentLyricText = document.getElementById('current-lyric-text');
+        const nextLyricText = document.getElementById('next-lyric-text');
+
+        let currentSongId = null;
+        let isPlaying = false;
+        let lyricsData = [];
+        let lyricIndex = 0;
+
+        const songs = {
+            'eta': {
+                title: 'ETA',
+                artist: 'NewJeans',
+                albumArtUrl: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP\'GetUp\'/NewJeans2ndEP\'GetUp\'.jpg',
+                mp3Url: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP\'GetUp\'/ETA.mp3',
+                srtUrl: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP\'GetUp\'/ETA.srt'
+            },
+            'supernatural': {
+                title: 'Supernatural',
+                artist: 'NewJeans',
+                albumArtUrl: 'http://www.applesodam.kro.kr/music/NewJeans/Supernatural-Single/Supernatural-Single.jpg',
+                mp3Url: 'http://www.applesodam.kro.kr/music/NewJeans/Supernatural-Single/Supernatural.mp3',
+                srtUrl: 'http://www.applesodam.kro.kr/music/NewJeans/Supernatural-Single/Supernatural.srt' // Need to create dummy srt or find real one
+            },
+            'howsweet': {
+                title: 'How Sweet',
+                artist: 'NewJeans',
+                albumArtUrl: 'http://www.applesodam.kro.kr/music/NewJeans/HowSweet-EP/HowSweet-EP.jpg',
+                mp3Url: 'http://www.applesodam.kro.kr/music/NewJeans/HowSweet-EP/HowSweet.mp3',
+                srtUrl: 'http://www.applesodam.kro.kr/music/NewJeans/HowSweet-EP/HowSweet.srt' // Need to create dummy srt or find real one
+            }
         };
 
 
-
-        // DOM Elements
-        const artistList = document.getElementById('artist-list');
-        const albumList = document.getElementById('album-list');
-        const nowPlayingBar = document.getElementById('now-playing-bar');
-        const nowPlayingImage = document.getElementById('now-playing-image');
-        const nowPlayingTitle = document.getElementById('now-playing-title');
-        const nowPlayingArtist = document.getElementById('now-playing-artist');
-        const playPauseButton = document.getElementById('play-pause-button');
-        const audioPlayer = document.getElementById('audio-player');
-        const lyricsDisplay = document.getElementById('lyrics-display');
-        const backButton = document.getElementById('back-button');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const albumView = document.getElementById('album-view');
-        const albumViewImage = document.getElementById('album-view-image');
-        const albumViewTitle = document.getElementById('album-view-title');
-        const albumViewArtist = document.getElementById('album-view-artist');
-        const albumTrackList = document.getElementById('album-track-list');
-        const nextButton = document.getElementById('next-button');
-        const prevButton = document.getElementById('prev-button');
-        const homeButton = document.getElementById('home-button');
-        const browseButton = document.getElementById('browse-button');
-        const libraryButton = document.getElementById('library-button');
-        const statusBar = document.getElementById('status-bar');
-
-        let currentArtist = null;
-        let currentAlbum = null;
-        let currentSongIndex = 0;
-        let lyrics = [];
-        let currentLyricsIndex = -1;
-        let lyricsInterval;
-        let isPlaying = false;
-
-
-        // --- Utility Functions ---
-
-        // Function to update the status bar with the current time
-        function updateStatusBarTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            statusBar.textContent = `${hours}:${minutes}`;
+        function showArtistDetail(artistId) {
+            document.getElementById('artist-list-section').classList.add('hidden');
+            document.getElementById('artist-detail-section').classList.remove('hidden');
+            document.querySelector('header > div').textContent = "< 아티스트"; // Header text change
         }
 
-        // Function to show loading overlay
-        function showLoading() {
-            loadingOverlay.style.display = 'flex';
-        }
+        function loadSong(songId) {
+            currentSongId = songId;
+            const song = songs[songId];
+            albumCoverMini.src = song.albumArtUrl;
+            playerTitle.textContent = song.title;
+            playerArtist.textContent = song.artist;
+            audio.src = song.mp3Url;
+            lyricsData = []; // Reset lyrics data
+            lyricIndex = 0;
+            currentLyricText.textContent = '';
+            nextLyricText.textContent = '';
 
-        // Function to hide loading overlay
-        function hideLoading() {
-            loadingOverlay.style.display = 'none';
-        }
-
-        // Function to parse SRT file content
-        function parseSRT(srtContent) {
-          const lines = srtContent.trim().split('\n\n');
-          return lines.map(line => {
-            const parts = line.split('\n');
-            const [index, time, ...text] = parts; // Destructure
-            const [start, end] = time.split(' --> ');
-
-            return {
-              index: parseInt(index, 10),
-              start: parseTime(start),
-              end: parseTime(end),
-              text: text.join('<br>') // Join multiple lines with <br>
-            };
-          });
-        }
-
-        // Function to parse time string (00:00:00,000) into seconds
-        function parseTime(timeString) {
-            const [hh, mm, ss_ms] = timeString.split(':');
-            const [ss, ms] = ss_ms.split(',');
-            return parseInt(hh, 10) * 3600 + parseInt(mm, 10) * 60 + parseInt(ss, 10) + parseInt(ms, 10) / 1000;
-        }
-
-        // --- UI Update Functions ---
-
-        function displayArtists() {
-            artistList.innerHTML = ''; // Clear existing list
-            musicData.artists.forEach(artist => {
-                const artistItem = document.createElement('div');
-                artistItem.classList.add('artist-item');
-                artistItem.innerHTML = `
-                    <img src="${artist.image}" alt="${artist.name}">
-                    <p>${artist.name}</p>
-                `;
-                artistItem.addEventListener('click', () => showAlbums(artist));
-                artistList.appendChild(artistItem);
-            });
-        }
-
-        function showAlbums(artist) {
-            currentArtist = artist; // Store current artist
-
-            albumList.innerHTML = ''; // Clear existing list
-            artist.albums.forEach(album => {
-                const albumItem = document.createElement('div');
-                albumItem.classList.add('album-item');
-                albumItem.innerHTML = `
-                    <img src="${album.image}" alt="${album.title}">
-                    <p>${album.title}</p>
-                `;
-                albumItem.addEventListener('click', () => showAlbumDetails(album));
-                albumList.appendChild(albumItem);
-            });
-
-            artistList.style.display = 'none'; // Hide artist list
-            albumList.style.display = 'flex'; // Show album list
-            backButton.style.display = 'block';
-            lyricsDisplay.style.display = "none";
-        }
-
-
-         function showAlbumDetails(album) {
-            currentAlbum = album;
-             albumViewImage.src = album.image;
-            albumViewTitle.textContent = album.title;
-            albumViewArtist.textContent = currentArtist.name;
-            albumTrackList.innerHTML = '';
-
-            album.songs.forEach((song, index) => {
-                const trackItem = document.createElement('li');
-                trackItem.classList.add('track-item');
-                trackItem.innerHTML = `
-                    <span class="track-number">${index + 1}</span>
-                    <span class="track-title">${song.title}</span>
-                `;
-                trackItem.addEventListener('click', () => playSong(index));
-                albumTrackList.appendChild(trackItem);
-            });
-
-            albumList.style.display = 'none';
-            albumView.style.display = 'block';
-        }
-
-
-       function playSong(songIndex) {
-            currentSongIndex = songIndex;
-            const song = currentAlbum.songs[currentSongIndex];
-
-            showLoading();  // Show loading screen before starting
-            audioPlayer.src = song.file;
-            audioPlayer.load(); // Load the new source
-
-            audioPlayer.oncanplaythrough = () => { // Use canplaythrough event
-                hideLoading(); // Hide loading screen once audio is ready
-                audioPlayer.play();
-                isPlaying = true;
-                playPauseButton.textContent = '||';
-                updateNowPlayingBar();
-                fetchAndDisplayLyrics(song.lyrics);  // Display lyrics
-            };
-
-            audioPlayer.onerror = () => {
-                hideLoading(); // Hide if error
-                alert("Error loading the song.");
-            }
-        }
-
-
-         // Function to update Now Playing Bar
-        function updateNowPlayingBar() {
-             const song = currentAlbum.songs[currentSongIndex];
-            nowPlayingImage.src = currentAlbum.image;
-            nowPlayingTitle.textContent = song.title;
-            nowPlayingArtist.textContent = currentArtist.name;
-            nowPlayingBar.style.display = 'flex';
-        }
-
-
-        // Function to fetch, parse, and display lyrics
-       function fetchAndDisplayLyrics(lyricsUrl) {
-            if (!lyricsUrl) {
-                lyricsDisplay.innerHTML = "No lyrics available.";
-                lyricsDisplay.style.display = "block";
-                clearInterval(lyricsInterval);
-                return;
-            }
-
-            fetch(lyricsUrl)
+            fetch(song.srtUrl)
                 .then(response => {
                     if (!response.ok) {
-                      throw new Error(`HTTP error! status: ${response.status}`);
+                        console.error(`Failed to fetch SRT file: ${response.status} ${response.statusText}`);
+                        return Promise.reject('Failed to load SRT file'); // Reject the promise on error
                     }
                     return response.text();
                 })
-                .then(srtContent => {
-                    lyrics = parseSRT(srtContent);
-                    currentLyricsIndex = -1; // Reset
-                    lyricsDisplay.innerHTML = ''; // Clear previous lyrics
-                    lyricsDisplay.style.display = "block"; // Show lyrics display
-                    startLyricsDisplay();
+                .then(srtText => {
+                    lyricsData = parseSRT(srtText);
+                    if (lyricsData.length > 0) {
+                        lyricsContainer.classList.remove('hidden'); // Show lyrics container if lyrics are available
+                    } else {
+                        lyricsContainer.classList.add('hidden'); // Hide if no lyrics data
+                    }
                 })
                 .catch(error => {
-                    console.error("Error fetching or parsing lyrics:", error);
-                    lyricsDisplay.innerHTML = "Lyrics failed to load.";
-                    lyricsDisplay.style.display = 'block';
-                    clearInterval(lyricsInterval); // Stop any previous interval
+                    console.error("Error loading SRT:", error);
+                    lyricsContainer.classList.add('hidden'); // Hide lyrics container on error
+                    lyricsData = []; // Ensure lyricsData is empty on error
                 });
         }
 
 
-        function startLyricsDisplay() {
-           clearInterval(lyricsInterval); // Clear any existing interval
+        function parseSRT(srtText) {
+            const lines = srtText.trim().split('\n');
+            const lyrics = [];
+            let i = 0;
+            while (i < lines.length) {
+                if (!lines[i].trim()) { // Skip empty lines
+                    i++;
+                    continue;
+                }
+                const index = parseInt(lines[i++].trim(), 10); // Index - not used but parse it anyway
+                const timeLine = lines[i++].trim();
+                const lyricText = lines[i++];
 
-           lyricsInterval = setInterval(() => {
-             const currentTime = audioPlayer.currentTime;
+                if (!timeLine || !lyricText) {
+                    continue; // Skip if timeLine or lyricText is missing
+                }
 
-             // Find the correct lyric line
-             let newIndex = lyrics.findIndex(lyric => currentTime >= lyric.start && currentTime < lyric.end);
+                const times = timeLine.split('-->').map(t => {
+                    const parts = t.trim().split(/[:,.]/);
+                    return parseInt(parts[0]) * 3600 + parseInt(parts[1]) * 60 + parseInt(parts[2]) + parseInt(parts[3]) / 1000; // HH:MM:SS,MS to seconds
+                });
 
-             if (newIndex !== -1 && newIndex !== currentLyricsIndex) {
-                currentLyricsIndex = newIndex;
-                // Update the display, highlighting the current line
-                lyricsDisplay.innerHTML = lyrics.map((lyric, index) => {
-                    return `<div class="${index === currentLyricsIndex ? 'current-lyric' : ''}">${lyric.text}</div>`;
-                }).join('');
-
-
-             } else if (newIndex === -1 && currentLyricsIndex !== -1) {
-                // No lyric for the current time, clear or handle as needed
-                 if(currentTime >= lyrics[lyrics.length -1].end){
-                    lyricsDisplay.innerHTML = "";
-                    currentLyricsIndex = -1;
-                 }
-             }
-
-           }, 100); // Check every 100ms
+                if (times.length === 2) {
+                    lyrics.push({ start: times[0], end: times[1], text: lyricText.trim() });
+                }
+            }
+            return lyrics;
         }
 
 
-        // --- Event Listeners ---
+        function togglePlayPause() {
+            if (!currentSongId) {
+                // If no song loaded, load the first song in the list (e.g., ETA)
+                const firstSongItem = document.querySelector('#song-list .song-item');
+                if (firstSongItem) {
+                    loadSong(firstSongItem.dataset.songId);
+                } else {
+                    return; // No songs to play
+                }
+            }
 
-        // Play/Pause Button
-        playPauseButton.addEventListener('click', () => {
             if (isPlaying) {
-                audioPlayer.pause();
-                playPauseButton.textContent = '▶';
+                audio.pause();
+                playPauseButton.textContent = 'play_arrow';
             } else {
-                audioPlayer.play();
-                playPauseButton.textContent = '||';
+                audio.play();
+                playPauseButton.textContent = 'pause';
+                if (lyricsData.length > 0) {
+                    updateLyrics(); // Start updating lyrics when playing starts
+                }
             }
             isPlaying = !isPlaying;
-        });
-
-        // Next Button
-        nextButton.addEventListener('click', () => {
-             if (currentAlbum && currentSongIndex < currentAlbum.songs.length - 1) {
-                playSong(currentSongIndex + 1);
-            } else if (currentAlbum) {
-                // If at the end of the album, loop to beginning
-                playSong(0);
-            }
-        });
-
-        // Previous Button
-        prevButton.addEventListener('click', () => {
-            if (currentAlbum && currentSongIndex > 0) {
-                playSong(currentSongIndex - 1);
-            } else if(currentAlbum){
-                // If at the start of the album, go to last song.
-                playSong(currentAlbum.songs.length - 1);
-            }
-        });
-
-        // Back Button
-        backButton.addEventListener('click', () => {
-          if (albumView.style.display === 'block') {
-            albumView.style.display = 'none';
-            albumList.style.display = 'flex';
-
-          } else if (albumList.style.display === 'flex') {
-            albumList.style.display = 'none';
-            artistList.style.display = 'flex';
-            backButton.style.display = 'none'; // Hide on artist list
-          }
-
-          lyricsDisplay.style.display = "none";
-        });
-
-
-        // Home Button
-        homeButton.addEventListener('click', () => {
-            // Stop current song and reset
-            audioPlayer.pause();
-            audioPlayer.src = '';  // Clear the audio source
-            isPlaying = false;
-            playPauseButton.textContent = '▶'; // Reset to play icon
-
-             // Hide all sections except the artist list
-            albumList.style.display = 'none';
-            albumView.style.display = 'none';
-            nowPlayingBar.style.display = 'none';
-            lyricsDisplay.style.display = 'none';  // Hide lyrics
-            artistList.style.display = 'flex';
-            backButton.style.display = 'none'; // Hide back button
-
-        });
-
-        // --- Initialization ---
-        function init() {
-            displayArtists();
-            updateStatusBarTime(); // Set initial time
-            setInterval(updateStatusBarTime, 60000); // Update every minute
         }
 
-        init();
+
+        function updateLyrics() {
+            if (lyricsData.length === 0 || !isPlaying) return;
+
+            const currentTime = audio.currentTime;
+            let foundLyric = false;
+
+            // Find the current lyric
+            for (let i = 0; i < lyricsData.length; i++) {
+                if (currentTime >= lyricsData[i].start && currentTime <= lyricsData[i].end) {
+                    if (lyricIndex !== i) { // Only update if index changed to prevent unnecessary updates
+                        currentLyricText.textContent = lyricsData[i].text;
+                        nextLyricText.textContent = (i < lyricsData.length - 1) ? lyricsData[i + 1].text : ''; // Show next lyric, if available
+                        lyricIndex = i;
+                    }
+                    foundLyric = true;
+                    break; // Lyric found, exit loop
+                }
+            }
+
+            if (!foundLyric) {
+                currentLyricText.textContent = ''; // Clear lyric if no match
+                nextLyricText.textContent = (lyricsData.length > 0) ? lyricsData[0].text : ''; // Optionally show first lyric as 'next'
+                lyricIndex = -1; // Reset lyric index
+            }
+
+
+            if (isPlaying) {
+                requestAnimationFrame(updateLyrics); // Smoothly update lyrics
+            }
+        }
+
+
+        // Event listeners for song list items
+        songList.addEventListener('click', function(e) {
+            const targetSongItem = e.target.closest('.song-item');
+            if (targetSongItem) {
+                const songId = targetSongItem.dataset.songId;
+                loadSong(songId);
+                togglePlayPause(); // Auto play when song is selected from list
+                document.getElementById('artist-detail-section').classList.add('hidden'); // Hide artist detail
+                document.getElementById('lyrics-view').classList.remove('hidden'); // Show lyrics view
+                document.querySelector('header > div').textContent = "< 보관함"; // Change header back
+            }
+        });
+
+        // 초기 로딩 시 'ETA' 곡 로드 (선택 사항)
+        // window.addEventListener('DOMContentLoaded', () => {
+        //     loadSong('eta'); // Optionally load 'eta' on initial page load
+        // });
 
 
     </script>
+     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </body>
 </html>
