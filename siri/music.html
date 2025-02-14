@@ -15,12 +15,18 @@
             background-color: #f0f0f0;
         }
 
-        /* Siri Music 부분을 항상 보이도록 수정 */
+        /* Siri Music 부분을 항상 보이도록 수정 및 블러 처리된 배경 추가 */
         .brand {
             position: fixed;
-            top: 20px;
-            left: 20px;
+            top: 0; /* 상단에 고정 */
+            left: 0; /* 좌측에 고정 */
+            width: 100%; /* 너비 100% */
             z-index: 1000;
+            background: rgba(255, 255, 255, 0.7); /* 반투명 배경 */
+            backdrop-filter: blur(10px); /* 블러 효과 */
+            padding: 20px; /* 패딩 추가 */
+            display: flex; /* Flexbox 사용 */
+            align-items: center; /* 수직 정렬 */
         }
 
         .brand-title {
@@ -38,7 +44,7 @@
 
         .back-button {
             position: fixed;
-            top: 70px;
+            top: 80px; /* brand 높이 및 패딩 고려, 더 아래로 내림 */
             left: 20px;
             background: rgba(255, 255, 255, 0.9);
             border: none;
@@ -52,9 +58,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            /*padding: 80px 20px 20px;  상단 패딩 제거*/
-            padding: 20px; /* 모든 면에 20px 패딩, 컨테이너 내용을 화면 가장자리에서 조금 떨어뜨림 */
-
+            padding: 100px 20px 20px; /* 상단 패딩 조정 (brand 높이 고려) */
         }
 
         .artists-grid {
@@ -93,12 +97,24 @@
             margin-bottom: 40px;
         }
 
-        /* 비디오 위에 오버레이 되는 그라데이션 스타일 조정 */
-      .artist-video {
+        /* 뉴모피즘 스타일 적용 */
+        .artist-video-container {
+            position: relative;
             width: 100%;
             height: 400px;
+            border-radius: 25px;
+            overflow: hidden; /* 비디오가 컨테이너 밖으로 나가지 않도록 */
+            box-shadow:
+                10px 10px 20px #c9c9c9, /* 외부 그림자 (오른쪽 아래) */
+                -10px -10px 20px #ffffff; /* 외부 그림자 (왼쪽 위) */
+        }
+      .artist-video {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            clip-path: inset(0% 0 0% 0);
+            position: absolute; /* 절대 위치 */
+            top: 0;
+            left: 0;
         }
 
         .artist-video-overlay {
@@ -107,14 +123,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* 그라데이션 강도 및 범위 조정 */
             background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4));
-            pointer-events: none; /* 마우스 이벤트 무시 */
+            pointer-events: none;
+            display: flex; /* Flexbox 사용 */
+            flex-direction: column; /* 수직 방향 정렬 */
+            justify-content: flex-end; /* 하단 정렬 */
+            padding: 20px; /* 패딩 추가 */
         }
-
-        /* 아티스트 이름 흰색으로 변경 */
         .artist-section .artist-info h2 {
-            color: white;
+          color: white; /* 텍스트 색상 흰색 */
+          text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); /* 그림자 효과 */
         }
 
         .albums-grid {
@@ -140,13 +158,12 @@
 
         .album-image {
             width: 100%;
-            aspect-ratio: 1; /* 앨범 아트 비율을 1:1로 설정 */
+            aspect-ratio: 1;
             object-fit: cover;
         }
 
-        /* 앨범 목록 글자 여유 조정 */
         .album-info {
-            padding: 10px 20px; /* 상하 패딩 10px, 좌우 패딩 20px */
+            padding: 10px 20px;
         }
         .tracks-list {
             display: none;
@@ -203,7 +220,7 @@
       .player-controls {
           display: flex;
           align-items: center;
-          gap: 10px; /* 컨트롤 간격 조정 */
+          gap: 10px;
           margin-right: 0px;
       }
 
@@ -221,16 +238,15 @@
             transform: scale(1.1);
         }
 
-        /* Full Player 배경 블러 처리 */
+        /* Full Player 블러 및 반투명 배경 */
         .full-player {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* 반투명 배경 대신 블러 효과 적용 */
-            backdrop-filter: blur(20px); /* 유리 효과 */
-            background-color: rgba(255, 255, 255, 0.1); /* 블러와 함께 약간의 투명도 적용 */
+            backdrop-filter: blur(20px);
+            background-color: rgba(255, 255, 255, 0.3); /* 더 투명하게 */
             display: none;
             flex-direction: column;
             align-items: center;
@@ -297,7 +313,7 @@
     </style>
 </head>
 <body>
-    <!-- Siri Music 브랜드, 항상 보이도록 수정 -->
+    <!-- Siri Music 브랜드, 항상 보이도록 수정 (블러 처리) -->
     <div class="brand">
         <a href="#" class="brand-title">Siri Music</a>
         <span class="os-version">musicOS 1.0</span>
@@ -306,24 +322,26 @@
     <button class="back-button">← 뒤로가기</button>
 
     <div class="container">
-      <!--padding-top을 없애서 스크롤하여도 Siri Music 부분이 잘보이도록 처리-->
+        <!-- 아티스트 목록 (아래로 이동) -->
         <div class="artists-grid">
             <!-- Artists will be dynamically added here -->
         </div>
 
-      <div class="artist-section">
-          <div class="artist-video-container">
-              <video class="artist-video" autoplay muted loop>
-                  <source src="" type="video/mp4">
-              </video>
-              <!-- 아티스트 비디오 오버레이, 그라데이션 조정 -->
-              <div class="artist-video-overlay"></div>
-          </div>
-          <!-- 아티스트 이름 흰색으로 표시 -->
-          <div class="artist-info">
-              <h2></h2>
-          </div>
-      </div>
+        <!-- 아티스트 섹션 (뉴모피즘 스타일) -->
+        <div class="artist-section">
+            <div class="artist-video-container">
+                <video class="artist-video" autoplay muted loop>
+                    <source src="" type="video/mp4">
+                </video>
+                 <!-- 아티스트 이름 흰색, 그림자 -->
+                <div class="artist-video-overlay">
+                  <div class="artist-info">
+                    <h2></h2>
+                </div>
+                </div>
+            </div>
+
+        </div>
 
         <div class="albums-grid">
             <!-- Albums will be dynamically added here -->
@@ -347,7 +365,7 @@
         </div>
     </div>
 
-    <!-- Full Player, 블러 배경 적용 -->
+    <!-- Full Player, 블러 및 반투명 배경 -->
     <div class="full-player">
         <button class="back-button">← 뒤로가기</button>
         <img src="" alt="Album art" style="width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px;">
@@ -365,33 +383,67 @@
             <span class="current-time">0:00</span>
             <span class="total-time">0:00</span>
         </div>
+        <!-- 가사 컨테이너 -->
         <div class="lyrics-container"></div>
     </div>
 
     <script>
-      const musicLibrary = {
-    artists: [{
-        name: 'NewJeans',
-        image: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg',
-        video: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4',
-        albums: [{
-            name: "NewJeans 2nd EP 'Get Up'",
-            cover: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
-            tracks: [{
-                number: 1,
-                title: 'ETA',
-                audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
-                lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.srt"
+        const musicLibrary = {
+            artists: [{
+                name: 'NewJeans',
+                image: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg',
+                video: 'http://www.applesodam.kro.kr/music/NewJeans/NewJeans.mp4',
+                albums: [{
+                    name: "NewJeans 2nd EP 'Get Up'",
+                    cover: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg",
+                    tracks: [
+                        {
+                            number: 1,
+                            title: 'New Jeans',
+                            audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/New Jeans.mp3",
+                            lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/New Jeans.lrc"
+                        },
+                        {
+                            number: 2,
+                            title: 'Super Shy',
+                            audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/Super Shy.mp3",
+                            lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/Super Shy.lrc"
+                        },
+                        {
+                            number: 3,
+                            title: 'ETA',
+                            audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.mp3",
+                            lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ETA.lrc"
+                        },
+                        {
+                            number: 4,
+                            title: 'Cool With You',
+                            audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/Cool With You.mp3",
+                            lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/Cool With You.lrc"
+                        },
+                        {
+                            number: 5,
+                            title: 'Get Up',
+                            audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/Get Up.mp3",
+                            lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/Get Up.lrc"
+                        },
+                        {
+                            number: 6,
+                            title: 'ASAP',
+                            audio: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ASAP.mp3",
+                            lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/ASAP.lrc"
+                        }
+                    ]
+                }]
             }]
-        }]
-    }]
-};
+        };
 
         let currentArtist = null;
         let currentAlbum = null;
         let currentTrack = null;
         let audio = new Audio();
         let isPlaying = false;
+        let currentLyrics = []; // 현재 가사 데이터 저장
 
         function initializeMusicPlayer() {
             loadArtists();
@@ -490,7 +542,7 @@
             audio.play();
             isPlaying = true;
             updateMiniPlayer();
-            loadAndDisplayLyrics(track.lyrics);
+            loadAndDisplayLyrics(track.lyrics); // 가사 로드 및 표시
         }
 
         function updateMiniPlayer() {
@@ -505,50 +557,43 @@
             });
         }
 
-      async function loadAndDisplayLyrics(lyricsUrl) {
-            try {
-                const response = await fetch(lyricsUrl);
-                const text = await response.text();
-                const lyrics = parseSRT(text);
-                displayLyrics(lyrics);
-            } catch (error) {
-                console.error('Error loading lyrics:', error);
-            }
-        }
-
-        function parseSRT(srtContent) {
-            const lines = srtContent.trim().split('\n\n');
-            return lines.map(block => {
-                const parts = block.split('\n');
-                const times = parts[1].split(' --> ');
-                // 시간 형식이 올바르지 않은 경우에 대한 예외 처리 (예: 빈 문자열)
-                if (times.length !== 2) {
-                    return {
-                        startTime: 0,
-                        endTime: 0,
-                        text: ''
-                    };
+        // LRC 파싱 함수
+        function parseLRC(lrcContent) {
+            const lines = lrcContent.trim().split('\n');
+            const lyrics = [];
+            lines.forEach(line => {
+                const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+                if (match) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseFloat(match[2]);
+                    const text = match[3].trim();
+                    const time = minutes * 60 + seconds;
+                    lyrics.push({ time: time, text: text });
                 }
-                return {
-                    startTime: timeToSeconds(times[0]),
-                    endTime: timeToSeconds(times[1]),
-                    text: parts.slice(2).join('\n')
-                };
-            }).filter(line => line.text !== ''); // 빈 텍스트를 가진 라인 필터링
+            });
+            return lyrics.filter(line => line.text !== ''); // 빈 텍스트 필터링
         }
 
-        function timeToSeconds(timeStr) {
-            const parts = timeStr.split(',');
-            const [hours, minutes, seconds] = parts[0].split(':').map(Number);
-            const milliseconds = parts.length > 1 ? Number(parts[1]) : 0;
-            return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
-        }
-
+        // 가사 표시
         function displayLyrics(lyrics) {
             const container = document.querySelector('.lyrics-container');
             container.innerHTML = lyrics.map(line =>
-                `<div class="lyrics-line" data-start="${line.startTime}" data-end="${line.endTime}">${line.text}</div>`
+                `<div class="lyrics-line" data-time="${line.time}">${line.text}</div>`
             ).join('');
+        }
+
+        // 가사 로드 및 표시 (비동기)
+        async function loadAndDisplayLyrics(lyricsUrl) {
+          try {
+            const response = await fetch(lyricsUrl);
+            const text = await response.text();
+            currentLyrics = parseLRC(text); // 파싱된 가사 저장
+            displayLyrics(currentLyrics);
+          } catch (error) {
+            console.error('Error loading lyrics:', error);
+            currentLyrics = []; // 에러 발생 시 빈 배열로 초기화
+            displayLyrics(currentLyrics); // 빈 가사 표시
+          }
         }
 
         function setupEventListeners() {
@@ -659,30 +704,37 @@
                 display.textContent = formatTime(audio.duration)
             );
 
-            updateLyrics();
+            updateLyrics(); // 가사 업데이트
         }
 
+        // 시간 포맷 (mm:ss)
         function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00';
+            if (isNaN(seconds)) return '0:00'; // NaN 처리
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = Math.floor(seconds % 60);
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
+        // 가사 업데이트
         function updateLyrics() {
-            const lines = document.querySelectorAll('.lyrics-line');
-            lines.forEach(line => {
-                const startTime = parseFloat(line.dataset.start);
-                const endTime = parseFloat(line.dataset.end);
+            if (!currentLyrics) return; // 가사 데이터 없으면 리턴
 
-                if (audio.currentTime >= startTime && audio.currentTime <= endTime) {
+            const currentTime = audio.currentTime;
+            const lines = document.querySelectorAll('.lyrics-line');
+
+            lines.forEach(line => {
+                const time = parseFloat(line.dataset.time);
+
+                // 현재 재생 시간과 가사 시간을 비교하여 active 클래스 처리
+                if (currentTime >= time && currentTime < (time + 0.5)) { // 약간의 시간차 허용
                     line.classList.add('active');
-                    line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                     line.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
                     line.classList.remove('active');
                 }
             });
         }
+
 
         // Initialize the music player when the page loads
         document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
