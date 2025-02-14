@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Siri Music - musicOS 1.0</title>
+    <title>Siri Music</title>
     <style>
         * {
             margin: 0;
@@ -15,19 +15,18 @@
             background-color: #f0f0f0;
         }
 
-        /* Siri Music 부분을 항상 보이도록 수정 및 블러 처리된 배경 추가 */
         .brand {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.7); /* 반투명 배경 */
-            backdrop-filter: blur(10px); /* 블러 효과 */
-            padding: 20px; /* 패딩 추가 */
-            display: flex; /* Flexbox 사용 */
-            align-items: center; /* 수직 정렬 */
-            justify-content: space-between; /* Siri Music과 musicOS 1.0 사이 공간 최대화 */
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .brand-title {
@@ -35,18 +34,19 @@
             color: #000;
             text-decoration: none;
             font-weight: 600;
+            display: flex; /* Flexbox 사용 */
+            align-items: center; /* 수직 정렬 */
+            gap: 10px;       /* Siri Music과 musicOS 1.0 사이 간격 */
         }
 
         .os-version {
             font-size: 12px;
             color: rgba(0, 0, 0, 0.5);
-            align-self: flex-end; /* musicOS 1.0을 오른쪽 아래로 정렬 */
-            margin-bottom: 5px; /* 아래쪽 여백 추가 (선택 사항) */
         }
 
         .back-button {
             position: fixed;
-            top: 80px; /* brand 높이 및 패딩 고려, 더 아래로 내림 */
+            top: 80px;
             left: 20px;
             background: rgba(255, 255, 255, 0.9);
             border: none;
@@ -60,7 +60,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 100px 20px 20px; /* 상단 패딩 조정 (brand 높이 고려) */
+            padding: 100px 20px 20px;
         }
 
         .artists-grid {
@@ -99,22 +99,22 @@
             margin-bottom: 40px;
         }
 
-        /* 뉴모피즘 스타일 적용 */
         .artist-video-container {
             position: relative;
             width: 100%;
             height: 400px;
             border-radius: 25px;
-            overflow: hidden; /* 비디오가 컨테이너 밖으로 나가지 않도록 */
+            overflow: hidden;
             box-shadow:
-                10px 10px 20px #c9c9c9, /* 외부 그림자 (오른쪽 아래) */
-                -10px -10px 20px #ffffff; /* 외부 그림자 (왼쪽 위) */
+                10px 10px 20px #c9c9c9,
+                -10px -10px 20px #ffffff;
         }
-      .artist-video {
+
+        .artist-video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            position: absolute; /* 절대 위치 */
+            position: absolute;
             top: 0;
             left: 0;
         }
@@ -125,7 +125,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.7) 70%); /* 그라데이션 범위 조정 */
+            background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4) 90%); /* 그라데이션 조정 */
             pointer-events: none;
             display: flex;
             flex-direction: column;
@@ -167,6 +167,7 @@
         .album-info {
             padding: 10px 20px;
         }
+
         .tracks-list {
             display: none;
             background: white;
@@ -219,12 +220,12 @@
             object-fit: cover;
         }
 
-      .player-controls {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-right: 0px;
-      }
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 0px;
+        }
 
         .control-button {
             background: none;
@@ -240,7 +241,6 @@
             transform: scale(1.1);
         }
 
-        /* Full Player 블러 및 반투명 배경 */
         .full-player {
             position: fixed;
             top: 0;
@@ -248,11 +248,8 @@
             width: 100%;
             height: 100%;
             backdrop-filter: blur(20px);
-            background-color: rgba(255, 255, 255, 0.3); /* 더 투명하게 */
+            background-color: rgba(255, 255, 255, 0.3);
             display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             z-index: 2000;
             padding: 20px;
         }
@@ -262,6 +259,31 @@
             top: 20px;
             left: 20px;
             display: block;
+        }
+
+        .full-player-content {
+            display: flex; /* Flexbox 사용 */
+            height: 100%; /* 컨텐츠 영역을 화면 높이에 맞춤 */
+            width: 100%;
+        }
+
+        .player-left {
+            flex: 1; /* 왼쪽 영역이 가능한 공간을 모두 차지 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .player-right {
+            flex: 1; /* 오른쪽 영역도 동일하게 */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 가사 중앙 정렬 */
+            justify-content: center; /* 수직 중앙 정렬 */
+            padding: 20px;
+            overflow-y: auto; /* 가사가 넘칠 경우 스크롤 */
         }
 
         .progress-container {
@@ -292,12 +314,8 @@
         }
 
         .lyrics-container {
-            margin-top: 30px;
-            height: 200px;
-            overflow-y: auto;
-            text-align: center;
-            width: 80%;
-            max-width: 600px;
+            width: 100%; /* 가사 컨테이너 너비 조정 */
+            text-align: center; /* 텍스트 중앙 정렬 */
         }
 
         .lyrics-line {
@@ -311,50 +329,39 @@
             opacity: 1;
             color: #0a84ff;
             font-weight: bold;
-             /* 팝업 효과를 위한 트랜지션 추가 */
             transition: transform 0.2s ease-out;
-            transform: scale(1.1); /* 팝업 효과 */
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
-    <!-- Siri Music 브랜드, 항상 보이도록 수정 (블러 처리) -->
     <div class="brand">
-        <a href="#" class="brand-title">Siri Music</a>
-        <span class="os-version">musicOS 1.0</span>
+        <div class="brand-title">
+          Siri Music
+          <span class="os-version">musicOS 1.0</span>
+        </div>
     </div>
 
     <button class="back-button">← 뒤로가기</button>
 
     <div class="container">
-        <!-- 아티스트 목록 (아래로 이동) -->
-        <div class="artists-grid">
-            <!-- Artists will be dynamically added here -->
-        </div>
+        <div class="artists-grid"></div>
 
-        <!-- 아티스트 섹션 (뉴모피즘 스타일) -->
         <div class="artist-section">
             <div class="artist-video-container">
                 <video class="artist-video" autoplay muted loop>
                     <source src="" type="video/mp4">
                 </video>
-                 <!-- 아티스트 이름 흰색, 그림자 -->
                 <div class="artist-video-overlay">
                   <div class="artist-info">
                     <h2></h2>
                 </div>
                 </div>
             </div>
-
         </div>
 
-        <div class="albums-grid">
-            <!-- Albums will be dynamically added here -->
-        </div>
-
-        <div class="tracks-list">
-            <!-- Tracks will be dynamically added here -->
-        </div>
+        <div class="albums-grid"></div>
+        <div class="tracks-list"></div>
     </div>
 
     <div class="mini-player">
@@ -370,26 +377,30 @@
         </div>
     </div>
 
-    <!-- Full Player, 블러 및 반투명 배경 -->
     <div class="full-player">
         <button class="back-button">← 뒤로가기</button>
-        <img src="" alt="Album art" style="width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px;">
-        <h2 class="track-name"></h2>
-        <p class="artist-name"></p>
-        <div class="player-controls">
-            <button class="control-button prev-button">⏮</button>
-            <button class="control-button play-pause-button">▶</button>
-            <button class="control-button next-button">⏭</button>
+        <div class="full-player-content">
+            <div class="player-left">
+                <img src="" alt="Album art" style="width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px;">
+                <h2 class="track-name"></h2>
+                <p class="artist-name"></p>
+                <div class="player-controls">
+                    <button class="control-button prev-button">⏮</button>
+                    <button class="control-button play-pause-button">▶</button>
+                    <button class="control-button next-button">⏭</button>
+                </div>
+                <div class="progress-container">
+                    <div class="progress"></div>
+                </div>
+                <div class="time-display">
+                    <span class="current-time">0:00</span>
+                    <span class="total-time">0:00</span>
+                </div>
+            </div>
+            <div class="player-right">
+                <div class="lyrics-container"></div>
+            </div>
         </div>
-        <div class="progress-container">
-            <div class="progress"></div>
-        </div>
-        <div class="time-display">
-            <span class="current-time">0:00</span>
-            <span class="total-time">0:00</span>
-        </div>
-        <!-- 가사 컨테이너 -->
-        <div class="lyrics-container"></div>
     </div>
 
     <script>
@@ -448,9 +459,8 @@
         let currentTrack = null;
         let audio = new Audio();
         let isPlaying = false;
-        let currentLyrics = []; // 현재 가사 데이터 저장
-        let highlightedLyric = null; // 현재 하이라이트된 가사 라인
-
+        let currentLyrics = [];
+        let highlightedLyric = null;
 
         function initializeMusicPlayer() {
             loadArtists();
@@ -488,9 +498,8 @@
 
         const artistVideo = document.querySelector('.artist-video');
         artistVideo.src = artist.video;
-        artistVideo.style.display = 'block'; // 비디오 요소 표시
+        artistVideo.style.display = 'block';
         document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
-
 
         loadAlbums(artist);
     }
@@ -549,8 +558,8 @@
             audio.play();
             isPlaying = true;
             updateMiniPlayer();
-            updateFullPlayer(); // Full Player 정보도 업데이트
-            loadAndDisplayLyrics(track.lyrics); // 가사 로드 및 표시
+            updateFullPlayer();
+            loadAndDisplayLyrics(track.lyrics);
         }
 
         function updateMiniPlayer() {
@@ -572,7 +581,6 @@
           }
       }
 
-        // LRC 파싱 함수
         function parseLRC(lrcContent) {
             const lines = lrcContent.trim().split('\n');
             const lyrics = [];
@@ -586,10 +594,9 @@
                     lyrics.push({ time: time, text: text });
                 }
             });
-            return lyrics.filter(line => line.text !== ''); // 빈 텍스트 필터링
+            return lyrics.filter(line => line.text !== '');
         }
 
-        // 가사 표시
         function displayLyrics(lyrics) {
             const container = document.querySelector('.lyrics-container');
             container.innerHTML = lyrics.map(line =>
@@ -597,17 +604,16 @@
             ).join('');
         }
 
-        // 가사 로드 및 표시 (비동기)
         async function loadAndDisplayLyrics(lyricsUrl) {
           try {
             const response = await fetch(lyricsUrl);
             const text = await response.text();
-            currentLyrics = parseLRC(text); // 파싱된 가사 저장
+            currentLyrics = parseLRC(text);
             displayLyrics(currentLyrics);
           } catch (error) {
             console.error('Error loading lyrics:', error);
-            currentLyrics = []; // 에러 발생 시 빈 배열로 초기화
-            displayLyrics(currentLyrics); // 빈 가사 표시
+            currentLyrics = [];
+            displayLyrics(currentLyrics);
           }
         }
 
@@ -626,7 +632,6 @@
             });
 
             document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
-
             document.querySelector('.progress-container').addEventListener('click', seekAudio);
         }
 
@@ -665,7 +670,7 @@
             document.querySelector('.full-player img').src = currentAlbum.cover;
             document.querySelector('.full-player .track-name').textContent = currentTrack.title;
             document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
-            updateFullPlayer(); // 추가: Full Player 정보 업데이트
+            updateFullPlayer();
         }
 
         function hideFullPlayer() {
@@ -688,7 +693,7 @@
             const currentIndex = tracks.findIndex(track => track === currentTrack);
             if (currentIndex > 0) {
                 playTrack(tracks[currentIndex - 1]);
-            } else { // 첫 번째 트랙이면 마지막 트랙으로
+            } else {
                 playTrack(tracks[tracks.length - 1]);
             }
         }
@@ -698,7 +703,7 @@
             const currentIndex = tracks.findIndex(track => track === currentTrack);
             if (currentIndex < tracks.length - 1) {
                 playTrack(tracks[currentIndex + 1]);
-            } else { // 마지막 트랙이면 첫 번째 트랙으로
+            } else {
                 playTrack(tracks[0]);
             }
         }
@@ -725,53 +730,45 @@
                 display.textContent = formatTime(audio.duration)
             );
 
-            updateLyrics(); // 가사 업데이트
+            updateLyrics();
         }
 
-        // 시간 포맷 (mm:ss)
         function formatTime(seconds) {
-            if (isNaN(seconds)) return '0:00'; // NaN 처리
+            if (isNaN(seconds)) return '0:00';
             const minutes = Math.floor(seconds / 60);
             const remainingSeconds = Math.floor(seconds % 60);
             return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
         }
 
-// 가사 업데이트 함수 수정
-function updateLyrics() {
-    if (!currentLyrics.length) return; // 빈 배열인 경우 처리
+        function updateLyrics() {
+            if (!currentLyrics.length) return;
 
-    const currentTime = audio.currentTime;
-    let nextLyricIndex = -1;
+            const currentTime = audio.currentTime;
+            let nextLyricIndex = -1;
 
-    // 현재 시간보다 뒤에 있는 가사 중 가장 빠른 가사 찾기
-    for (let i = 0; i < currentLyrics.length; i++) {
-        if (currentLyrics[i].time > currentTime) {
-            nextLyricIndex = i;
-            break;
-        }
-    }
+            for (let i = 0; i < currentLyrics.length; i++) {
+                if (currentLyrics[i].time > currentTime) {
+                    nextLyricIndex = i;
+                    break;
+                }
+            }
 
-    // 현재 표시해야 할 가사 인덱스 (다음 가사가 없으면 마지막 가사, 있으면 이전 가사)
-    let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
+            let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
 
-    // 이전 가사 하이라이트 제거
-    if (highlightedLyric) {
-        highlightedLyric.classList.remove('active');
-    }
+            if (highlightedLyric) {
+                highlightedLyric.classList.remove('active');
+            }
 
-    // 현재 가사 하이라이트, 없을 수도 있음 (0보다 작으면)
-    if (currentLyricIndex >= 0) {
-        const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
+            if (currentLyricIndex >= 0) {
+                const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
 
-        if (lyricLine) {
-            lyricLine.classList.add('active');
-            lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            highlightedLyric = lyricLine; // 현재 하이라이트된 가사 업데이트
-        }
-    }
+                if (lyricLine) {
+                    lyricLine.classList.add('active');
+                    lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    highlightedLyric = lyricLine;
+                }
+            }
 }
-
-        // Initialize the music player when the page loads
         document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
     </script>
 </body>
