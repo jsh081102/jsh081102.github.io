@@ -44,7 +44,7 @@
 
         .back-button {
             position: fixed;
-            top: 70px; /* brand 높이 및 패딩 고려 */
+            top: 70px; /* brand 높이 및 패딩 고려, 더 아래로 내림 */
             left: 20px;
             background: rgba(255, 255, 255, 0.9);
             border: none;
@@ -387,7 +387,7 @@
         <div class="lyrics-container"></div>
     </div>
 
- <script>
+    <script>
         const musicLibrary = {
             artists: [{
                 name: 'NewJeans',
@@ -443,6 +443,7 @@
         let currentTrack = null;
         let audio = new Audio();
         let isPlaying = false;
+        let currentLyrics = []; // 현재 가사 데이터 저장
 
         function initializeMusicPlayer() {
             loadArtists();
@@ -556,51 +557,43 @@
             });
         }
 
-        // SRT 파싱 함수
-        function parseSRT(srtContent) {
-            const lines = srtContent.trim().split('\n\n'); // 빈 줄로 분리
-            return lines.map(block => {
-              const parts = block.split('\n');
-              const times = parts[1].split(' --> ');
-              // 예외 처리: 시간 형식이 올바르지 않거나, 빈 문자열인 경우
-              if (times.length !== 2) {
-                return { startTime: 0, endTime: 0, text: '' };
-              }
-              return {
-                startTime: timeToSeconds(times[0]),
-                endTime: timeToSeconds(times[1]),
-                text: parts.slice(2).join('\n') // 가사 텍스트
-              };
-            }).filter(line => line.text !== ''); // 빈 텍스트 필터링
-
-        }
-
-        // 시간 문자열을 초로 변환
-        function timeToSeconds(timeStr) {
-            const parts = timeStr.split(','); // 밀리초 부분 분리
-            const [hours, minutes, seconds] = parts[0].split(':').map(Number); // 시, 분, 초
-            const milliseconds = parts.length > 1 ? Number(parts[1]) : 0; // 밀리초 (없으면 0)
-            return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+        // LRC 파싱 함수
+        function parseLRC(lrcContent) {
+            const lines = lrcContent.trim().split('\n');
+            const lyrics = [];
+            lines.forEach(line => {
+                const match = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+                if (match) {
+                    const minutes = parseInt(match[1]);
+                    const seconds = parseFloat(match[2]);
+                    const text = match[3].trim();
+                    const time = minutes * 60 + seconds;
+                    lyrics.push({ time: time, text: text });
+                }
+            });
+            return lyrics.filter(line => line.text !== ''); // 빈 텍스트 필터링
         }
 
         // 가사 표시
         function displayLyrics(lyrics) {
             const container = document.querySelector('.lyrics-container');
             container.innerHTML = lyrics.map(line =>
-                `<div class="lyrics-line" data-start="${line.startTime}" data-end="${line.endTime}">${line.text}</div>`
+                `<div class="lyrics-line" data-time="${line.time}">${line.text}</div>`
             ).join('');
         }
 
         // 가사 로드 및 표시 (비동기)
         async function loadAndDisplayLyrics(lyricsUrl) {
-            try {
-                const response = await fetch(lyricsUrl); // 파일 가져오기
-                const text = await response.text();      // 텍스트로 변환
-                const lyrics = parseSRT(text);        // SRT 파싱
-                displayLyrics(lyrics);                // 가사 표시
-            } catch (error) {
-                console.error('Error loading lyrics:', error);
-            }
+          try {
+            const response = await fetch(lyricsUrl);
+            const text = await response.text();
+            currentLyrics = parseLRC(text); // 파싱된 가사 저장
+            displayLyrics(currentLyrics);
+          } catch (error) {
+            console.error('Error loading lyrics:', error);
+            currentLyrics = []; // 에러 발생 시 빈 배열로 초기화
+            displayLyrics(currentLyrics); // 빈 가사 표시
+          }
         }
 
         function setupEventListeners() {
@@ -724,19 +717,24 @@
 
         // 가사 업데이트
         function updateLyrics() {
+            if (!currentLyrics) return; // 가사 데이터 없으면 리턴
+
+            const currentTime = audio.currentTime;
             const lines = document.querySelectorAll('.lyrics-line');
+
             lines.forEach(line => {
-                const startTime = parseFloat(line.dataset.start);
-                const endTime = parseFloat(line.dataset.end);
-                // 현재 재생 시간이 가사 범위 내에 있으면 active 클래스 추가, 아니면 제거
-                if (audio.currentTime >= startTime && audio.currentTime <= endTime) {
+                const time = parseFloat(line.dataset.time);
+
+                // 현재 재생 시간과 가사 시간을 비교하여 active 클래스 처리
+                if (currentTime >= time && currentTime < (time + 0.5)) { // 약간의 시간차 허용
                     line.classList.add('active');
-                    line.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 해당 가사로 스크롤
+                     line.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 } else {
                     line.classList.remove('active');
                 }
             });
         }
+
 
         // Initialize the music player when the page loads
         document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
