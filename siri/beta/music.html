@@ -82,54 +82,17 @@
 
     /* Progress Bar */
     .progress-container {
-      width: 95%;
-      max-width: 400px;
-      height: 8px;
-      background: #ddd;
-      border-radius: 100px; /* Changed to 100px for fully rounded ends */
-      margin: 20px 0;
-      cursor: pointer;
-      position: relative;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      display: flex; /* Added to center the progress bar vertically */
-      align-items: center; /* Added to center the progress bar vertically */
-      overflow: hidden; /* Added to clip progress and knob within rounded corners */
+      width: 95%; max-width: 400px; height: 8px; background: #ddd; border-radius: 10px; /* Changed border-radius to make it round */
+      margin: 20px 0; cursor: pointer; position: relative; /* 그림자 추가 */ box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      overflow: hidden; /* Add overflow: hidden to ensure rounded corners work */
     }
-    .progress {
-      height: 100%;
-      background: #0a84ff;
-      border-radius: 100px; /* Changed to 100px for fully rounded ends */
-      width: 0;
-      transition: width 0.1s ease;
-    }
-    .progress-knob {
-      position: absolute;
-      top: 50%; /* Vertically center the knob */
-      transform: translateY(-50%); /* Vertically center the knob */
-      right: -7px; /* Adjust to align with the end of the progress bar */
-      width: 14px;
-      height: 14px;
-      background-color: #0a84ff;
-      border-radius: 50%;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-      pointer-events: none;
-    }
+    .progress { height: 100%; background: #0a84ff; border-radius: 10px; /* Changed border-radius to match container */ width: 0; transition: width 0.1s ease; }
+    .progress-knob { position: absolute; top: -3px; /* Adjusted top to align knob */ right: -7px; /* Adjusted right to center knob on the progress end */ width: 14px; height: 14px; background-color: #0a84ff; border-radius: 50%; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
     .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #666; font-size: 12px; /* 그림자 추가 */ text-shadow: 0 1px 1px rgba(0,0,0,0.2); } /* time-display 그림자 추가 */
 
     /* Lyrics */
-  .lyrics-container {
-    width: 100%;
-    text-align: center;
-    color: rgba(255,255,255,0.8);
-    overflow-y: auto;
-    max-height: 50vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-bottom: 75vh; /* Increased padding-bottom for overscroll effect (1.5 times lyrics area) */
-    }
+  .lyrics-container { width: 100%; text-align: center; color: rgba(255,255,255,0.8); overflow-y: auto; max-height: 75vh; /* Increased max-height for more scroll */ display: flex; flex-direction: column; align-items: center;  } /* max-height: 50vh -> 75vh 로 수정 */
   .lyrics-line { padding: 4px; transition:  transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s, background-color 0.3s ease; opacity: 0.5; display: flex; align-items: center; justify-content: center;  cursor: pointer; font-size: 0.9em; border-radius: 5px; /* 가사 배경 둥글게 */ } /* 가사 하이라이트 애니메이션 개선 및 둥글게 */
   .lyrics-line.active { font-size: 1.2em; opacity: 1; color: white; font-weight: bold;  transform: scale(1.05); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); transition: transform 0.1s ease-out; background-color: rgba(255,255,255,0.15); /* 하이라이트 가사 배경색 추가 */ } /* 하이라이트 가사 배경색 추가 */
   .lyrics-line:hover { background-color: rgba(255,255,255,0.05); } /* 가사 호버 효과 추가 */
@@ -172,17 +135,11 @@
       .player-left, .player-right { padding: 20px; }
       .player-right { padding-top: 50px; }
       .full-player-album-art { width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px; }
-      .progress-container {
-        max-width: 800px;
-        height: 10px;
-        border-radius: 100px; /* Changed to 100px for fully rounded ends */
-        margin: 25px 0;
-        box-shadow: 0 2px 7px rgba(0,0,0,0.2);
-      }
-      .progress { border-radius: 100px; } /* Changed to 100px for fully rounded ends */
-      .progress-knob { top: 50%; transform: translateY(-50%); width: 16px; height: 16px; right: -8px; } /* Adjusted knob position and size */
+      .progress-container { max-width: 800px; height: 10px; border-radius: 10px; /* 그림자 추가 */ margin: 25px 0; /* 그림자 추가 */ box-shadow: 0 2px 7px rgba(0,0,0,0.2); overflow: hidden; } /* 프로그레스 컨테이너 그림자 추가 및 border-radius 수정 */
+      .progress { border-radius: 10px; } /* progress border-radius 수정 */
+      .progress-knob { top: -4px; width: 16px; height: 16px; right: -8px; } /* progress-knob 크기 및 위치 수정 */
       .time-display { max-width: 800px; font-size: 14px; }
-      .lyrics-container { max-height: 60vh; padding-bottom: 90vh; /* Increased padding-bottom for overscroll effect (1.5 times lyrics area) */}
+      .lyrics-container { max-height: 60vh; }
       .lyrics-line { padding: 5px; font-size: 1em; }
       .lyrics-line.active { font-size: 1.5em;  transform: scale(1.1); }
       .full-player .track-name, .full-player .artist-name { margin-bottom: 5px; font-size: 1.5em; }
@@ -228,7 +185,8 @@
       }
       .progress-container {
         max-width: 95%; /* 프로그레스 컨테이너 max-width 조정 */
-        border-radius: 100px; /* Changed to 100px for fully rounded ends */
+        border-radius: 10px; /* border-radius 수정 */
+        overflow: hidden; /* overflow hidden 추가 */
       }
       .time-display {
         max-width: 95%; /* 시간 표시 max-width 조정 */
@@ -242,9 +200,6 @@
       }
       .full-player .player-controls, .full-player .progress-container, .full-player .time-display { /* 모바일 컨트롤러 요소 그림자 추가 */
         text-shadow: none; /* 텍스트 그림자 제거 (선택 사항) */
-      }
-       .lyrics-container {
-        padding-bottom: 75vh; /* Increased padding-bottom for overscroll effect (1.5 times lyrics area) */
       }
     }
 
