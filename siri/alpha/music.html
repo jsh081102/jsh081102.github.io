@@ -194,6 +194,7 @@
         border-radius: 50px;
         width: 0;
         transition: width 0.1s ease;
+        transition-duration: 0s !important; /* 버그 수정 */
     }
 
     .progress-knob {
@@ -209,6 +210,7 @@
         transition: opacity 0.2s ease;
         pointer-events: none;
         box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #f9f9f9; /* 손잡이 그림자 */
+        transition-duration: 0s !important; /* 버그 수정 */
     }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
     .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #eee; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); color: #fff; } /* 텍스트 색상 흰색으로 */
@@ -218,9 +220,16 @@
         text-align: center;
         color: rgba(255, 255, 255, 0.8);
         overflow-y: scroll;
+        overflow-x: hidden; /* 가사 스크롤 바 및 좌우 움직임 제거 */
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
         max-height: calc(100vh - 450px);
         padding: 10px;
         margin-bottom: 20px;
+        border-radius: 15px; /* 가사 박스 배경 곡률 적용 */
+    }
+    .lyrics-container::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
     }
 
     .lyrics-line {
@@ -233,6 +242,7 @@
         font-size: 1em; /* 기본 크기 약간 증가 */
         color: #eee; /* 가사 색상 변경 */
         text-shadow: 0 1px 1px rgba(0,0,0,0.3); /* 텍스트 그림자 추가 */
+        white-space: nowrap; /* 가사 좌우 움직임 제거 */
     }
     .lyrics-line.active {
         font-size: 1.4em; /* 활성 가사 크기 증가 */
@@ -344,23 +354,21 @@
         text-shadow: none;
       }
     }
-      /*뒤로가기 애니메이션*/
-      @keyframes slideOutLeft {
+      /* 뒤로가기 애니메이션 제거 및 fade-out 애니메이션 추가 */
+      @keyframes fadeOut {
           from {
-            transform: translateX(0);
+            opacity: 1;
           }
           to {
-            transform: translateX(-100%);
+            opacity: 0;
+            display: none; /* 애니메이션 완료 후 display: none 처리 */
           }
         }
 
-        .slide-out-left {
-          animation: slideOutLeft 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) both;
+        .fade-out {
+          animation: fadeOut 0.3s ease-out forwards;
         }
 
-    .slide-out-left {
-      animation: slideOutLeft 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
-    }
   </style>
 </head>
 <body>
@@ -696,15 +704,15 @@
     const backButton = document.querySelector('.back-button');
 
     if (document.querySelector('.tracks-list').style.display === 'block') {
-      document.querySelector('.tracks-list').classList.add('slide-out-left');
+      document.querySelector('.tracks-list').classList.add('fade-out');
       setTimeout(() => {
         document.querySelector('.tracks-list').style.display = 'none';
-        document.querySelector('.tracks-list').classList.remove('slide-out-left');
+        document.querySelector('.tracks-list').classList.remove('fade-out');
         document.querySelector('.albums-grid').style.display = 'grid';
-      }, 500); // Matches the animation duration
+      }, 300); // 애니메이션 시간과 일치
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-      document.querySelector('.albums-grid').classList.add('slide-out-left');
-      document.querySelector('.artist-section').classList.add('slide-out-left');
+      document.querySelector('.albums-grid').classList.add('fade-out');
+      document.querySelector('.artist-section').classList.add('fade-out');
 
        setTimeout(() => {
             document.querySelector('.artist-section').style.display = 'none';
@@ -712,9 +720,9 @@
             document.querySelector('.artists-grid').style.display = 'grid';
             document.querySelector('.back-button').style.display = 'none';
 
-             document.querySelector('.artists-grid').classList.remove('slide-out-left');
-             document.querySelector('.artist-section').classList.remove('slide-out-left');
-        }, 500);
+             document.querySelector('.artists-grid').classList.remove('fade-out');
+             document.querySelector('.artist-section').classList.remove('fade-out');
+        }, 300);
 
 
     }
@@ -815,8 +823,6 @@
         let percent = (e.clientX - rect.left) / rect.width;
         percent = Math.max(0, Math.min(1, percent)); // Ensure 0-1 range
         audio.currentTime = percent * audio.duration;
-
-        // 진행바와 손잡이 위치 업데이트
         document.querySelector('.progress').style.width = `${percent * 100}%`;
         document.querySelector('.progress-knob').style.left = `${percent * 100}%`;
         }
