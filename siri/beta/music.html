@@ -197,6 +197,40 @@
       }
     }
 
+    /* 기존 스타일 유지 */
+
+    /* 가사 스타일 수정 */
+    .lyrics-line.active {
+      font-size: 1.2em;
+      opacity: 1;
+      color: white;
+      font-weight: bold;
+      transform: scale(1.05);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease-out, color 0.3s ease, opacity 0.3s ease; /* 애니메이션 부드럽게 */
+    }
+
+    /* 프로그레스 바 색상 변경 */
+    .progress {
+      height: 100%;
+      background: white; /* 기존 파란색(#0a84ff)에서 흰색으로 변경 */
+      border-radius: 4px;
+      width: 0;
+      transition: width 0.1s ease;
+    }
+
+    .progress-knob {
+      position: absolute;
+      top: -4px;
+      right: 0px;
+      width: 14px;
+      height: 14px;
+      background-color: white; /* 기존 파란색(#0a84ff)에서 흰색으로 변경 */
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -649,7 +683,7 @@
             const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
             if (lyricLine) {
                 lyricLine.classList.add('active');
-                // lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 화면 이동 삭제
+                lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 중앙 정렬 추가
                 highlightedLyric = lyricLine;
             }
         }
