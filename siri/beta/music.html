@@ -75,29 +75,29 @@
     /* Fullscreen Player */
     .full-player { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom right, #a8b8fc, #84ccf0); display: none; z-index: 2000; padding: 15px; overflow: hidden; }
     .full-player .back-button { position: absolute; top: 15px; left: 15px; display: block; }
-    .full-player-content { display: flex; flex-direction: column; height: 100%; width: 100%; }
+    .full-player-content { display: flex; flex-direction: column; height: 100%; width: 100%; /* flex-direction 변경 및 그림자 추가를 위한 display:flex 추가 */ display: flex; } /* flex-direction: column 삭제 및 display:flex 추가 */
     .player-left, .player-right { flex: none; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .player-right { overflow-y: auto; padding-top: 30px; }
     .full-player-album-art { width: 200px; height: 200px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); transition: transform 0.5s ease, opacity 0.5s ease; opacity: 1; transform: scale(1); }
 
     /* Progress Bar */
-    .progress-container { width: 95%; max-width: 400px; height: 8px; background: #ddd; border-radius: 4px; margin: 20px 0; cursor: pointer; position: relative; /* 그림자 추가 */ box-shadow: 0 2px 5px rgba(0,0,0,0.3); } /* 음악 시간 컨트롤러 그림자 추가 */
+    .progress-container { width: 95%; max-width: 400px; height: 8px; background: #ddd; border-radius: 4px; margin: 20px 0; cursor: pointer; position: relative; /* 그림자 추가 */ box-shadow: 0 2px 5px rgba(0,0,0,0.2); } /* progress bar 그림자 추가 */
     .progress { height: 100%; background: #0a84ff; border-radius: 4px; width: 0; transition: width 0.1s ease; }
     .progress-knob { position: absolute; top: -4px; right: 0px; width: 14px; height: 14px; background-color: #0a84ff; border-radius: 50%; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
-    .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #666; font-size: 12px; }
+    .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #666; font-size: 12px; /* 그림자 추가 */ text-shadow: 0 1px 1px rgba(0,0,0,0.2); } /* time-display 그림자 추가 */
 
     /* Lyrics */
   .lyrics-container { width: 100%; text-align: center; color: rgba(255,255,255,0.8); overflow-y: auto; max-height: 50vh; display: flex; flex-direction: column; align-items: center;  }
-  .lyrics-line { padding: 4px; transition:  transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s; opacity: 0.5; display: flex; align-items: center; justify-content: center;  cursor: pointer; font-size: 0.9em; } /* 각각의 텍스트로 취급 및 애니메이션 개선 */
-  .lyrics-line.active { font-size: 1.2em; opacity: 1; color: white; font-weight: bold;  transform: scale(1.05); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease-out; } /* 하이라이트 애니메이션 개선 */
-
+  .lyrics-line { padding: 4px; transition:  transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s, background-color 0.3s ease; opacity: 0.5; display: flex; align-items: center; justify-content: center;  cursor: pointer; font-size: 0.9em; border-radius: 5px; /* 가사 배경 둥글게 */ } /* 가사 하이라이트 애니메이션 개선 및 둥글게 */
+  .lyrics-line.active { font-size: 1.2em; opacity: 1; color: white; font-weight: bold;  transform: scale(1.05); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); transition: transform 0.1s ease-out; background-color: rgba(255,255,255,0.15); /* 하이라이트 가사 배경색 추가 */ } /* 하이라이트 가사 배경색 추가 */
+  .lyrics-line:hover { background-color: rgba(255,255,255,0.05); } /* 가사 호버 효과 추가 */
 
     /* Text Styles */
     .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
 
     /* Responsive Design */
-    @media (min-width: 768px) { /* 데스크탑 및 태블릿 환경 */
+    @media (min-width: 768px) {
       .brand { padding: 20px; }
       .brand-title { font-size: 24px; gap: 10px; }
       .os-version { font-size: 12px; left: 110px; }
@@ -131,7 +131,7 @@
       .player-left, .player-right { padding: 20px; }
       .player-right { padding-top: 50px; }
       .full-player-album-art { width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px; }
-      .progress-container { max-width: 800px; height: 10px; border-radius: 5px; margin: 25px 0; }
+      .progress-container { max-width: 800px; height: 10px; border-radius: 5px; margin: 25px 0; /* 그림자 추가 */ box-shadow: 0 2px 7px rgba(0,0,0,0.2); } /* 프로그레스 컨테이너 그림자 추가 */
       .progress { border-radius: 5px; }
       .progress-knob { top: -3px; width: 16px; height: 16px; }
       .time-display { max-width: 800px; font-size: 14px; }
@@ -139,28 +139,64 @@
       .lyrics-line { padding: 5px; font-size: 1em; }
       .lyrics-line.active { font-size: 1.5em;  transform: scale(1.1); }
       .full-player .track-name, .full-player .artist-name { margin-bottom: 5px; font-size: 1.5em; }
-      .full-player-content { flex-direction: row; /* 가사-컨트롤러 좌우 배치 */ }
-      .player-left { width: 40%; /* 컨트롤러 영역 너비 조정 */ }
-      .player-right { width: 60%; /* 가사 영역 너비 조정 */ padding-top: 15px;} /* 가사 영역 너비 조정 및 padding-top 조정 */
-      .full-player-album-art { width: 250px; height: 250px; } /* 앨범 아트 크기 조정 */
-      .progress-container { max-width: 350px; } /* 프로그레스 바 최대 너비 조정 */
-      .time-display { max-width: 350px; } /* 시간 표시 최대 너비 조정 */
+
+      /* 데스크탑 레이아웃 */
+      .full-player-content {
+        flex-direction: row; /* 가로 방향으로 변경 */
+      }
+      .player-left, .player-right {
+        width: 50%; /* 좌우 영역 동일 비율 분배 */
+        padding: 20px;
+      }
+      .player-right {
+        padding-top: 20px; /* 데스크탑 환경에서 padding-top 조정 */
+      }
+      .full-player-album-art {
+        width: 250px; /* 앨범 아트 크기 조정 */
+        height: 250px;
+      }
+      .progress-container {
+        max-width: 350px; /* 프로그레스 컨테이너 max-width 조정 */
+      }
+      .time-display {
+        max-width: 350px; /* 시간 표시 max-width 조정 */
+      }
     }
 
-    /* 모바일 환경 */
+    /* 모바일 레이아웃 (768px 미만) */
     @media (max-width: 767px) {
-      .full-player-content { flex-direction: column; /* 가사-컨트롤러 상하 배치 (기본값) */ }
-      .player-left { width: 100%; } /* 컨트롤러 영역 너비 100% */
-      .player-right { width: 100%; padding-top: 30px; } /* 가사 영역 너비 100% 및 padding-top 유지 */
+      .full-player-content {
+        flex-direction: column; /* 세로 방향 유지 (모바일 기본) */
+      }
+      .player-left, .player-right {
+        width: 100%; /* 좌우 영역 100% */
+        padding: 15px; /* padding 유지 */
+      }
+      .player-right {
+        padding-top: 30px; /* padding-top 유지 */
+      }
+      .full-player-album-art {
+        width: 180px; /* 앨범 아트 크기 조정 */
+        height: 180px;
+      }
+      .progress-container {
+        max-width: 95%; /* 프로그레스 컨테이너 max-width 조정 */
+      }
+      .time-display {
+        max-width: 95%; /* 시간 표시 max-width 조정 */
+      }
+      .full-player .player-left { /* 모바일 환경 컨트롤러 그림자 추가 */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        border-radius: 15px;
+        padding: 20px;
+        background-color: rgba(255,255,255,0.1); /* 컨트롤러 배경색 추가 (선택 사항) */
+        backdrop-filter: blur(10px); /* 블러 효과 (선택 사항) */
+      }
+      .full-player .player-controls, .full-player .progress-container, .full-player .time-display { /* 모바일 컨트롤러 요소 그림자 추가 */
+        text-shadow: none; /* 텍스트 그림자 제거 (선택 사항) */
+      }
     }
 
-    /* Full Player 컨트롤러 그림자 */
-    .full-player .player-controls {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* 음악 컨트롤러 그림자 추가 */
-      border-radius: 15px; /* 둥근 모서리 추가 (선택 사항) */
-      padding: 10px 0; /* 상하 padding 추가 (선택 사항) */
-      background-color: rgba(0,0,0,0.3); /* 배경색상 추가 (선택 사항) */
-    }
   </style>
 </head>
 <body>
@@ -190,9 +226,9 @@
       <div class="artist-name"></div>
     </div>
     <div class="player-controls">
-      <button class="control-button prev-button">⏮</button>
-      <button class="control-button play-pause-button">▶</button>
-      <button class="control-button next-button">⏭</button>
+      <button class="control-button prev-button">⏮</button>  <!-- "⏮" -> 되감기 심볼로 변경 -->
+      <button class="control-button play-pause-button">►</button> <!-- "▶" -> 재생 심볼로 변경 -->
+      <button class="control-button next-button">⏯</button>  <!-- "⏭" -> 빨리 감기 심볼로 변경 -->
     </div>
   </div>
 
@@ -204,9 +240,9 @@
         <h2 class="track-name"></h2>
         <p class="artist-name"></p>
         <div class="player-controls">
-          <button class="control-button prev-button">⏮</button>
-          <button class="control-button play-pause-button">▶</button>
-          <button class="control-button next-button">⏭</button>
+          <button class="control-button prev-button">⏮</button>  <!-- "⏮" -> 되감기 심볼로 변경 -->
+          <button class="control-button play-pause-button">►</button> <!-- "▶" -> 재생 심볼로 변경 -->
+          <button class="control-button next-button">⏯</button>  <!-- "⏭" -> 빨리 감기 심볼로 변경 -->
         </div>
         <div class="progress-container">
           <div class="progress"></div>
@@ -264,15 +300,13 @@
 };
 
 
-    let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', #84ccf0'], isDragging = false;
+    let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
 
 
     function initializeMusicPlayer() {
       loadArtists();
       setupEventListeners();
       setupAudioEventListeners();
-      // 모바일 환경 체크 후 컨트롤러 버튼 변경 (추가)
-      checkMobileAndSetControlButtons();
     }
 
     function loadArtists() {
@@ -405,20 +439,13 @@
     }
 
     function displayLyrics(lyrics) {
-      const lyricsContainer = document.querySelector('.lyrics-container');
-      lyricsContainer.innerHTML = ''; // clear existing lyrics
-      lyrics.forEach(line => { // 각각의 텍스트로 취급
-          const lyricLine = document.createElement('div');
-          lyricLine.className = 'lyrics-line';
-          lyricLine.textContent = line.text;
-          lyricLine.dataset.time = line.time;
-          lyricsContainer.appendChild(lyricLine);
-
-          lyricLine.addEventListener('click', () => {
-              audio.currentTime = parseFloat(lyricLine.dataset.time);
-              updateLyrics();
-          });
-      });
+      document.querySelector('.lyrics-container').innerHTML = lyrics.map(line => `<div class="lyrics-line" data-time="${line.time}">${line.text}</div>`).join('');
+       document.querySelectorAll('.lyrics-line').forEach(line => {
+            line.addEventListener('click', () => {
+                audio.currentTime = parseFloat(line.dataset.time);
+                updateLyrics();
+            });
+        });
     }
 
     async function loadAndDisplayLyrics(lyricsUrl) {
@@ -554,8 +581,7 @@
       isPlaying = !isPlaying;
       updateMiniPlayer();
       updateFullPlayer();
-      // 모바일 환경 체크 후 컨트롤러 버튼 업데이트 (추가)
-      checkMobileAndSetControlButtons();
+      document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶'); // 버튼 텍스트 업데이트
     }
 
     function playPreviousTrack() {
@@ -623,28 +649,9 @@
             const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
             if (lyricLine) {
                 lyricLine.classList.add('active');
-                // lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 자동 스크롤 제거
+                // lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 화면 이동 삭제
                 highlightedLyric = lyricLine;
             }
-        }
-    }
-
-    // 모바일 환경 체크 및 컨트롤 버튼 설정 함수 (추가)
-    function checkMobileAndSetControlButtons() {
-        const playPauseButton = document.querySelectorAll('.play-pause-button');
-        const prevButton = document.querySelectorAll('.prev-button');
-        const nextButton = document.querySelectorAll('.next-button');
-
-        if (window.matchMedia("(max-width: 767px)").matches) {
-            // 모바일 환경: 버튼을 이미지 아이콘으로 변경 (예시, 실제 이미지 경로로 변경해야 함)
-            playPauseButton.forEach(button => button.innerHTML = isPlaying ? '⏸' : '▶'); // pause & play unicode
-            prevButton.forEach(button => button.innerHTML = '⏮'); // previous unicode
-            nextButton.forEach(button => button.innerHTML = '⏭'); // next unicode
-         } else {
-            // 데스크탑 및 태블릿 환경: 기존 텍스트 버튼 유지
-            playPauseButton.forEach(button => button.innerHTML = isPlaying ? '⏸' : '▶');
-            prevButton.forEach(button => button.innerHTML = '⏮');
-            nextButton.forEach(button => button.innerHTML = '⏭');
         }
     }
 
