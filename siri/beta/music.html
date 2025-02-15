@@ -15,7 +15,7 @@
     .os-version { font-size: 12px; color: rgba(0, 0, 0, 0.5); position: absolute; bottom: -0.1px; left: 110px; white-space: nowrap; }
 
     /* Back Button */
-    .back-button { position: fixed; top: 80px; left: 20px; background: rgba(255, 255, 255, 0.9); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: none; z-index: 1001; transition: transform 0.2s ease; }
+    .back-button { position: fixed; top: 80px; left: 20px; background: rgba(255, 255, 255, 0.9); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: none; z-index: 1001; transition: transform 0.3s ease; }
     .back-button:active { transform: scale(0.95); }
 
     /* Main Container */
@@ -23,7 +23,7 @@
 
     /* Artists Grid */
     .artists-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; margin-top: 30px; }
-    .artist-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; position: relative; } /* Added position: relative */
+    .artist-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; position: relative; }
     .artist-card:hover { transform: translateY(-5px); }
     .artist-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
     /* Artist Name Overlay */
@@ -64,7 +64,7 @@
     .player-controls { display: flex; align-items: center; gap: 10px; margin-right: 0px; }
 
      /* Control Buttons */
-    .control-button { background: none; border: none; cursor: pointer; padding: 5px;  transition: transform 0.2s ease; } /* Removed color */
+    .control-button { background: none; border: none; cursor: pointer; padding: 5px;  transition: transform 0.2s; } /* Removed color */
     .mini-player .control-button { font-size: 20px; color: black; } /* Mini player button color */
     .full-player .control-button { font-size: 32px; margin: 0 10px; color: white; } /* Full player button color */
 
@@ -206,10 +206,6 @@
 
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
 
-    // Local Storage keys
-    const LS_ARTIST_VIDEO = 'artistVideo_';
-    const LS_ALBUM_AUDIO = 'albumAudio_';
-
 
     function initializeMusicPlayer() {
       loadArtists();
@@ -222,13 +218,6 @@
       musicLibrary.artists.forEach(artist => {
         const artistCard = createArtistCard(artist);
         artistsGrid.appendChild(artistCard);
-
-        // Check for cached video
-        const cachedVideoBase64 = localStorage.getItem(LS_ARTIST_VIDEO + artist.name); // Base64 데이터 로드
-        if (cachedVideoBase64) {
-            const videoBlob = base64toBlob(cachedVideoBase64, 'video/mp4'); // Base64 -> Blob 변환
-            artist.video = URL.createObjectURL(videoBlob); // Blob URL 생성
-        }
       });
     }
 
@@ -236,67 +225,40 @@
       const card = document.createElement('div');
       card.className = 'artist-card';
       card.innerHTML = `<img src="${artist.image}" class="artist-image" alt="${artist.name}">
-                        <div class="artist-name-overlay">${artist.name}</div>`;  /* Artist name overlay */
+                        <div class="artist-name-overlay">${artist.name}</div>`;
       card.addEventListener('click', () => showArtist(artist));
       return card;
     }
 
 
-    async function showArtist(artist) {
+    function showArtist(artist) {
         currentArtist = artist;
-
-        // 화면 업데이트를 requestAnimationFrame 내에서 실행하여 버그 수정 및 부드러운 전환
-        requestAnimationFrame(() => {
-            document.querySelector('.artists-grid').style.display = 'none'; // 아티스트 목록 숨김
-        });
-
-        document.querySelector('.artist-section').style.display = 'block'; // 아티스트 섹션 표시
-        document.querySelector('.albums-grid').style.display = 'grid'; // 앨범 목록 표시
-        document.querySelector('.back-button').style.display = 'block'; // 뒤로가기 버튼 표시
+        document.querySelector('.artists-grid').style.display = 'none';
+        document.querySelector('.artist-section').style.display = 'block';
+        document.querySelector('.albums-grid').style.display = 'grid';
+        document.querySelector('.back-button').style.display = 'block';
         const artistVideo = document.querySelector('.artist-video');
-
-
-         // Load video (check local storage first)
-        let artistVideoURL = artist.video; // 기본 비디오 URL 설정
-        const cachedVideoBase64 = localStorage.getItem(LS_ARTIST_VIDEO + artist.name); // Base64 데이터 로드
-
-        if (cachedVideoBase64) {
-            const videoBlob = base64toBlob(cachedVideoBase64, 'video/mp4'); // Base64 -> Blob 변환
-            artistVideoURL = URL.createObjectURL(videoBlob); // Blob URL 생성
-        } else {
-            try{
-                const response = await fetch(artist.video);
-                const arrayBuffer = await response.arrayBuffer();
-                const videoBlob = new Blob([arrayBuffer], {type: 'video/mp4'});
-                const base64Video = blobToBase64(videoBlob); // Blob -> Base64 변환
-                localStorage.setItem(LS_ARTIST_VIDEO + artist.name, base64Video); // Base64 데이터 localStorage에 저장
-                artistVideoURL = URL.createObjectURL(videoBlob); // Blob URL 생성
-
-            } catch (error){
-                console.error("Error loading artist video", error);
-            }
-        }
-
-        artistVideo.src = artistVideoURL; // 비디오 소스 설정
-        artistVideo.style.display = 'block'; // 비디오 표시
-        document.querySelector('.artist-section .artist-info h2').textContent = artist.name; // 아티스트 이름 표시
-        loadAlbums(artist); // 앨범 목록 로드
+        artistVideo.src = artist.video;
+        artistVideo.style.display = 'block';
+        document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
+        loadAlbums(artist);
     }
+
 
 
     function loadAlbums(artist) {
       const albumsGrid = document.querySelector('.albums-grid');
       albumsGrid.innerHTML = '';
-      artist.albums.forEach((album, index) => albumsGrid.appendChild(createAlbumCard(album, index + 1))); // 앨범 번호 전달
+      artist.albums.forEach((album, index) => albumsGrid.appendChild(createAlbumCard(album, index + 1)));
     }
 
-    function createAlbumCard(album, albumNumber) { // albumNumber 매개변수 추가
+    function createAlbumCard(album, albumNumber) {
       const card = document.createElement('div');
       card.className = 'album-card';
       card.innerHTML = `
         <img src="${album.cover}" class="album-image" alt="${album.name}">
         <div class="album-info">
-          <div class="album-number">#${albumNumber}</div>  <!-- 앨범 번호 표시 -->
+          <div class="album-number">#${albumNumber}</div>
           <h3>${album.name}</h3>
         </div>`;
       card.addEventListener('click', () => showAlbumTracks(album));
@@ -322,31 +284,8 @@
 
    async function playTrack(track) {
         currentTrack = track;
-
-        // Load Audio (check local storage first)
-        const cacheKey = LS_ALBUM_AUDIO + currentAlbum.name + "_" + track.title;
-        let audioURL = track.audio; // 기본 오디오 URL 설정
-        const cachedAudioBase64 = localStorage.getItem(cacheKey); // Base64 데이터 로드
-
-        if (cachedAudioBase64) {
-             const audioBlob = base64toBlob(cachedAudioBase64, 'audio/mpeg'); // Base64 -> Blob 변환
-             audioURL = URL.createObjectURL(audioBlob); // Blob URL 생성
-        } else {
-            try {
-                const response = await fetch(track.audio);
-                const arrayBuffer = await response.arrayBuffer();
-                const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
-                const base64Audio = blobToBase64(audioBlob); // Blob -> Base64 변환
-                localStorage.setItem(cacheKey, base64Audio); // Base64 데이터 localStorage에 저장
-                audioURL = URL.createObjectURL(audioBlob); // Blob URL 생성
-            } catch (error) {
-                console.error("Error loading audio:", error);
-            }
-        }
-        audio.src = audioURL; // 오디오 소스 설정
-
-
-      audio.play();
+        audio.src = track.audio;
+        audio.play();
       isPlaying = true;
       const img = new Image();
       img.crossOrigin = "Anonymous";
@@ -405,11 +344,10 @@
 
     function displayLyrics(lyrics) {
       document.querySelector('.lyrics-container').innerHTML = lyrics.map(line => `<div class="lyrics-line" data-time="${line.time}">${line.text}</div>`).join('');
-       // Add click event listener to each lyrics line
-        document.querySelectorAll('.lyrics-line').forEach(line => {
+       document.querySelectorAll('.lyrics-line').forEach(line => {
             line.addEventListener('click', () => {
                 audio.currentTime = parseFloat(line.dataset.time);
-                updateLyrics(); // Update lyrics highlighting after seeking
+                updateLyrics();
             });
         });
     }
@@ -463,22 +401,22 @@
     }
 
     function handleBack() {
-        // 화면 업데이트를 requestAnimationFrame 내에서 실행하여 버그 수정 및 부드러운 전환
-        requestAnimationFrame(() => {
-            if (document.querySelector('.tracks-list').style.display === 'block') {
-                document.querySelector('.tracks-list').style.display = 'none';
-                document.querySelector('.albums-grid').style.display = 'grid';
-            } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-                document.querySelector('.artist-section').style.display = 'none';
-                document.querySelector('.albums-grid').style.display = 'none';
-                document.querySelector('.artists-grid').style.display = 'grid';
-                document.querySelector('.back-button').style.display = 'none';
-                const artistVideo = document.querySelector('.artist-video');
-                artistVideo.style.display = 'none';
-            }
-        });
-    }
+      const backButton = document.querySelector('.back-button');
+      backButton.style.transform = 'translateX(0)';
 
+        if (document.querySelector('.tracks-list').style.display === 'block') {
+          document.querySelector('.tracks-list').style.display = 'none';
+          document.querySelector('.albums-grid').style.display = 'grid';
+        } else if (document.querySelector('.albums-grid').style.display === 'grid') {
+          document.querySelector('.artist-section').style.display = 'none';
+          document.querySelector('.albums-grid').style.display = 'none';
+          document.querySelector('.artists-grid').style.display = 'grid';
+          document.querySelector('.back-button').style.display = 'none';
+          const artistVideo = document.querySelector('.artist-video');
+          artistVideo.style.display = 'none';
+        }
+
+    }
 
     function goToHome() {
       document.querySelector('.artist-section').style.display = 'none';
@@ -596,7 +534,6 @@
         const currentTime = audio.currentTime;
         let nextLyricIndex = -1;
 
-        // Find the index of the *next* lyric to be displayed.
         for (let i = 0; i < currentLyrics.length; i++) {
             if (currentLyrics[i].time > currentTime) {
                 nextLyricIndex = i;
@@ -604,54 +541,22 @@
             }
         }
 
-        // The current lyric index is one before the next, or the last lyric if no next lyric.
         let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
 
 
-        // Remove active class from previously highlighted lyric
         if (highlightedLyric) {
             highlightedLyric.classList.remove('active');
         }
 
-        // Highlight the current lyric
         if (currentLyricIndex >= 0) {
             const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
             if (lyricLine) {
                 lyricLine.classList.add('active');
-
-                // Smoothly scroll to the active lyric, centering it.
                 lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 highlightedLyric = lyricLine;
             }
         }
     }
-
-    // Base64 인코딩 함수 (Blob -> Base64)
-    function blobToBase64(blob) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result.split(',')[1]); // Data URL prefix 제거
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-        });
-    }
-
-    // Base64 디코딩 함수 (Base64 -> Blob)
-    function base64toBlob(base64Data, contentType) {
-        const byteCharacters = atob(base64Data);
-        const byteArrays = [];
-        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-            const slice = byteCharacters.slice(offset, offset + 512);
-            const byteNumbers = new Array(slice.length);
-            for (let i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
-            const byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);
-        }
-        return new Blob(byteArrays, { type: contentType });
-    }
-
 
     document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
   </script>
