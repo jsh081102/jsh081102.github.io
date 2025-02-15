@@ -26,7 +26,7 @@
             backdrop-filter: blur(10px);
             padding: 20px;
             display: flex;
-            align-items: flex-start; /* 수정: 수직 정렬을 상단으로 변경 */
+            align-items: center;
             justify-content: space-between;
         }
 
@@ -36,18 +36,18 @@
             text-decoration: none;
             font-weight: 600;
             display: flex;
-            flex-direction: column; /* 수정: 세로로 배치 */
-            align-items: flex-start; /* 수정: 왼쪽 정렬 */
-            gap: 5px; /* 수정: Siri Music과 musicOS 1.0 사이 간격 */
+            align-items: center;
+            gap: 10px;
+            position: relative; /* os-version을 위한 상대 위치 설정 */
         }
-      .brand-title > span{
-            line-height: 1em;
+      .os-version {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.5);
+        position: absolute; /* 절대 위치 설정 */
+        bottom: -15px;      /* 아래쪽으로 조금 내림 */
+        right: 0;          /* 오른쪽 정렬 */
+        white-space: nowrap; /* 줄바꿈 방지 */
       }
-
-        .os-version {
-            font-size: 12px;
-            color: rgba(0, 0, 0, 0.5);
-        }
 
         .back-button {
             position: fixed;
@@ -234,19 +234,25 @@
             margin-right: 0px;
         }
 
-        .control-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 5px;
-            font-size: 20px;
-            color: #0a84ff;
-            transition: transform 0.2s;
-        }
+      .control-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        font-size: 20px; /* 기본 크기 */
+        color: #0a84ff;
+        transition: transform 0.2s;
+    }
 
-        .control-button:hover {
-            transform: scale(1.1);
-        }
+    .control-button:hover {
+        transform: scale(1.1);
+    }
+
+    /* 풀스크린 플레이어 컨트롤 버튼 크기 증가 */
+    .full-player .control-button {
+        font-size: 32px; /* 더 큰 크기 */
+        margin: 0 10px; /* 버튼 사이 간격 */
+    }
 
        .full-player {
             position: fixed;
@@ -261,12 +267,18 @@
             overflow: hidden; /* 그라데이션이 넘치는 것을 방지 */
         }
       /* 그라데이션 배경 애니메이션 추가 */
-        @keyframes gradientAnimation {
+       @keyframes gradientAnimation {
             0% {
                 background-position: 0% 50%;
             }
+            25% {
+              background-position: 50% 100%;
+            }
             50% {
                 background-position: 100% 50%;
+            }
+            75%{
+              background-position: 50% 0%;
             }
             100% {
                 background-position: 0% 50%;
@@ -310,51 +322,47 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* 그림자 효과 */
         transition: transform 0.5s ease;      /* 앨범 아트 전환 효과 */
       }
-        .progress-container {
-            width: 90%;  /* 수정: 너비 증가 */
-            max-width: 700px; /* 수정: 최대 너비 증가 */
-            height: 10px;     /* 수정: 두께 증가 */
-            background: #ddd;
-            border-radius: 5px; /* 수정: 둥근 모서리 */
-            margin: 20px 0;
-            cursor: pointer;
-            position: relative;
-        }
+      .progress-container {
+        width: 90%; /* 조금 더 넓게 */
+        max-width: 800px; /* 최대 너비 증가 */
+        height: 10px; /* 두께 증가 */
+        background: #ddd;
+        border-radius: 5px; /* 더 둥글게 */
+        margin: 25px 0; /* 상하 마진 증가 */
+        cursor: pointer;
+        position: relative;
+    }
 
-        .progress {
-            height: 100%;
-            background: #0a84ff;
-            border-radius: 5px; /* 수정: 둥근 모서리 */
-            width: 0;
-            transition: width 0.1s ease; /* 부드러운 프로그레스 바 애니메이션 */
-        }
-
-      /* 프로그래스 바 핸들 추가 */
-        .progress-handle {
-          position: absolute;
-          right: 0;
-          top: -3px;
-          width: 16px;
-          height: 16px;
-          background-color: #0a84ff;
-          border-radius: 50%;
-          cursor: pointer;
-          opacity: 0; /* 기본적으로 숨김 */
-          transition: opacity 0.2s, transform 0.2s;
-        }
-
-        /* 프로그래스 컨테이너에 호버/터치 시 핸들 표시 */
-        .progress-container:hover .progress-handle,
-        .progress-container:active .progress-handle{
-          opacity: 1;
-          transform: scale(1.2); /* 살짝 크게 */
-        }
+    .progress {
+        height: 100%;
+        background: #0a84ff;
+        border-radius: 5px; /* 더 둥글게 */
+        width: 0;
+        transition: width 0.1s ease; /* 부드러운 움직임 */
+    }
+      /* 프로그래스 바 위에 마우스 오버/드래그 시 나타나는 원 */
+    .progress-container:hover .progress-knob,
+    .progress-container.dragging .progress-knob {
+        opacity: 1;
+    }
+      .progress-knob {
+        position: absolute;
+        top: -3px;
+        right: 0px;
+        width: 16px; /* 크기 증가 */
+        height: 16px; /* 크기 증가 */
+        background-color: #0a84ff;
+        border-radius: 50%;
+        opacity: 0; /* 기본적으로 숨김 */
+        transition: opacity 0.2s ease;
+        pointer-events: none; /* 호버로 인한 깜빡임 방지 */
+    }
 
         .time-display {
             display: flex;
             justify-content: space-between;
-            width: 90%;  /* 수정: 너비 증가 */
-            max-width: 700px;  /* 수정: 최대 너비 증가 */
+            width: 90%;       /* 너비 증가 */
+            max-width: 800px; /* 최대 너비 증가 */
             color: #666;
             font-size: 14px;
         }
@@ -362,16 +370,13 @@
         .lyrics-container {
             width: 100%;
             text-align: center;
-          /* 가독성을 위한 스타일 */
-            background: rgba(0, 0, 0, 0.2); /* 반투명 배경 */
-            border-radius: 15px;
-            padding: 10px;
+          color: rgba(255,255,255,0.8);
         }
 
         .lyrics-line {
             padding: 10px;
             transition: all 0.3s;
-            opacity: 0.7; /* 수정: 기본 투명도 조정 */
+            opacity: 0.5;
             /* 가사 중앙 정렬을 위한 스타일 */
             display: flex;
             align-items: center;
@@ -379,15 +384,16 @@
             height: 2em; /* 가사 한 줄의 높이 */
         }
 
-        .lyrics-line.active {
-            font-size: 1.5em; /* 수정: 활성 가사 크기 증가 */
-            opacity: 1;
-            color: #fff; /* 수정: 활성 가사 색상 변경 */
-            font-weight: bold;
-            transition: transform 0.2s ease-out;
-            transform: scale(1.1);
-              text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 텍스트 그림자 */
-        }
+      .lyrics-line.active {
+          font-size: 1.2em;
+          opacity: 1;
+          color: white; /* 활성 가사 색 변경 */
+          font-weight: bold;
+          transition: transform 0.2s ease-out;
+          transform: scale(1.1);
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* 텍스트 그림자 */
+      }
+
 
       /* 텍스트 스타일 (그림자 추가) */
       .full-player .track-name,
@@ -397,30 +403,6 @@
         text-align: center; /* 텍스트 중앙 정렬 */
         margin-bottom: 5px; /* 제목과 부제 사이 간격 */
       }
-
-      /* 컨트롤 버튼 스타일 수정 */
-        .full-player .player-controls {
-            display: flex;
-            justify-content: center; /* 중앙 정렬 */
-            align-items: center;
-            gap: 30px; /* 버튼 간 간격 증가 */
-            margin-bottom: 20px;
-        }
-
-        .full-player .control-button {
-            font-size: 40px; /* 버튼 크기 증가 */
-            color: white;  /* 버튼 색상 */
-            background: rgba(0, 0, 0, 0.2); /* 반투명 배경 */
-            border-radius: 50%; /* 원형 버튼 */
-            padding: 15px; /* 패딩 증가 */
-            transition: transform 0.2s, background 0.2s;
-        }
-
-      /* 버튼 호버 효과 */
-      .full-player .control-button:hover {
-          transform: scale(1.2);
-          background: rgba(0, 0, 0, 0.4);
-        }
 
       /* 반응형 디자인 추가 */
         @media (min-width: 768px) {
@@ -437,10 +419,10 @@
 </head>
 <body>
     <div class="brand">
-        <div class="brand-title">
-          <span>Siri Music</span>  <!-- 수정: span 태그로 감싸기 -->
-          <span class="os-version">musicOS 1.0</span>
-        </div>
+      <div class="brand-title">
+        Siri Music
+        <span class="os-version">musicOS 1.0</span>
+    </div>
     </div>
 
     <button class="back-button">← 뒤로가기</button>
@@ -485,16 +467,14 @@
                 <img src="" alt="Album art" class = "full-player-album-art">
                 <h2 class="track-name"></h2>
                 <p class="artist-name"></p>
-                <!-- 컨트롤 버튼, 프로그레스 바, 시간 표시 -->
                 <div class="player-controls">
                     <button class="control-button prev-button">⏮</button>
                     <button class="control-button play-pause-button">▶</button>
                     <button class="control-button next-button">⏭</button>
                 </div>
                 <div class="progress-container">
-                    <div class="progress">
-                      <div class="progress-handle"></div>
-                    </div>
+                    <div class="progress"></div>
+                    <div class="progress-knob"></div>
                 </div>
                 <div class="time-display">
                     <span class="current-time">0:00</span>
@@ -567,7 +547,7 @@
         let highlightedLyric = null;
       // 그라데이션 색상 배열
         let currentGradientColors = ['#ffffff', '#ffffff'];
-        let isDragging = false; // 드래그 상태 변수
+      let isDragging = false;
 
         function initializeMusicPlayer() {
             loadArtists();
@@ -744,39 +724,57 @@
           }
         }
 
-        function setupEventListeners() {
-            document.querySelector('.back-button').addEventListener('click', handleBack);
-            document.querySelector('.brand-title').addEventListener('click', goToHome);
-          // 미니 플레이어 클릭 이벤트 리스너 수정
-          const miniPlayer = document.querySelector('.mini-player');
-            miniPlayer.addEventListener('click', () => {
-              if (currentAlbum && currentTrack) { // 현재 앨범과 트랙 정보가 있을 때만
-                showFullPlayer();
-              }
-            });
+      function setupEventListeners() {
+        document.querySelector('.back-button').addEventListener('click', handleBack);
+        document.querySelector('.brand-title').addEventListener('click', goToHome);
 
-            const controls = document.querySelectorAll('.player-controls');
-            controls.forEach(control => {
-                control.addEventListener('click', e => e.stopPropagation());
+        // 미니 플레이어 클릭 이벤트 리스너
+        const miniPlayer = document.querySelector('.mini-player');
+        miniPlayer.addEventListener('click', () => {
+          if (currentAlbum && currentTrack) {
+            showFullPlayer();
+          }
+        });
 
-                control.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
-                control.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
-                control.querySelector('.next-button').addEventListener('click', playNextTrack);
-            });
+        const controls = document.querySelectorAll('.player-controls');
+        controls.forEach(control => {
+            control.addEventListener('click', e => e.stopPropagation());
 
-            document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
-          
-            // 프로그레스 바 클릭 및 드래그 이벤트
-            const progressContainer = document.querySelector('.progress-container');
-            progressContainer.addEventListener('mousedown', startDragging);
-            progressContainer.addEventListener('mouseup', stopDragging);
-            progressContainer.addEventListener('mouseleave', stopDragging);
-            progressContainer.addEventListener('mousemove', (e) => {
-              if (isDragging) {
-                seekAudio(e);
-              }
-            });
+            control.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
+            control.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
+            control.querySelector('.next-button').addEventListener('click', playNextTrack);
+        });
+
+        document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
+
+        // 드래그 기능 추가
+        const progressContainer = document.querySelector('.progress-container');
+        progressContainer.addEventListener('mousedown', startDragging);
+        progressContainer.addEventListener('mousemove', drag);
+        progressContainer.addEventListener('mouseup', stopDragging);
+        progressContainer.addEventListener('mouseleave', stopDragging);
+    }
+
+    function startDragging(e) {
+        isDragging = true;
+        document.querySelector('.progress-container').classList.add('dragging');
+        seekAudio(e); // 즉시 업데이트
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            seekAudio(e);
         }
+    }
+
+    function stopDragging(e) {
+        if (isDragging) {
+            isDragging = false;
+          document.querySelector('.progress-container').classList.remove('dragging');
+            seekAudio(e);
+        }
+    }
+
 
         function setupAudioEventListeners() {
             audio.addEventListener('timeupdate', updateProgress);
@@ -855,8 +853,8 @@
             miniPlayer.style.transform = 'translateY(0)';
 
         // Full Player 앨범 아트 transform 초기화 (Fade-out 효과를 위해)
-          const fullPlayerAlbumArt = document
-                    fullPlayerAlbumArt.style.opacity = 0;
+          const fullPlayerAlbumArt = document.querySelector('.full-player-album-art');
+          fullPlayerAlbumArt.style.opacity = 0;
           fullPlayerAlbumArt.style.transform = 'scale(0.5)';
 
 
@@ -903,31 +901,31 @@
             }
         }
 
-      // 드래그 시작
-        function startDragging(e) {
-            isDragging = true;
-            seekAudio(e); // 즉시 업데이트
-        }
+    function seekAudio(e) {
+        const container = document.querySelector('.progress-container');
+        const rect = container.getBoundingClientRect();
+        const percent = (e.clientX - rect.left) / rect.width;
+        audio.currentTime = percent * audio.duration;
 
-        // 드래그 중지
-        function stopDragging(e) {
-            isDragging = false;
-        }
+        // 프로그레스 바 너비 즉시 업데이트
+        const progress = document.querySelector('.progress');
+        progress.style.width = `${percent * 100}%`;
 
-        function seekAudio(e) {
-            const container = document.querySelector('.progress-container');
-            const rect = container.getBoundingClientRect();
-            const percent = (e.clientX - rect.left) / rect.width;
-            audio.currentTime = percent * audio.duration;
-        }
+        // 손잡이 위치 업데이트
+        const knob = document.querySelector('.progress-knob');
+        knob.style.left = `${percent * 100}%`;
+    }
+
 
         function updateProgress() {
             const progress = document.querySelectorAll('.progress');
             const currentTimeDisplays = document.querySelectorAll('.current-time');
             const totalTimeDisplays = document.querySelectorAll('.total-time');
+          const knob = document.querySelector('.progress-knob');
 
             const percentage = (audio.currentTime / audio.duration) * 100;
             progress.forEach(p => p.style.width = `${percentage}%`);
+          knob.style.left=`${percentage}%`
 
             currentTimeDisplays.forEach(display =>
                 display.textContent = formatTime(audio.currentTime)
