@@ -64,25 +64,13 @@
     .mini-player .artist-name { color: rgba(0, 0, 0, 0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8em; }
     .player-controls { display: flex; align-items: center; gap: 5px; margin-right: 0px; }
 
-     /* Control Buttons 공통 스타일 */
-    .control-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      transition: transform 0.2s;
-      display: flex; /* flexbox 레이아웃 사용 */
-      align-items: center; /* 세로 중앙 정렬 */
-      justify-content: center; /* 가로 중앙 정렬 */
-    }
-    .control-button:hover { transform: scale(1.1); }
-
-    /* Mini Player Control Buttons */
+     /* Control Buttons */
+    .control-button { background: none; border: none; cursor: pointer; padding: 4px;  transition: transform 0.2s; }
     .mini-player .control-button { font-size: 18px; color: black; }
-
-    /* Fullscreen Player Control Buttons */
     .full-player .control-button { font-size: 28px; margin: 0 8px; color: white; }
 
+    .control-button:hover { transform: scale(1.1); }
+    .full-player .control-button { font-size: 28px; margin: 0 8px; }
 
     /* Fullscreen Player */
     .full-player { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom right, #a8b8fc, #84ccf0); display: none; z-index: 2000; padding: 15px; overflow: hidden; }
@@ -93,9 +81,7 @@
     .full-player-album-art { width: 200px; height: 200px; border-radius: 8px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); transition: transform 0.5s ease, opacity 0.5s ease; opacity: 1; transform: scale(1); }
 
     /* Progress Bar */
-    .progress-container { width: 95%; max-width: 400px; height: 8px; background: #ddd; border-radius: 4px; margin: 20px 0; cursor: pointer; position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 음악 컨트롤러 그림자 추가 */
-    }
+    .progress-container { width: 95%; max-width: 400px; height: 8px; background: #ddd; border-radius: 4px; margin: 20px 0; cursor: pointer; position: relative; /* 그림자 추가 */ box-shadow: 0 2px 5px rgba(0,0,0,0.3); } /* 음악 시간 컨트롤러 그림자 추가 */
     .progress { height: 100%; background: #0a84ff; border-radius: 4px; width: 0; transition: width 0.1s ease; }
     .progress-knob { position: absolute; top: -4px; right: 0px; width: 14px; height: 14px; background-color: #0a84ff; border-radius: 50%; opacity: 0; transition: opacity 0.2s ease; pointer-events: none; }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
@@ -103,41 +89,15 @@
 
     /* Lyrics */
   .lyrics-container { width: 100%; text-align: center; color: rgba(255,255,255,0.8); overflow-y: auto; max-height: 50vh; display: flex; flex-direction: column; align-items: center;  }
-  .lyrics-line {
-    padding: 4px;
-    transition: opacity 0.3s ease-in-out, color 0.3s ease-in-out, font-size 0.2s ease-out, text-shadow 0.2s ease-out; /* transition 속성 수정 */
-    opacity: 0.5;
-    cursor: pointer;
-    font-size: 0.9em;
-    text-shadow: none; /* 기본 text-shadow 제거 */
-  }
-
-
-  .lyrics-line.active {
-    opacity: 1;
-    color: white;
-    font-weight: bold;
-    font-size: 1.1em; /* 살짝 더 크게 */
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5); /* 강조 효과 text-shadow 수정 */
-    transform: scale(1.03); /* 살짝 확대 효과 */
-  }
+  .lyrics-line { padding: 4px; transition:  transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s; opacity: 0.5; display: flex; align-items: center; justify-content: center;  cursor: pointer; font-size: 0.9em; } /* 각각의 텍스트로 취급 및 애니메이션 개선 */
+  .lyrics-line.active { font-size: 1.2em; opacity: 1; color: white; font-weight: bold;  transform: scale(1.05); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); transition: transform 0.2s ease-out; } /* 하이라이트 애니메이션 개선 */
 
 
     /* Text Styles */
     .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
 
-    /* 음악 컨트롤러 그림자 스타일 */
-    .full-player .player-controls {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      padding: 10px 0; /* 필요에 따라 패딩 추가 */
-      border-radius: 10px;
-      background-color: rgba(255, 255, 255, 0.1); /* 배경색 추가 (선택 사항) */
-      backdrop-filter: blur(10px); /* 블러 효과 (선택 사항) */
-    }
-
-
     /* Responsive Design */
-    @media (min-width: 768px) {
+    @media (min-width: 768px) { /* 데스크탑 및 태블릿 환경 */
       .brand { padding: 20px; }
       .brand-title { font-size: 24px; gap: 10px; }
       .os-version { font-size: 12px; left: 110px; }
@@ -171,78 +131,36 @@
       .player-left, .player-right { padding: 20px; }
       .player-right { padding-top: 50px; }
       .full-player-album-art { width: 300px; height: 300px; border-radius: 10px; margin-bottom: 20px; }
-      .progress-container { max-width: 800px; height: 10px; border-radius: 5px; margin: 25px 0; box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* 데스크탑 그림자 더 강하게 */ }
+      .progress-container { max-width: 800px; height: 10px; border-radius: 5px; margin: 25px 0; }
       .progress { border-radius: 5px; }
       .progress-knob { top: -3px; width: 16px; height: 16px; }
       .time-display { max-width: 800px; font-size: 14px; }
       .lyrics-container { max-height: 60vh; }
       .lyrics-line { padding: 5px; font-size: 1em; }
-      .lyrics-line.active { font-size: 1.3em;  transform: scale(1.05); }
+      .lyrics-line.active { font-size: 1.5em;  transform: scale(1.1); }
       .full-player .track-name, .full-player .artist-name { margin-bottom: 5px; font-size: 1.5em; }
-
-      /* 데스크탑 레이아웃 */
-      .full-player-content {
-        flex-direction: row; /* 가로 방향으로 변경 */
-      }
-      .player-left {
-        width: 50%; /* 왼쪽 영역 너비 조정 */
-        max-width: 500px; /* 최대 너비 설정 */
-        padding-right: 20px;
-        align-items: flex-start; /* 왼쪽 정렬 */
-      }
-      .player-right {
-        width: 50%; /* 오른쪽 영역 너비 조정 */
-        padding-top: 20px;
-        align-items: flex-start; /* 왼쪽 정렬 */
-        padding-left: 20px;
-      }
-       .lyrics-container {
-        text-align: left; /* 가사 왼쪽 정렬 */
-        align-items: flex-start; /* 가사 왼쪽 정렬 */
-      }
-      .full-player .player-controls {
-        align-self: flex-start; /* 컨트롤 왼쪽 정렬 */
-        margin-left: 0; /* 왼쪽 마진 제거 */
-      }
-      .progress-container, .time-display {
-        align-self: flex-start; /* 프로그레스 바 왼쪽 정렬 */
-        margin-left: 0; /* 왼쪽 마진 제거 */
-      }
-
+      .full-player-content { flex-direction: row; /* 가사-컨트롤러 좌우 배치 */ }
+      .player-left { width: 40%; /* 컨트롤러 영역 너비 조정 */ }
+      .player-right { width: 60%; /* 가사 영역 너비 조정 */ padding-top: 15px;} /* 가사 영역 너비 조정 및 padding-top 조정 */
+      .full-player-album-art { width: 250px; height: 250px; } /* 앨범 아트 크기 조정 */
+      .progress-container { max-width: 350px; } /* 프로그레스 바 최대 너비 조정 */
+      .time-display { max-width: 350px; } /* 시간 표시 최대 너비 조정 */
     }
 
-    /* 모바일 환경 (768px 미만) 스타일 */
+    /* 모바일 환경 */
     @media (max-width: 767px) {
-      .full-player-content {
-        flex-direction: column-reverse; /* 세로 방향, 컨트롤러가 위에 가사 아래에 */
-        align-items: center; /* 전체 내용 가운데 정렬 */
-      }
-      .player-left, .player-right {
-        width: 100%; /* 모바일에서는 100% 너비 */
-        padding-left: 0;
-        padding-right: 0;
-        align-items: center; /* 내용 가운데 정렬 */
-      }
-      .player-right {
-        padding-top: 10px; /* 가사 영역 상단 패딩 줄임 */
-      }
-      .lyrics-container {
-        text-align: center; /* 가사 가운데 정렬 */
-        align-items: center; /* 가사 가운데 정렬 */
-      }
-      .full-player .player-controls {
-        align-self: center; /* 컨트롤 가운데 정렬 */
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .progress-container, .time-display {
-        align-self: center; /* 프로그레스 바 가운데 정렬 */
-        margin-left: auto;
-        margin-right: auto;
-      }
+      .full-player-content { flex-direction: column; /* 가사-컨트롤러 상하 배치 (기본값) */ }
+      .player-left { width: 100%; } /* 컨트롤러 영역 너비 100% */
+      .player-right { width: 100%; padding-top: 30px; } /* 가사 영역 너비 100% 및 padding-top 유지 */
     }
 
-
+    /* Full Player 컨트롤러 그림자 */
+    .full-player .player-controls {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4); /* 음악 컨트롤러 그림자 추가 */
+      border-radius: 15px; /* 둥근 모서리 추가 (선택 사항) */
+      padding: 10px 0; /* 상하 padding 추가 (선택 사항) */
+      background-color: rgba(0,0,0,0.3); /* 배경색상 추가 (선택 사항) */
+    }
   </style>
 </head>
 <body>
@@ -272,16 +190,9 @@
       <div class="artist-name"></div>
     </div>
     <div class="player-controls">
-      <button class="control-button prev-button">
-        <img src="data:image/svg+xml;base64,PHN2ZyBfill="000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m6 6v12l8-6z"/><path d="m16 6v12l8-6z"/></svg>" alt="Previous" style="width: 20px; height: 20px;">
-      </button>
-      <button class="control-button play-pause-button">
-        <img src="data:image/svg+xml;base64,PHN2Zy fill="000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 5v14l12-7z"/></svg>" alt="Play" style="width: 20px; height: 20px;" class="play-icon">
-        <img src="data:image/svg+xml;base64,PHN2Zy fill="000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m6 19h4v-14h-4zm8 0h4v-14h-4z"/></svg>" alt="Pause" style="width: 20px; height: 20px; display: none;" class="pause-icon">
-      </button>
-      <button class="control-button next-button">
-        <img src="data:image/svg+xml;base64,PHN2Zy fill="000000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m10 18 8-6-8-6z"/><path d="m18 18 8-6-8-6z"/></svg>" alt="Next" style="width: 20px; height: 20px;">
-      </button>
+      <button class="control-button prev-button">⏮</button>
+      <button class="control-button play-pause-button">▶</button>
+      <button class="control-button next-button">⏭</button>
     </div>
   </div>
 
@@ -293,16 +204,9 @@
         <h2 class="track-name"></h2>
         <p class="artist-name"></p>
         <div class="player-controls">
-          <button class="control-button prev-button">
-             <img src="data:image/svg+xml;base64,PHN2Zy fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m6 6v12l8-6z"/><path d="m16 6v12l8-6z"/></svg>" alt="Previous" style="width: 24px; height: 24px;">
-          </button>
-          <button class="control-button play-pause-button">
-             <img src="data:image/svg+xml;base64,PHN2Zy fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m7 5v14l12-7z"/></svg>" alt="Play" style="width: 24px; height: 24px;" class="play-icon">
-            <img src="data:image/svg+xml;base64,PHN2Zy fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m6 19h4v-14h-4zm8 0h4v-14h-4z"/></svg>" alt="Pause" style="width: 24px; height: 24px; display: none;" class="pause-icon">
-          </button>
-          <button class="control-button next-button">
-             <img src="data:image/svg+xml;base64,PHN2Zy fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m10 18 8-6-8-6z"/><path d="m18 18 8-6-8-6z"/></svg>" alt="Next" style="width: 24px; height: 24px;">
-          </button>
+          <button class="control-button prev-button">⏮</button>
+          <button class="control-button play-pause-button">▶</button>
+          <button class="control-button next-button">⏭</button>
         </div>
         <div class="progress-container">
           <div class="progress"></div>
@@ -360,14 +264,15 @@
 };
 
 
-    let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
+    let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', #84ccf0'], isDragging = false;
 
 
     function initializeMusicPlayer() {
       loadArtists();
       setupEventListeners();
       setupAudioEventListeners();
-      updateControlButtons(); // 초기 버튼 상태 설정
+      // 모바일 환경 체크 후 컨트롤러 버튼 변경 (추가)
+      checkMobileAndSetControlButtons();
     }
 
     function loadArtists() {
@@ -444,7 +349,6 @@
         audio.src = track.audio;
         audio.play();
       isPlaying = true;
-      updateControlButtons();
       const img = new Image();
       img.crossOrigin = "Anonymous";
       img.src = currentAlbum.cover;
@@ -466,7 +370,7 @@
       miniPlayer.querySelector('.mini-player-album-art').src = currentAlbum.cover;
       miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
       miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
-      updateControlButtons();
+      document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶');
     }
 
 
@@ -477,7 +381,6 @@
         fullPlayer.querySelector('.track-name').textContent = currentTrack.title;
         fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
         fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
-        updateControlButtons();
       }
     }
 
@@ -503,28 +406,27 @@
 
     function displayLyrics(lyrics) {
       const lyricsContainer = document.querySelector('.lyrics-container');
-      lyricsContainer.innerHTML = ''; // 기존 가사Clear
-      currentLyrics = lyrics.map(line => {
-        const lyricLine = document.createElement('div');
-        lyricLine.className = 'lyrics-line';
-        lyricLine.textContent = line.text;
-        lyricLine.dataset.time = line.time;
-        lyricLine.addEventListener('click', () => {
-            audio.currentTime = parseFloat(lyricLine.dataset.time);
-            updateLyrics();
-        });
-        lyricsContainer.appendChild(lyricLine);
-        return lyricLine; // DOM 요소 반환
+      lyricsContainer.innerHTML = ''; // clear existing lyrics
+      lyrics.forEach(line => { // 각각의 텍스트로 취급
+          const lyricLine = document.createElement('div');
+          lyricLine.className = 'lyrics-line';
+          lyricLine.textContent = line.text;
+          lyricLine.dataset.time = line.time;
+          lyricsContainer.appendChild(lyricLine);
+
+          lyricLine.addEventListener('click', () => {
+              audio.currentTime = parseFloat(lyricLine.dataset.time);
+              updateLyrics();
+          });
       });
     }
-
 
     async function loadAndDisplayLyrics(lyricsUrl) {
       try {
         const response = await fetch(lyricsUrl);
         const text = await response.text();
-        const parsedLyrics = parseLRC(text);
-        displayLyrics(parsedLyrics);
+        currentLyrics = parseLRC(text);
+        displayLyrics(currentLyrics);
       } catch (error) {
         console.error('Error loading lyrics:', error);
         currentLyrics = [];
@@ -650,26 +552,11 @@
     function togglePlayPause() {
       isPlaying ? audio.pause() : audio.play();
       isPlaying = !isPlaying;
-      updateControlButtons();
       updateMiniPlayer();
       updateFullPlayer();
+      // 모바일 환경 체크 후 컨트롤러 버튼 업데이트 (추가)
+      checkMobileAndSetControlButtons();
     }
-
-    function updateControlButtons() {
-      const playPauseButtons = document.querySelectorAll('.play-pause-button');
-      playPauseButtons.forEach(button => {
-        const playIcon = button.querySelector('.play-icon');
-        const pauseIcon = button.querySelector('.pause-icon');
-        if (isPlaying) {
-          playIcon.style.display = 'none';
-          pauseIcon.style.display = 'block';
-        } else {
-          playIcon.style.display = 'block';
-          pauseIcon.style.display = 'none';
-        }
-      });
-    }
-
 
     function playPreviousTrack() {
       const tracks = currentAlbum.tracks;
@@ -733,8 +620,31 @@
         }
 
         if (currentLyricIndex >= 0) {
-            highlightedLyric = currentLyrics[currentLyricIndex]; // DOM 요소 저장
-            highlightedLyric.classList.add('active');
+            const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
+            if (lyricLine) {
+                lyricLine.classList.add('active');
+                // lyricLine.scrollIntoView({ behavior: 'smooth', block: 'center' }); // 자동 스크롤 제거
+                highlightedLyric = lyricLine;
+            }
+        }
+    }
+
+    // 모바일 환경 체크 및 컨트롤 버튼 설정 함수 (추가)
+    function checkMobileAndSetControlButtons() {
+        const playPauseButton = document.querySelectorAll('.play-pause-button');
+        const prevButton = document.querySelectorAll('.prev-button');
+        const nextButton = document.querySelectorAll('.next-button');
+
+        if (window.matchMedia("(max-width: 767px)").matches) {
+            // 모바일 환경: 버튼을 이미지 아이콘으로 변경 (예시, 실제 이미지 경로로 변경해야 함)
+            playPauseButton.forEach(button => button.innerHTML = isPlaying ? '⏸' : '▶'); // pause & play unicode
+            prevButton.forEach(button => button.innerHTML = '⏮'); // previous unicode
+            nextButton.forEach(button => button.innerHTML = '⏭'); // next unicode
+         } else {
+            // 데스크탑 및 태블릿 환경: 기존 텍스트 버튼 유지
+            playPauseButton.forEach(button => button.innerHTML = isPlaying ? '⏸' : '▶');
+            prevButton.forEach(button => button.innerHTML = '⏮');
+            nextButton.forEach(button => button.innerHTML = '⏭');
         }
     }
 
