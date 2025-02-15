@@ -7,33 +7,28 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #f0f0f0; overflow-x: hidden; } /* 뒤로가기 애니메이션을 위해 overflow-x: hidden 추가 */
+    body { background-color: #f0f0f0; }
 
     .brand { position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); padding: 15px; display: flex; align-items: center; justify-content: space-between; }
     .brand-title { font-size: 20px; color: #000; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; position: relative; }
     .os-version { font-size: 11px; color: rgba(0, 0, 0, 0.5); position: absolute; bottom: -0.1px; left: 90px; white-space: nowrap; }
 
-    .back-button { position: fixed; top: 65px; left: 10px; background: rgba(255, 255, 255, 0.9); border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; display: none; z-index: 1001; transition: transform 0.3s ease; font-size: 14px; }
-    .back-button:active { transform: scale(0.95); }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 80px 15px 20px; position: relative; /* 애니메이션 position 설정 */ }
-
-    .artists-grid, .artist-section, .albums-grid, .tracks-list {
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease; /* 애니메이션 transition 설정 */
+    .back-button {
+      position: fixed; top: 65px; left: 10px; background: rgba(255, 255, 255, 0.9); border: none; padding: 6px 12px; border-radius: 20px; cursor: pointer; display: none; z-index: 1001; transition: transform 0.3s ease, transform 0.2s ease-out; /* 뒤로가기 애니메이션 추가 */
+      font-size: 14px;
+      transform: translateX(0); /* 초기 위치 설정 */
       opacity: 1;
-      transform: translateX(0);
-      position: relative; /* 애니메이션 position 설정 */
     }
 
-    .artists-grid.slide-out-right, .artist-section.slide-out-right, .albums-grid.slide-out-right, .tracks-list.slide-out-right {
-      transform: translateX(100%);
+    .back-button.animate-back {
+      transform: translateX(-100%); /* 애니메이션 효과 */
       opacity: 0;
     }
 
-    .artists-grid.slide-in-left, .artist-section.slide-in-left, .albums-grid.slide-in-left, .tracks-list.slide-in-left {
-      transform: translateX(0);
-      opacity: 1;
-    }
+
+    .back-button:active { transform: scale(0.95); }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 80px 15px 20px; }
 
     .artists-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
     .artist-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; position: relative; }
@@ -90,36 +85,36 @@
       max-width: 400px;
       height: 8px;
       background: #ddd;
-      border-radius: 50px; /* Modified: Fully rounded corners */
+      border-radius: 50px;
       margin: 20px 0;
       cursor: pointer;
       position: relative;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      display: flex; /* Added: To center progress bar vertically */
-      align-items: center; /* Added: To center progress bar vertically */
+      display: flex;
+      align-items: center;
     }
     .progress {
       height: 100%;
-      background: #fff; /* 변경: 하얀색으로 변경 */
-      border-radius: 50px; /* Modified: Fully rounded corners */
+      background: #fff; /* Modified: 하얀색으로 변경 */
+      border-radius: 50px;
       width: 0;
       transition: width 0.1s ease;
     }
     .progress-knob {
       position: absolute;
-      top: 50%; /* Modified: Center knob vertically */
-      transform: translateY(-50%); /* Modified: Center knob vertically */
+      top: 50%;
+      transform: translateY(-50%);
       right: 0px;
       width: 14px;
       height: 14px;
-      background-color: #fff; /* 변경: 하얀색으로 변경 */
+      background-color: #fff; /* Modified: 하얀색으로 변경 */
       border-radius: 50%;
       opacity: 0;
       transition: opacity 0.2s ease;
       pointer-events: none;
     }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
-    .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #666; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+    .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #fff; /* Modified: 시간 색상 하얀색으로 변경 */ font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
     .lyrics-container {
       width: 100%;
@@ -130,10 +125,32 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-bottom: 75vh; /* Modified: 가사 스크롤 공간 확보 */
+      justify-content: center; /* Modified: lyrics-container 중앙 정렬 */
+      padding-bottom: 10vh; /* Modified: 가사 아래 여백 조정 */
      }
-  .lyrics-line { padding: 4px; transition:  transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, color 0.4s ease, font-size 0.4s ease, filter 0.4s ease; opacity: 0.6; display: flex; align-items: center; justify-content: center;  cursor: pointer; font-size: 1em; border-radius: 5px; color: rgba(255,255,255,0.6); filter: blur(1px); } /* 변경: 블러 효과, 색상, transition 속도 조정 */
-  .lyrics-line.active { font-size: 1.3em; opacity: 1; color: white; font-weight: bold;  transform: scale(1.05); text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); transition: transform 0.1s ease-out; background-color: transparent; filter: none; } /* 변경: 배경색 제거, transition 속도 조정, 블러 제거, 크기 및 색상 변경 */
+  .lyrics-line {
+    padding: 4px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s, color 0.3s ease, font-size 0.3s ease, text-shadow 0.3s ease, filter 0.3s ease; /* Modified: transition 속성 추가 및 조정 */
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1em; /* Modified: 기본 font-size 조정 */
+    border-radius: 5px;
+    color: rgba(255,255,255,0.6); /* Modified: 기본 색상 연하게 */
+    filter: blur(1px); /* Modified: 기본 블러 효과 */
+  }
+  .lyrics-line.active {
+    font-size: 1.3em; /* Modified: 강조 font-size 조정 */
+    opacity: 1;
+    color: white;
+    font-weight: bold;
+    transform: scale(1.08); /* Modified: 강조 transform 조정 */
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4); /* Modified: 강조 text-shadow 조정 */
+    /* background-color: rgba(255,255,255,0.15); Modified: 배경색 제거 */
+    filter: none; /* Modified: 강조 시 블러 제거 */
+  }
   .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
 
     .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
@@ -246,7 +263,7 @@
 
   <div class="container">
     <div class="artists-grid"></div>
-    <div class="artist-section" style="display: none;">
+    <div class="artist-section">
       <div class="artist-video-container">
         <video class="artist-video" autoplay muted loop><source src="" type="video/mp4"></video>
         <div class="artist-video-overlay">
@@ -254,8 +271,8 @@
         </div>
       </div>
     </div>
-    <div class="albums-grid" style="display: none;"></div>
-    <div class="tracks-list" style="display: none;"></div>
+    <div class="albums-grid"></div>
+    <div class="tracks-list"></div>
   </div>
 
   <div class="mini-player">
@@ -368,26 +385,10 @@
 
     function showArtist(artist) {
         currentArtist = artist;
-        const artistsGrid = document.querySelector('.artists-grid');
-        const artistSection = document.querySelector('.artist-section');
-        const albumsGrid = document.querySelector('.albums-grid');
-        const backButton = document.querySelector('.back-button');
-
-        artistsGrid.classList.add('slide-out-right');
-        artistSection.classList.remove('slide-out-right');
-        albumsGrid.classList.remove('slide-out-right');
-        backButton.style.display = 'block';
-
-        setTimeout(() => {
-            artistsGrid.style.display = 'none';
-            artistSection.style.display = 'block';
-            albumsGrid.style.display = 'grid';
-            artistsGrid.classList.remove('slide-out-right');
-            artistSection.classList.add('slide-in-left');
-            albumsGrid.classList.add('slide-in-left');
-        }, 300);
-
-
+        document.querySelector('.artists-grid').style.display = 'none';
+        document.querySelector('.artist-section').style.display = 'block';
+        document.querySelector('.albums-grid').style.display = 'grid';
+        document.querySelector('.back-button').style.display = 'block';
         const artistVideo = document.querySelector('.artist-video');
         artistVideo.src = artist.video;
         artistVideo.style.display = 'block';
@@ -418,23 +419,11 @@
 
     function showAlbumTracks(album) {
       currentAlbum = album;
-      const albumsGrid = document.querySelector('.albums-grid');
+      document.querySelector('.albums-grid').style.display = 'none';
+      document.querySelector('.tracks-list').style.display = 'block';
       const tracksList = document.querySelector('.tracks-list');
-
-      albumsGrid.classList.add('slide-out-right');
-      tracksList.classList.remove('slide-out-right');
-
-      setTimeout(() => {
-          albumsGrid.style.display = 'none';
-          tracksList.style.display = 'block';
-          albumsGrid.classList.remove('slide-out-right');
-          tracksList.classList.add('slide-in-left');
-      }, 300);
-
-
-      const tracksListContainer = document.querySelector('.tracks-list');
-      tracksListContainer.innerHTML = '';
-      album.tracks.forEach(track => tracksListContainer.appendChild(createTrackItem(track)));
+      tracksList.innerHTML = '';
+      album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
     }
 
     function createTrackItem(track) {
@@ -564,62 +553,34 @@
     }
 
     function handleBack() {
-      const tracksList = document.querySelector('.tracks-list');
-      const albumsGrid = document.querySelector('.albums-grid');
-      const artistSection = document.querySelector('.artist-section');
-      const artistsGrid = document.querySelector('.artists-grid');
       const backButton = document.querySelector('.back-button');
+      backButton.classList.add('animate-back'); // 애니메이션 클래스 추가
 
-        if (tracksList.style.display === 'block') {
-          tracksList.classList.add('slide-out-right');
-          albumsGrid.classList.remove('slide-out-right');
-            setTimeout(() => {
-                tracksList.style.display = 'none';
-                albumsGrid.style.display = 'grid';
-                tracksList.classList.remove('slide-out-right');
-                albumsGrid.classList.add('slide-in-left');
-            }, 300);
-
-        } else if (albumsGrid.style.display === 'grid') {
-          albumsGrid.classList.add('slide-out-right');
-          artistSection.classList.remove('slide-out-right');
-          setTimeout(() => {
-              albumsGrid.style.display = 'none';
-              artistSection.style.display = 'block';
-              albumsGrid.classList.remove('slide-out-right');
-              artistSection.classList.add('slide-in-left');
-          }, 300);
-        } else if (artistSection.style.display === 'block') {
-          artistSection.classList.add('slide-out-right');
-          artistsGrid.classList.remove('slide-out-right');
-          backButton.style.display = 'none';
+      setTimeout(() => {
+        backButton.classList.remove('animate-back'); // 애니메이션 클래스 제거 (다음 나타날 때를 위해)
+        if (document.querySelector('.tracks-list').style.display === 'block') {
+          document.querySelector('.tracks-list').style.display = 'none';
+          document.querySelector('.albums-grid').style.display = 'grid';
+        } else if (document.querySelector('.albums-grid').style.display === 'grid') {
+          document.querySelector('.artist-section').style.display = 'none';
+          document.querySelector('.albums-grid').style.display = 'none';
+          document.querySelector('.artists-grid').style.display = 'grid';
+          document.querySelector('.back-button').style.display = 'none';
           const artistVideo = document.querySelector('.artist-video');
           artistVideo.style.display = 'none';
-            setTimeout(() => {
-                artistSection.style.display = 'none';
-                artistsGrid.style.display = 'grid';
-                artistSection.classList.remove('slide-out-right');
-                artistsGrid.classList.add('slide-in-left');
-            }, 300);
         }
-
+      }, 200); // 애니메이션 시간과 동일하게 설정 (0.2s)
     }
 
-    function goToHome() {
-      const artistSection = document.querySelector('.artist-section');
-      const albumsGrid = document.querySelector('.albums-grid');
-      const tracksList = document.querySelector('.tracks-list');
-      const artistsGrid = document.querySelector('.artists-grid');
-      const backButton = document.querySelector('.back-button');
-      const fullPlayer = document.querySelector('.full-player');
-      const artistVideo = document.querySelector('.artist-video');
 
-      artistSection.style.display = 'none';
-      albumsGrid.style.display = 'none';
-      tracksList.style.display = 'none';
-      artistsGrid.style.display = 'grid';
-      backButton.style.display = 'none';
-      fullPlayer.style.display = 'none';
+    function goToHome() {
+      document.querySelector('.artist-section').style.display = 'none';
+      document.querySelector('.albums-grid').style.display = 'none';
+      document.querySelector('.tracks-list').style.display = 'none';
+      document.querySelector('.artists-grid').style.display = 'grid';
+      document.querySelector('.back-button').style.display = 'none';
+      document.querySelector('.full-player').style.display = 'none';
+      const artistVideo = document.querySelector('.artist-video');
       artistVideo.style.display = 'none';
     }
 
@@ -723,6 +684,8 @@
       return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
+    let lastLyricLine = null; // 이전에 활성화된 가사 줄을 저장하는 변수
+
     function updateLyrics() {
         if (!currentLyrics.length) return;
 
@@ -739,26 +702,41 @@
         let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
 
 
-        if (highlightedLyric) {
-            highlightedLyric.classList.remove('active');
+        if (lastLyricLine) { // 이전 활성 가사 줄이 있다면
+            lastLyricLine.classList.remove('active'); // active 클래스 제거
         }
 
         if (currentLyricIndex >= 0) {
             const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
             if (lyricLine) {
-                lyricLine.classList.add('active');
+                lyricLine.classList.add('active'); // 새 가사 줄에 active 클래스 추가
+                lastLyricLine = lyricLine; // 현재 활성 가사 줄을 저장
+                // 가사 컨테이너 중앙으로 스크롤 (선택 사항)
+                scrollToLyric(lyricLine);
                 highlightedLyric = lyricLine;
-                 // Scroll to center active lyric
-                const lyricsContainer = document.querySelector('.lyrics-container');
-                const activeLyricTop = lyricLine.offsetTop;
-                const scrollPosition = activeLyricTop - lyricsContainer.offsetHeight / 2 + lyricLine.offsetHeight / 2;
-                lyricsContainer.scrollTo({
-                    top: scrollPosition,
-                    behavior: 'smooth' // Optional smooth scrolling
-                });
             }
+        } else {
+            lastLyricLine = null; // 활성 가사가 없을 때 lastLyricLine 초기화
         }
     }
+
+
+    function scrollToLyric(lyricLine) {
+        const lyricsContainer = document.querySelector('.lyrics-container');
+        if (!lyricsContainer || !lyricLine) return;
+
+        const containerHeight = lyricsContainer.offsetHeight;
+        const lineHeight = lyricLine.offsetHeight;
+        const lineOffsetTop = lyricLine.offsetTop;
+
+        const scrollPosition = lineOffsetTop - (containerHeight / 2) + (lineHeight / 2); // 중앙 정렬 스크롤 위치 계산
+
+        lyricsContainer.scrollTo({
+            top: scrollPosition,
+            behavior: 'smooth' // 부드러운 스크롤 효과 (선택 사항)
+        });
+    }
+
 
     document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
   </script>
