@@ -26,7 +26,7 @@
             backdrop-filter: blur(10px);
             padding: 20px;
             display: flex;
-            align-items: center;
+            align-items: flex-start; /* 수정: 수직 정렬을 상단으로 변경 */
             justify-content: space-between;
         }
 
@@ -36,18 +36,19 @@
             text-decoration: none;
             font-weight: 600;
             display: flex;
-            align-items: center;
-            gap: 10px;
+            flex-direction: column; /* 수정: 세로로 배치 */
+            align-items: flex-start; /* 수정: 왼쪽 정렬 */
+            gap: 5px; /* 수정: Siri Music과 musicOS 1.0 사이 간격 */
         }
+      .brand-title > span{
+            line-height: 1em;
+      }
 
         .os-version {
             font-size: 12px;
             color: rgba(0, 0, 0, 0.5);
-            display: flex;      /* 추가: 플렉스 컨테이너로 만듦 */
-            align-items: center; /* 추가: 수직 중앙 정렬 */
-            height: 100%;       /* 추가: 부모 높이만큼 늘림 */
         }
-      
+
         .back-button {
             position: fixed;
             top: 80px;
@@ -310,11 +311,11 @@
         transition: transform 0.5s ease;      /* 앨범 아트 전환 효과 */
       }
         .progress-container {
-            width: 80%;
-            max-width: 600px;
-            height: 4px;
+            width: 90%;  /* 수정: 너비 증가 */
+            max-width: 700px; /* 수정: 최대 너비 증가 */
+            height: 10px;     /* 수정: 두께 증가 */
             background: #ddd;
-            border-radius: 2px;
+            border-radius: 5px; /* 수정: 둥근 모서리 */
             margin: 20px 0;
             cursor: pointer;
             position: relative;
@@ -323,15 +324,37 @@
         .progress {
             height: 100%;
             background: #0a84ff;
-            border-radius: 2px;
+            border-radius: 5px; /* 수정: 둥근 모서리 */
             width: 0;
+            transition: width 0.1s ease; /* 부드러운 프로그레스 바 애니메이션 */
+        }
+
+      /* 프로그래스 바 핸들 추가 */
+        .progress-handle {
+          position: absolute;
+          right: 0;
+          top: -3px;
+          width: 16px;
+          height: 16px;
+          background-color: #0a84ff;
+          border-radius: 50%;
+          cursor: pointer;
+          opacity: 0; /* 기본적으로 숨김 */
+          transition: opacity 0.2s, transform 0.2s;
+        }
+
+        /* 프로그래스 컨테이너에 호버/터치 시 핸들 표시 */
+        .progress-container:hover .progress-handle,
+        .progress-container:active .progress-handle{
+          opacity: 1;
+          transform: scale(1.2); /* 살짝 크게 */
         }
 
         .time-display {
             display: flex;
             justify-content: space-between;
-            width: 80%;
-            max-width: 600px;
+            width: 90%;  /* 수정: 너비 증가 */
+            max-width: 700px;  /* 수정: 최대 너비 증가 */
             color: #666;
             font-size: 14px;
         }
@@ -339,12 +362,16 @@
         .lyrics-container {
             width: 100%;
             text-align: center;
+          /* 가독성을 위한 스타일 */
+            background: rgba(0, 0, 0, 0.2); /* 반투명 배경 */
+            border-radius: 15px;
+            padding: 10px;
         }
 
         .lyrics-line {
             padding: 10px;
             transition: all 0.3s;
-            opacity: 0.5;
+            opacity: 0.7; /* 수정: 기본 투명도 조정 */
             /* 가사 중앙 정렬을 위한 스타일 */
             display: flex;
             align-items: center;
@@ -353,9 +380,9 @@
         }
 
         .lyrics-line.active {
-            font-size: 1.2em;
+            font-size: 1.5em; /* 수정: 활성 가사 크기 증가 */
             opacity: 1;
-            color: #0a84ff;
+            color: #fff; /* 수정: 활성 가사 색상 변경 */
             font-weight: bold;
             transition: transform 0.2s ease-out;
             transform: scale(1.1);
@@ -370,6 +397,30 @@
         text-align: center; /* 텍스트 중앙 정렬 */
         margin-bottom: 5px; /* 제목과 부제 사이 간격 */
       }
+
+      /* 컨트롤 버튼 스타일 수정 */
+        .full-player .player-controls {
+            display: flex;
+            justify-content: center; /* 중앙 정렬 */
+            align-items: center;
+            gap: 30px; /* 버튼 간 간격 증가 */
+            margin-bottom: 20px;
+        }
+
+        .full-player .control-button {
+            font-size: 40px; /* 버튼 크기 증가 */
+            color: white;  /* 버튼 색상 */
+            background: rgba(0, 0, 0, 0.2); /* 반투명 배경 */
+            border-radius: 50%; /* 원형 버튼 */
+            padding: 15px; /* 패딩 증가 */
+            transition: transform 0.2s, background 0.2s;
+        }
+
+      /* 버튼 호버 효과 */
+      .full-player .control-button:hover {
+          transform: scale(1.2);
+          background: rgba(0, 0, 0, 0.4);
+        }
 
       /* 반응형 디자인 추가 */
         @media (min-width: 768px) {
@@ -387,7 +438,7 @@
 <body>
     <div class="brand">
         <div class="brand-title">
-          Siri Music
+          <span>Siri Music</span>  <!-- 수정: span 태그로 감싸기 -->
           <span class="os-version">musicOS 1.0</span>
         </div>
     </div>
@@ -434,13 +485,16 @@
                 <img src="" alt="Album art" class = "full-player-album-art">
                 <h2 class="track-name"></h2>
                 <p class="artist-name"></p>
+                <!-- 컨트롤 버튼, 프로그레스 바, 시간 표시 -->
                 <div class="player-controls">
                     <button class="control-button prev-button">⏮</button>
                     <button class="control-button play-pause-button">▶</button>
                     <button class="control-button next-button">⏭</button>
                 </div>
                 <div class="progress-container">
-                    <div class="progress"></div>
+                    <div class="progress">
+                      <div class="progress-handle"></div>
+                    </div>
                 </div>
                 <div class="time-display">
                     <span class="current-time">0:00</span>
@@ -513,6 +567,7 @@
         let highlightedLyric = null;
       // 그라데이션 색상 배열
         let currentGradientColors = ['#ffffff', '#ffffff'];
+        let isDragging = false; // 드래그 상태 변수
 
         function initializeMusicPlayer() {
             loadArtists();
@@ -710,7 +765,17 @@
             });
 
             document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
-            document.querySelector('.progress-container').addEventListener('click', seekAudio);
+          
+            // 프로그레스 바 클릭 및 드래그 이벤트
+            const progressContainer = document.querySelector('.progress-container');
+            progressContainer.addEventListener('mousedown', startDragging);
+            progressContainer.addEventListener('mouseup', stopDragging);
+            progressContainer.addEventListener('mouseleave', stopDragging);
+            progressContainer.addEventListener('mousemove', (e) => {
+              if (isDragging) {
+                seekAudio(e);
+              }
+            });
         }
 
         function setupAudioEventListeners() {
@@ -790,8 +855,8 @@
             miniPlayer.style.transform = 'translateY(0)';
 
         // Full Player 앨범 아트 transform 초기화 (Fade-out 효과를 위해)
-          const fullPlayerAlbumArt = document.querySelector('.full-player-album-art');
-          fullPlayerAlbumArt.style.opacity = 0;
+          const fullPlayerAlbumArt = document
+                    fullPlayerAlbumArt.style.opacity = 0;
           fullPlayerAlbumArt.style.transform = 'scale(0.5)';
 
 
@@ -836,6 +901,17 @@
             } else {
                 playTrack(tracks[0]);
             }
+        }
+
+      // 드래그 시작
+        function startDragging(e) {
+            isDragging = true;
+            seekAudio(e); // 즉시 업데이트
+        }
+
+        // 드래그 중지
+        function stopDragging(e) {
+            isDragging = false;
         }
 
         function seekAudio(e) {
