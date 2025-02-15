@@ -102,35 +102,35 @@
     .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #666; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
 
     .lyrics-container {
-    width: 100%;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.8);
-    overflow-y: scroll; /* 변경: 스크롤 가능하도록 변경 */
-    max-height: calc(100vh - 450px); /* 조정: 가사 컨테이너 높이 조절 */
-    padding: 10px;
-    margin-bottom: 20px;
-}
+        width: 100%;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.8);
+        overflow-y: scroll;
+        max-height: calc(100vh - 450px);
+        padding: 10px;
+        margin-bottom: 20px;
+    }
 
-.lyrics-line {
-    padding: 8px;
-    margin: 4px 0;
-    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s, background-color 0.3s ease;
-    opacity: 0.6; /* 기본 투명도 감소 */
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.95em;
-}
-.lyrics-line.active {
-        font-size: 1.3em; /* 크기 증가 */
+    .lyrics-line {
+        padding: 8px;
+        margin: 4px 0;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s, background-color 0.3s ease;
+        opacity: 0.6;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.95em;
+    }
+    .lyrics-line.active {
+        font-size: 1.3em;
         font-weight: bold;
         opacity: 1;
-        transform: scale(1.05); /* 크기 증가 */
+        transform: scale(1.05);
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        background-color: transparent; /* 배경색 제거 */
-        color: white; /* 가사 색상을 흰색으로 변경 */
+        background-color: transparent;
+        color: white;
         padding: 10px;
-      }
- .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
+    }
+     .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
 
     .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
 
@@ -248,7 +248,6 @@
     .slide-out-left {
       animation: slideOutLeft 0.5s cubic-bezier(0.550, 0.085, 0.680, 0.530) both;
     }
-
   </style>
 </head>
 <body>
@@ -310,46 +309,46 @@
         </div>
     </div>
   </div>
-  
+
   <script>
-  const musicLibrary = {
-    artists: [
-      {
-        name: '뉴진스',
-        image: 'http://www.applesodam.kro.kr/music/뉴진스/NewJeans.jpg',
-        video: 'http://www.applesodam.kro.kr/music/뉴진스/NewJeans.mp4',
-        albums: [{
-          name: "NewJeans 2nd EP 'Get Up'",
-          cover: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/NewJeans 2nd EP 'Get Up'.jpg",
-          tracks: [
-            { number: 1, title: 'New Jeans', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/New Jeans.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/New Jeans.lrc" },
-            { number: 2, title: 'Super Shy', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Super Shy.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Super Shy.lrc" },
-            { number: 3, title: 'ETA', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ETA.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ETA.lrc" },
-            { number: 4, title: 'Cool With You', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Cool With You.mp3", lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans 2nd EP 'Get Up'/Cool With You.lrc" },
-            { number: 5, title: 'Get Up', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Get Up.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Get Up.lrc" },
-            { number: 6, title: 'ASAP', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ASAP.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ASAP.lrc" }
-          ]
-        }]
-      },
-      {
-        name: '아이브',
-        image: 'http://www.applesodam.kro.kr/music/아이브/IVE.jpg',
-        video: 'http://www.applesodam.kro.kr/music/아이브/IVE.mp4',
-        albums: [{
-          name: "IVE EMPATHY - EP",
-          cover: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/IVE EMPATHY - EP.jpg",
-          tracks: [
-            { number: 1, title: 'REBEL HEART', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/REBEL HEART.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/REBEL HEART.lrc" },
-            { number: 2, title: 'FLU', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/FLU.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/FLU.lrc" },
-            { number: 3, title: 'You Wanna Cry', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/You Wanna Cry.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/You Wanna Cry.lrc" },
-            { number: 4, title: 'Thank U', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/Thank U.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/Thank U.lrc" },
-            { number: 5, title: 'ATTITUDE', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/ATTITUDE.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/ATTITUDE.lrc" },
-            { number: 6, title: 'TKO', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/TKO.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/TKO.lrc" }
-          ]
-        }]
-      }
-    ]
-  };
+    const musicLibrary = {
+      artists: [
+        {
+          name: '뉴진스',
+          image: 'http://www.applesodam.kro.kr/music/뉴진스/NewJeans.jpg',
+          video: 'http://www.applesodam.kro.kr/music/뉴진스/NewJeans.mp4',
+          albums: [{
+            name: "NewJeans 2nd EP 'Get Up'",
+            cover: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/NewJeans 2nd EP 'Get Up'.jpg",
+            tracks: [
+              { number: 1, title: 'New Jeans', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/New Jeans.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/New Jeans.lrc" },
+              { number: 2, title: 'Super Shy', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Super Shy.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Super Shy.lrc" },
+              { number: 3, title: 'ETA', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ETA.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ETA.lrc" },
+              { number: 4, title: 'Cool With You', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Cool With You.mp3", lyrics: "http://www.applesodam.kro.kr/music/NewJeans/NewJeans 2nd EP 'Get Up'/Cool With You.lrc" },
+              { number: 5, title: 'Get Up', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Get Up.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/Get Up.lrc" },
+              { number: 6, title: 'ASAP', audio: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ASAP.mp3", lyrics: "http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/ASAP.lrc" }
+            ]
+          }]
+        },
+        {
+          name: '아이브',
+          image: 'http://www.applesodam.kro.kr/music/아이브/IVE.jpg',
+          video: 'http://www.applesodam.kro.kr/music/아이브/IVE.mp4',
+          albums: [{
+            name: "IVE EMPATHY - EP",
+            cover: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/IVE EMPATHY - EP.jpg",
+            tracks: [
+              { number: 1, title: 'REBEL HEART', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/REBEL HEART.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/REBEL HEART.lrc" },
+              { number: 2, title: 'FLU', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/FLU.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/FLU.lrc" },
+              { number: 3, title: 'You Wanna Cry', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/You Wanna Cry.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/You Wanna Cry.lrc" },
+              { number: 4, title: 'Thank U', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/Thank U.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/Thank U.lrc" },
+              { number: 5, title: 'ATTITUDE', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/ATTITUDE.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/ATTITUDE.lrc" },
+              { number: 6, title: 'TKO', audio: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/TKO.mp3", lyrics: "http://www.applesodam.kro.kr/music/아이브/IVE EMPATHY - EP/TKO.lrc" }
+            ]
+          }]
+        }
+      ]
+    };
 
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
 
