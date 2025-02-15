@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #ecf0f3; } /* Light gray background for neumorphism */
+    body { background-color: #ecf0f3; }
 
     .brand {
         position: fixed;
@@ -19,8 +19,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
-        box-shadow: 9px 9px 16px #d1d9e6, -9px -9px 16px #f9f9f9; /* 뉴모피즘 그림자 */
+        background-color: #ecf0f3;
+        box-shadow: 9px 9px 16px #d1d9e6, -9px -9px 16px #f9f9f9;
     }
     .brand-title { font-size: 20px; color: #555; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; position: relative; }
     .os-version { font-size: 11px; color: rgba(0, 0, 0, 0.3); position: absolute; bottom: -0.1px; left: 90px; white-space: nowrap; }
@@ -29,64 +29,64 @@
         position: fixed;
         top: 65px;
         left: 10px;
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
+        background-color: #ecf0f3;
         border: none;
-        padding: 8px 16px; /* 패딩 조정 */
-        border-radius: 25px; /* 더 둥근 버튼 */
+        padding: 8px 16px;
+        border-radius: 25px;
         cursor: pointer;
         display: none;
         z-index: 1001;
         transition: transform 0.3s ease;
         font-size: 14px;
-        color: #555; /* 텍스트 색상 변경 */
-        box-shadow: 5px 5px 9px #d1d9e6, -5px -5px 9px #f9f9f9; /* 뉴모피즘 그림자 */
+        color: #555;
+        box-shadow: 5px 5px 9px #d1d9e6, -5px -5px 9px #f9f9f9;
     }
     .back-button:active {
         transform: scale(0.95);
-        box-shadow: inset 5px 5px 9px #d1d9e6, inset -5px -5px 9px #f9f9f9; /* 클릭 시 내부 그림자 */
+        box-shadow: inset 5px 5px 9px #d1d9e6, inset -5px -5px 9px #f9f9f9;
     }
 
     .container { max-width: 1200px; margin: 0 auto; padding: 80px 15px 20px; }
 
     .artists-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
     .artist-card {
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
-        border-radius: 15px; /* 둥근 테두리 증가 */
+        background-color: #ecf0f3;
+        border-radius: 15px;
         overflow: hidden;
-        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; /* 뉴모피즘 그림자 */
+        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9;
         transition: transform 0.2s;
         cursor: pointer;
         position: relative;
     }
     .artist-card:hover {
         transform: translateY(-3px);
-        box-shadow: 9px 9px 12px #d1d9e6, -9px -9px 12px #f9f9f9; /* 호버 시 그림자 강조 */
+        box-shadow: 9px 9px 12px #d1d9e6, -9px -9px 12px #f9f9f9;
     }
     .artist-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
-    .artist-name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; /* 패딩 증가 */
-        background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.6)); /* 투명도 조절 */
-        color: #fff; /* 흰색 유지 */
+    .artist-name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.6));
+        color: #fff;
         font-size: 1.4em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); }
 
     .artist-section { display: none; position: relative; margin-bottom: 30px; }
     .artist-video-container { position: relative; width: 100%; height: 250px; border-radius: 25px; overflow: hidden;
-        box-shadow: 9px 9px 16px #d1d9e6, -9px -9px 16px #f9f9f9; /* 뉴모피즘 그림자 */ }
+        box-shadow: 9px 9px 16px #d1d9e6, -9px -9px 16px #f9f9f9; }
     .artist-video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
     .artist-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4) 90%); pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 15px; }
     .artist-section .artist-info h2 { color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); font-size: 1.6em; }
 
     .albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; display: none; }
     .album-card {
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
-        border-radius: 12px; /* 둥근 테두리 증가 */
+        background-color: #ecf0f3;
+        border-radius: 12px;
         overflow: hidden;
-        box-shadow: 6px 6px 9px #d1d9e6, -6px -6px 9px #f9f9f9; /* 뉴모피즘 그림자 */
+        box-shadow: 6px 6px 9px #d1d9e6, -6px -6px 9px #f9f9f9;
         transition: transform 0.2s;
         cursor: pointer;
     }
     .album-card:hover {
         transform: translateY(-3px);
-        box-shadow: 8px 8px 11px #d1d9e6, -8px -8px 11px #f9f9f9; /* 호버 시 그림자 강조 */
+        box-shadow: 8px 8px 11px #d1d9e6, -8px -8px 11px #f9f9f9;
     }
     .album-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
     .album-info { padding: 10px 15px; }
@@ -94,25 +94,25 @@
 
     .tracks-list {
         display: none;
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
-        border-radius: 15px; /* 둥근 테두리 증가 */
-        padding: 20px; /* 패딩 증가 */
+        background-color: #ecf0f3;
+        border-radius: 15px;
+        padding: 20px;
         margin-top: 20px;
-        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; /* 뉴모피즘 그림자 */
+        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9;
     }
-    .track-item { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 10px; /* 둥근 요소 */ }
-    .track-item:hover { background-color: #e2e8ec; } /* 호버 시 배경색 약간 변경 */
+    .track-item { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 10px; }
+    .track-item:hover { background-color: #e2e8ec; }
     .track-number { width: 25px; color: #777; font-size: 0.9em; }
-    .track-info { flex-grow: 1; font-size: 0.95em; color: #444; } /* 텍스트 색상 변경 */
+    .track-info { flex-grow: 1; font-size: 0.95em; color: #444; }
 
     .mini-player {
         position: fixed;
         bottom: 15px;
         right: 15px;
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
-        border-radius: 12px; /* 둥근 테두리 증가 */
-        padding: 12px; /* 패딩 조정 */
-        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; /* 뉴모피즘 그림자 */
+        background-color: #ecf0f3;
+        border-radius: 12px;
+        padding: 12px;
+        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9;
         display: none;
         align-items: center;
         gap: 10px;
@@ -124,7 +124,7 @@
     }
     .mini-player img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; transition: transform 0.5s ease; }
     .mini-player .track-info{ flex-grow: 1; overflow: hidden; }
-    .mini-player .track-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; color: #333; } /* 텍스트 색상 변경 */
+    .mini-player .track-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; color: #333; }
     .mini-player .artist-name { color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8em; }
     .player-controls { display: flex; align-items: center; gap: 5px; margin-right: 0px; }
 
@@ -132,9 +132,9 @@
         background: none;
         border: none;
         cursor: pointer;
-        padding: 6px; /* 패딩 조정 */
+        padding: 6px;
         transition: transform 0.2s;
-        color: #555; /* 버튼 색상 변경 */
+        color: #555;
     }
     .mini-player .control-button { font-size: 18px; }
     .full-player .control-button { font-size: 28px; margin: 0 8px; color: #fff; }
@@ -147,10 +147,10 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: #a8b8fc; /* 기존 배경색 유지 또는 뉴모피즘 스타일로 변경 */
+        background: #a8b8fc;
         display: none;
         z-index: 2000;
-        padding: 20px; /* 패딩 증가 */
+        padding: 20px;
         overflow: hidden;
     }
     .full-player .back-button {
@@ -158,11 +158,11 @@
         top: 20px;
         left: 20px;
         display: block;
-        color: #fff; /* 흰색으로 변경 */
-        box-shadow: 5px 5px 9px #92a3d8, -5px -5px 9px #c0cffd; /* 배경색에 맞춘 그림자 */
+        color: #000;
+        box-shadow: 5px 5px 9px #92a3d8, -5px -5px 9px #c0cffd;
     }
     .full-player .back-button:active {
-        box-shadow: inset 5px 5px 9px #92a3d8, inset -5px -5px 9px #c0cffd; /* 클릭 시 내부 그림자 */
+        box-shadow: inset 5px 5px 9px #92a3d8, inset -5px -5px 9px #c0cffd;
     }
     .full-player-content { display: flex; flex-direction: column; height: 100%; width: 100%; display: flex; }
     .player-left, .player-right { flex: none; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -170,28 +170,27 @@
     .full-player-album-art {
         width: 200px;
         height: 200px;
-        border-radius: 15px; /* 둥근 테두리 증가 */
+        border-radius: 15px;
         margin-bottom: 15px;
-        box-shadow: 9px 9px 16px #92a3d8, -9px -9px 16px #c0cffd; /* 배경색에 맞춘 그림자 */
         transition: transform 0.5s ease, opacity 0.5s ease; opacity: 1; transform: scale(1);
     }
 
     .progress-container {
         width: 95%;
         max-width: 400px;
-        height: 10px; /* 높이 조정 */
-        background-color: #ecf0f3; /* 배경색과 동일하게 */
+        height: 10px;
+        background-color: #ecf0f3;
         border-radius: 50px;
         margin: 20px 0;
         cursor: pointer;
         position: relative;
-        box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #f9f9f9; /* 내부 그림자 */
+        box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #f9f9f9;
         display: flex;
         align-items: center;
     }
     .progress {
         height: 100%;
-        background-color: #a8b8fc; /* 진행바 색상 */
+        background-color: #a8b8fc;
         border-radius: 50px;
         width: 0;
         transition: width 0.1s ease;
@@ -202,58 +201,54 @@
         top: 50%;
         transform: translateY(-50%);
         right: 0px;
-        width: 16px; /* 크기 조정 */
-        height: 16px; /* 크기 조정 */
-        background-color: #a8b8fc; /* 손잡이 색상 */
+        width: 16px;
+        height: 16px;
+        background-color: #a8b8fc;
         border-radius: 50%;
         opacity: 0;
         transition: opacity 0.2s ease;
         pointer-events: none;
-        box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #f9f9f9; /* 손잡이 그림자 */
+        box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #f9f9f9;
     }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
-    .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #eee; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); color: #fff; } /* 텍스트 색상 흰색으로 */
+    .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #eee; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); color: #fff; }
 
     .lyrics-container {
         width: 100%;
         text-align: center;
         color: rgba(255, 255, 255, 0.8);
-        overflow-y: scroll;
-        overflow-x: hidden; /* 가로 스크롤 방지 */
-        scrollbar-width: none; /* Firefox */
-        -ms-overflow-style: none;  /* IE and Edge */
+        overflow-y: auto;
+        overflow-x: hidden; /* 가사 스크롤 바 제거 및 좌우 움직임 방지 (개선 사항 1) */
+        -ms-overflow-style: none; /* IE, Edge에서 스크롤바 제거 (개선 사항 1) */
+        scrollbar-width: none; /* Firefox에서 스크롤바 제거 (개선 사항 1) */
         max-height: calc(100vh - 450px);
         padding: 10px;
         margin-bottom: 20px;
-        border-radius: 15px; /* 박스 배경 곡률 적용 */
-        background-color: rgba(0, 0, 0, 0.2); /* 박스 배경 추가 (필요한 경우) */
     }
     .lyrics-container::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera */
+        display: none; /* Chrome, Safari, Opera에서 스크롤바 제거 (개선 사항 1) */
     }
-
 
     .lyrics-line {
-        padding: 10px; /* 패딩 증가 */
-        margin: 5px 0; /* 마진 조정 */
+        padding: 10px;
+        margin: 5px 0;
         transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s, background-color 0.3s ease;
-        opacity: 0.7; /* 기본 투명도 증가 */
-        border-radius: 10px; /* 둥근 코너 */
+        opacity: 0.7;
+        border-radius: 10px;
         cursor: pointer;
-        font-size: 1em; /* 기본 크기 약간 증가 */
-        color: #eee; /* 가사 색상 변경 */
-        text-shadow: 0 1px 1px rgba(0,0,0,0.3); /* 텍스트 그림자 추가 */
-        word-wrap: break-word; /* 긴 가사 줄바꿈 처리 */
+        font-size: 1em;
+        color: #eee;
+        text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     }
     .lyrics-line.active {
-        font-size: 1.4em; /* 활성 가사 크기 증가 */
+        font-size: 1.4em;
         font-weight: bold;
         opacity: 1;
         transform: scale(1.05);
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        background-color: rgba(255,255,255,0.1); /* 활성 배경색 약간 투명하게 */
+        background-color: rgba(255,255,255,0.1);
         color: #fff;
-        padding: 12px; /* 활성 패딩 증가 */
+        padding: 12px;
     }
      .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
 
@@ -355,20 +350,19 @@
         text-shadow: none;
       }
     }
-      /* 뒤로가기 애니메이션 변경: fade-out */
-      @keyframes fadeOut {
+      @keyframes fadeOut { /* fadeOut 애니메이션 (개선 사항 2) */
           from {
             opacity: 1;
           }
           to {
             opacity: 0;
-            display: none; /* 애니메이션 후 숨김 처리 */
           }
         }
+    .fade-out {
+      animation: fadeOut 0.3s ease-in-out both; /* fadeOut 클래스 (개선 사항 2) */
+    }
 
-        .fade-out {
-          animation: fadeOut 0.3s ease-out forwards; /* forwards를 사용하여 최종 상태 유지 */
-        }
+
   </style>
 </head>
 <body>
@@ -472,6 +466,8 @@
     };
 
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
+    let isUserScrollingLyrics = false; // 사용자 가사 스크롤 여부 플래그 (개선 사항 4)
+    let lyricScrollTimeout; // 가사 스크롤 타임아웃 (개선 사항 4)
 
     function initializeMusicPlayer() {
         loadArtists();
@@ -565,7 +561,7 @@
       img.src = currentAlbum.cover;
         img.onload = () => {
           const colorThief = new ColorThief();
-          const colors = colorThief.getPalette(img, 2); // 2가지 주요 색상 추출
+          const colors = colorThief.getPalette(img, 2);
             currentGradientColors = colors.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
             updateFullPlayerBackground();
         };
@@ -609,18 +605,18 @@
                 const seconds = parseFloat(match[2]);
                 const text = line.replace(timeRegex, '').trim();
                 const time = minutes * 60 + seconds;
-                if (text) { // 빈 문자열이 아닌 경우만 추가
+                if (text) {
                     lyrics.push({ time: time, text: text });
                 }
             }
         });
 
-        return lyrics.sort((a, b) => a.time - b.time); // Ensure chronological order
+        return lyrics.sort((a, b) => a.time - b.time);
     }
 
     function displayLyrics(lyrics) {
       const lyricsContainer = document.querySelector('.lyrics-container');
-        lyricsContainer.innerHTML = ''; // Clear previous lyrics
+        lyricsContainer.innerHTML = '';
         lyrics.forEach(line => {
             const lineElement = document.createElement('div');
             lineElement.classList.add('lyrics-line');
@@ -628,7 +624,7 @@
             lineElement.textContent = line.text;
             lineElement.addEventListener('click', () => {
                 audio.currentTime = parseFloat(line.time);
-                updateLyrics(); // Update highlight on manual click
+                updateLyrics();
             });
             lyricsContainer.appendChild(lineElement);
         });
@@ -643,7 +639,7 @@
             const text = await response.text();
             currentLyrics = parseLRC(text);
             displayLyrics(currentLyrics);
-            updateLyrics(); // Initial highlighting
+            updateLyrics();
         } catch (error) {
             console.error('Error loading lyrics:', error);
             document.querySelector('.lyrics-container').innerHTML = '<div class="lyrics-line">가사를 불러올 수 없습니다.</div>';
@@ -667,11 +663,21 @@
       });
 
       document.querySelector('.full-player .back-button').addEventListener('click', hideFullPlayer);
-        // Add event listeners for dragging the progress knob
       const progressContainer = document.querySelector('.progress-container');
         progressContainer.addEventListener('mousedown', startDragging);
         document.addEventListener('mousemove', drag);
         document.addEventListener('mouseup', stopDragging);
+
+      const lyricsContainer = document.querySelector('.lyrics-container');
+      lyricsContainer.addEventListener('scroll', handleLyricsScroll); // 가사 컨테이너 스크롤 이벤트 리스너 추가 (개선 사항 4)
+    }
+
+    function handleLyricsScroll() {
+      isUserScrollingLyrics = true;
+      clearTimeout(lyricScrollTimeout);
+      lyricScrollTimeout = setTimeout(() => {
+        isUserScrollingLyrics = false;
+      }, 3000); // 3초 후 자동 스크롤 활성화 (개선 사항 4)
     }
 
 
@@ -704,15 +710,15 @@
     const backButton = document.querySelector('.back-button');
 
     if (document.querySelector('.tracks-list').style.display === 'block') {
-      document.querySelector('.tracks-list').classList.add('fade-out');
+      document.querySelector('.tracks-list').classList.add('fade-out'); // fadeOut 애니메이션으로 변경 (개선 사항 2)
       setTimeout(() => {
         document.querySelector('.tracks-list').style.display = 'none';
-        document.querySelector('.tracks-list').classList.remove('fade-out');
+        document.querySelector('.tracks-list').classList.remove('fade-out'); // fadeOut 클래스 제거 (개선 사항 2)
         document.querySelector('.albums-grid').style.display = 'grid';
-      }, 300); // fade-out 애니메이션 시간과 일치
+      }, 300); // 애니메이션 시간과 맞춤 (개선 사항 2)
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-      document.querySelector('.albums-grid').classList.add('fade-out');
-      document.querySelector('.artist-section').classList.add('fade-out');
+      document.querySelector('.albums-grid').classList.add('fade-out'); // fadeOut 애니메이션으로 변경 (개선 사항 2)
+      document.querySelector('.artist-section').classList.add('fade-out'); // fadeOut 애니메이션으로 변경 (개선 사항 2)
 
        setTimeout(() => {
             document.querySelector('.artist-section').style.display = 'none';
@@ -720,9 +726,9 @@
             document.querySelector('.artists-grid').style.display = 'grid';
             document.querySelector('.back-button').style.display = 'none';
 
-             document.querySelector('.artists-grid').classList.remove('fade-out');
-             document.querySelector('.artist-section').classList.remove('fade-out');
-        }, 300);
+             document.querySelector('.artists-grid').classList.remove('fade-out'); // fadeOut 클래스 제거 (개선 사항 2)
+             document.querySelector('.artist-section').classList.remove('fade-out'); // fadeOut 클래스 제거 (개선 사항 2)
+        }, 300); // 애니메이션 시간과 맞춤 (개선 사항 2)
 
 
     }
@@ -799,7 +805,7 @@
             isPlaying = false;
         }
       updateMiniPlayer();
-      updateFullPlayer(); // In case it's visible
+      updateFullPlayer();
       document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶');
     }
 
@@ -821,10 +827,9 @@
         const container = document.querySelector('.progress-container');
         const rect = container.getBoundingClientRect();
         let percent = (e.clientX - rect.left) / rect.width;
-        percent = Math.max(0, Math.min(1, percent)); // Ensure 0-1 range
+        percent = Math.max(0, Math.min(1, percent));
         audio.currentTime = percent * audio.duration;
 
-        // 진행바와 손잡이 위치 업데이트
         document.querySelector('.progress').style.width = `${percent * 100}%`;
         document.querySelector('.progress-knob').style.left = `${percent * 100}%`;
         }
@@ -841,7 +846,7 @@
       knob.style.left = `${percentage}%`
       currentTimeDisplays.forEach(display => display.textContent = formatTime(audio.currentTime));
       totalTimeDisplays.forEach(display => display.textContent = formatTime(audio.duration));
-      updateLyrics(); // Update lyric highlighting
+      updateLyrics();
     }
 
      function formatTime(seconds) {
@@ -854,11 +859,11 @@
 
    function updateLyrics() {
     if (!currentLyrics.length) return;
+    if (isUserScrollingLyrics) return; // 사용자가 스크롤 중이면 자동 스크롤 하지 않음 (개선 사항 4)
 
     const currentTime = audio.currentTime;
     let nextLyricIndex = -1;
 
-    // Find the index of the next lyric to highlight.
     for (let i = 0; i < currentLyrics.length; i++) {
         if (currentLyrics[i].time > currentTime) {
             nextLyricIndex = i;
@@ -868,13 +873,11 @@
 
     let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
 
-    // Remove highlight from the previously active lyric
     if (highlightedLyric) {
         highlightedLyric.classList.remove('active');
-        highlightedLyric = null; // Reset the reference
+        highlightedLyric = null;
     }
 
-    // Highlight the current lyric and scroll it into view
        if (currentLyricIndex >= 0) {
         const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
         if (lyricLine) {
@@ -888,7 +891,6 @@
             const scrollTop = container.scrollTop;
             const scrollBottom = scrollTop + containerHeight;
 
-            // 가사 라인이 화면 중앙에 오도록 스크롤 조정
             const offsetToCenter = lineTop - scrollTop - (containerHeight / 2) + (lyricLine.offsetHeight / 2);
 
             container.scrollBy({
