@@ -15,7 +15,7 @@
     .os-version { font-size: 12px; color: rgba(0, 0, 0, 0.5); position: absolute; bottom: -0.1px; left: 110px; white-space: nowrap; }
 
     /* Back Button */
-    .back-button { position: fixed; top: 80px; left: 20px; background: rgba(255, 255, 255, 0.9); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: none; z-index: 1001; transition: transform 0.3s ease; }
+    .back-button { position: fixed; top: 80px; left: 20px; background: rgba(255, 255, 255, 0.9); border: none; padding: 8px 16px; border-radius: 20px; cursor: pointer; display: none; z-index: 1001; transition: transform 0.2s ease; }
     .back-button:active { transform: scale(0.95); }
 
     /* Main Container */
@@ -27,7 +27,7 @@
     .artist-card:hover { transform: translateY(-5px); }
     .artist-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
     /* Artist Name Overlay */
-    .artist-name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.8)); color: white; font-size: 2em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); }
+    .artist-name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.8)); color: white; font-size: 1.2em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); }
 
     /* Artist Section */
     .artist-section { display: none; position: relative; margin-bottom: 40px; }
@@ -64,7 +64,7 @@
     .player-controls { display: flex; align-items: center; gap: 10px; margin-right: 0px; }
 
      /* Control Buttons */
-    .control-button { background: none; border: none; cursor: pointer; padding: 5px;  transition: transform 0.2s; } /* Removed color */
+    .control-button { background: none; border: none; cursor: pointer; padding: 5px;  transition: transform 0.2s ease; } /* Removed color */
     .mini-player .control-button { font-size: 20px; color: black; } /* Mini player button color */
     .full-player .control-button { font-size: 32px; margin: 0 10px; color: white; } /* Full player button color */
 
@@ -202,7 +202,7 @@
     }
   ]
 };
-    
+
 
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
 
@@ -224,13 +224,11 @@
         artistsGrid.appendChild(artistCard);
 
         // Check for cached video
-        const cachedVideo = localStorage.getItem(LS_ARTIST_VIDEO + artist.name);
-        if (cachedVideo) {
-            const blob = new Blob([cachedVideo], { type: 'video/mp4' });
-            artist.video = URL.createObjectURL(blob);
-
+        const cachedVideoBase64 = localStorage.getItem(LS_ARTIST_VIDEO + artist.name); // Base64 데이터 로드
+        if (cachedVideoBase64) {
+            const videoBlob = base64toBlob(cachedVideoBase64, 'video/mp4'); // Base64 -> Blob 변환
+            artist.video = URL.createObjectURL(videoBlob); // Blob URL 생성
         }
-
       });
     }
 
@@ -246,43 +244,44 @@
 
     async function showArtist(artist) {
         currentArtist = artist;
-        document.querySelector('.artists-grid').style.display = 'none';
-        document.querySelector('.artist-section').style.display = 'block';
-        document.querySelector('.albums-grid').style.display = 'grid';
-        document.querySelector('.back-button').style.display = 'block';
+
+        // 화면 업데이트를 requestAnimationFrame 내에서 실행하여 버그 수정 및 부드러운 전환
+        requestAnimationFrame(() => {
+            document.querySelector('.artists-grid').style.display = 'none'; // 아티스트 목록 숨김
+        });
+
+        document.querySelector('.artist-section').style.display = 'block'; // 아티스트 섹션 표시
+        document.querySelector('.albums-grid').style.display = 'grid'; // 앨범 목록 표시
+        document.querySelector('.back-button').style.display = 'block'; // 뒤로가기 버튼 표시
         const artistVideo = document.querySelector('.artist-video');
 
 
          // Load video (check local storage first)
-        const cachedVideo = localStorage.getItem(LS_ARTIST_VIDEO + artist.name);
+        let artistVideoURL = artist.video; // 기본 비디오 URL 설정
+        const cachedVideoBase64 = localStorage.getItem(LS_ARTIST_VIDEO + artist.name); // Base64 데이터 로드
 
-        if (cachedVideo) {
-            const blob = new Blob([new Uint8Array(cachedVideo.split(',').map(Number))], { type: 'video/mp4' });
-            artistVideo.src = URL.createObjectURL(blob);
-
+        if (cachedVideoBase64) {
+            const videoBlob = base64toBlob(cachedVideoBase64, 'video/mp4'); // Base64 -> Blob 변환
+            artistVideoURL = URL.createObjectURL(videoBlob); // Blob URL 생성
         } else {
-
             try{
                 const response = await fetch(artist.video);
                 const arrayBuffer = await response.arrayBuffer();
-                const uint8Array = new Uint8Array(arrayBuffer);
-                localStorage.setItem(LS_ARTIST_VIDEO + artist.name, Array.from(uint8Array));
-                 const blob = new Blob([arrayBuffer], {type: 'video/mp4'});
-                artistVideo.src = URL.createObjectURL(blob);
+                const videoBlob = new Blob([arrayBuffer], {type: 'video/mp4'});
+                const base64Video = blobToBase64(videoBlob); // Blob -> Base64 변환
+                localStorage.setItem(LS_ARTIST_VIDEO + artist.name, base64Video); // Base64 데이터 localStorage에 저장
+                artistVideoURL = URL.createObjectURL(videoBlob); // Blob URL 생성
 
             } catch (error){
                 console.error("Error loading artist video", error);
-                artistVideo.src = artist.video;
             }
         }
 
-
-
-        artistVideo.style.display = 'block';
-        document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
-        loadAlbums(artist);
+        artistVideo.src = artistVideoURL; // 비디오 소스 설정
+        artistVideo.style.display = 'block'; // 비디오 표시
+        document.querySelector('.artist-section .artist-info h2').textContent = artist.name; // 아티스트 이름 표시
+        loadAlbums(artist); // 앨범 목록 로드
     }
-
 
 
     function loadAlbums(artist) {
@@ -326,26 +325,25 @@
 
         // Load Audio (check local storage first)
         const cacheKey = LS_ALBUM_AUDIO + currentAlbum.name + "_" + track.title;
-        const cachedAudio = localStorage.getItem(cacheKey);
+        let audioURL = track.audio; // 기본 오디오 URL 설정
+        const cachedAudioBase64 = localStorage.getItem(cacheKey); // Base64 데이터 로드
 
-        if (cachedAudio) {
-            const blob = new Blob([new Uint8Array(cachedAudio.split(',').map(Number))], { type: 'audio/mpeg' });
-            audio.src = URL.createObjectURL(blob);
+        if (cachedAudioBase64) {
+             const audioBlob = base64toBlob(cachedAudioBase64, 'audio/mpeg'); // Base64 -> Blob 변환
+             audioURL = URL.createObjectURL(audioBlob); // Blob URL 생성
         } else {
             try {
                 const response = await fetch(track.audio);
                 const arrayBuffer = await response.arrayBuffer();
-                const uint8Array = new Uint8Array(arrayBuffer);
-
-                localStorage.setItem(cacheKey, Array.from(uint8Array)); // Store as comma-separated string
-
-                const blob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
-                audio.src = URL.createObjectURL(blob);
+                const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
+                const base64Audio = blobToBase64(audioBlob); // Blob -> Base64 변환
+                localStorage.setItem(cacheKey, base64Audio); // Base64 데이터 localStorage에 저장
+                audioURL = URL.createObjectURL(audioBlob); // Blob URL 생성
             } catch (error) {
                 console.error("Error loading audio:", error);
-                audio.src = track.audio; // Fallback to original URL
             }
         }
+        audio.src = audioURL; // 오디오 소스 설정
 
 
       audio.play();
@@ -465,24 +463,22 @@
     }
 
     function handleBack() {
-      const backButton = document.querySelector('.back-button');
-      backButton.style.transition = 'transform 0.3s ease';
-      backButton.style.transform = 'translateX(-10px)';
-      setTimeout(() => {
-        if (document.querySelector('.tracks-list').style.display === 'block') {
-          document.querySelector('.tracks-list').style.display = 'none';
-          document.querySelector('.albums-grid').style.display = 'grid';
-        } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-          document.querySelector('.artist-section').style.display = 'none';
-          document.querySelector('.albums-grid').style.display = 'none';
-          document.querySelector('.artists-grid').style.display = 'grid';
-          document.querySelector('.back-button').style.display = 'none';
-          const artistVideo = document.querySelector('.artist-video');
-          artistVideo.style.display = 'none';
-        }
-        backButton.style.transform = 'translateX(0)';
-      }, 200);
+        // 화면 업데이트를 requestAnimationFrame 내에서 실행하여 버그 수정 및 부드러운 전환
+        requestAnimationFrame(() => {
+            if (document.querySelector('.tracks-list').style.display === 'block') {
+                document.querySelector('.tracks-list').style.display = 'none';
+                document.querySelector('.albums-grid').style.display = 'grid';
+            } else if (document.querySelector('.albums-grid').style.display === 'grid') {
+                document.querySelector('.artist-section').style.display = 'none';
+                document.querySelector('.albums-grid').style.display = 'none';
+                document.querySelector('.artists-grid').style.display = 'grid';
+                document.querySelector('.back-button').style.display = 'none';
+                const artistVideo = document.querySelector('.artist-video');
+                artistVideo.style.display = 'none';
+            }
+        });
     }
+
 
     function goToHome() {
       document.querySelector('.artist-section').style.display = 'none';
@@ -629,6 +625,33 @@
             }
         }
     }
+
+    // Base64 인코딩 함수 (Blob -> Base64)
+    function blobToBase64(blob) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result.split(',')[1]); // Data URL prefix 제거
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+        });
+    }
+
+    // Base64 디코딩 함수 (Base64 -> Blob)
+    function base64toBlob(base64Data, contentType) {
+        const byteCharacters = atob(base64Data);
+        const byteArrays = [];
+        for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+            const slice = byteCharacters.slice(offset, offset + 512);
+            const byteNumbers = new Array(slice.length);
+            for (let i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+        return new Blob(byteArrays, { type: contentType });
+    }
+
 
     document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
   </script>
