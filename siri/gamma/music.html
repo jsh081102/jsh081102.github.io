@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale: 1.0">
   <title>Siri Music</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
   <style>
@@ -75,7 +75,7 @@
     .artist-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4) 90%); pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 15px; }
     .artist-section .artist-info h2 { color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); font-size: 1.6em; }
 
-    .albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; display: none; opacity: 1; } /* opacity: 1 추가 (개선 사항 2) */
+    .albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 20px; display: none; }
     .album-card {
         background-color: #ecf0f3;
         border-radius: 12px;
@@ -99,7 +99,6 @@
         padding: 20px;
         margin-top: 20px;
         box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9;
-        opacity: 1; /* opacity: 1 추가 (개선 사항 2) */
     }
     .track-item { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 10px; }
     .track-item:hover { background-color: #e2e8ec; }
@@ -188,7 +187,6 @@
         box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #f9f9f9;
         display: flex;
         align-items: center;
-        overflow: hidden; /* Knob 영역 제한 (개선 사항 1) */
     }
     .progress {
         height: 100%;
@@ -202,14 +200,13 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        /* right: 0px; 기존 코드 삭제 (개선 사항 1) */
-        left: 0; /* 초기 left 값 설정 (개선 사항 1) */
+        right: -8px; /* 수정 1: 데스크탑 knob 위치 조정 */
         width: 16px;
         height: 16px;
         background-color: #a8b8fc;
         border-radius: 50%;
         opacity: 0;
-        transition: opacity 0.2s ease, left 0.1s ease; /* left transition 추가 (개선 사항 1) */
+        transition: opacity 0.2s ease;
         pointer-events: none;
         box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #f9f9f9;
     }
@@ -235,7 +232,7 @@
     .lyrics-line {
         padding: 10px;
         margin: 5px 0;
-        transition: transform 0.25s ease-out, opacity 0.2s, background-color 0.3s ease, color 0.25s ease-out; /* ease-out easing 및 transition 시간 조정 (개선 사항 4) */
+        transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out, background-color 0.3s ease; /* 수정 4: 가사 애니메이션 부드럽게 변경 */
         opacity: 0.7;
         border-radius: 10px;
         cursor: pointer;
@@ -247,7 +244,7 @@
         font-size: 1.4em;
         font-weight: bold;
         opacity: 1;
-        transform: translateY(-5px); /* transform 변경 (개선 사항 4) */
+        transform: scale(1.05);
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         color: #fff;
         padding: 12px;
@@ -318,6 +315,9 @@
       .time-display {
         max-width: 350px;
       }
+      .progress-knob {
+         right: -5px; /* 수정 1: 데스크탑 knob 위치 재조정 */
+      }
     }
 
     @media (max-width: 767px) {
@@ -351,36 +351,35 @@
         text-shadow: none;
       }
     }
-      @keyframes fadeOut {
+      @keyframes slideOutRight { /* 수정 3: slideOutRight 애니메이션 */
           from {
+            transform: translateX(0);
             opacity: 1;
           }
           to {
+            transform: translateX(100%);
             opacity: 0;
           }
         }
-    .fade-out {
-      animation: fadeOut 0.3s ease-in-out both;
-    }
-
-    @keyframes slideOutRight { /* 오른쪽으로 슬라이드 아웃 애니메이션 (개선 사항 3) */
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-
-    @keyframes slideInLeft { /* 왼쪽에서 슬라이드 인 애니메이션 (개선 사항 3) */
-        from { transform: translateX(-100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-
+      @keyframes slideInLeft { /* 수정 3: slideInLeft 애니메이션 */
+          from {
+            transform: translateX(-100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
     .slide-out-right {
-        animation: slideOutRight 0.3s ease-in-out both; /* slideOutRight 클래스 (개선 사항 3) */
+      animation: slideOutRight 0.3s ease-in-out both; /* 수정 3: slide-out-right 클래스 */
     }
-
     .slide-in-left {
-        animation: slideInLeft 0.3s ease-in-out both; /* slideInLeft 클래스 (개선 사항 3) */
+      animation: slideInLeft 0.3s ease-in-out both; /* 수정 3: slide-in-left 클래스 */
     }
-
+    .fade-out { /* 기존 fadeOut 제거 및 slide-out-right 사용으로 대체 */
+     opacity: 0; /* fade-out 클래스 본래 기능 제거 및 slide-out-right로 대체 */
+    }
 
   </style>
 </head>
@@ -516,22 +515,15 @@
         currentArtist = artist;
         document.querySelector('.artists-grid').style.display = 'none';
         document.querySelector('.artist-section').style.display = 'block';
-        document.querySelector('.albums-grid').style.display = 'grid';
+        const albumsGrid = document.querySelector('.albums-grid');
+        albumsGrid.style.display = 'grid';
+        albumsGrid.classList.remove('slide-out-right'); // 수정 2: 애니메이션 클래스 제거
         document.querySelector('.back-button').style.display = 'block';
         const artistVideo = document.querySelector('.artist-video');
         artistVideo.src = artist.video;
         artistVideo.style.display = 'block';
         document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
         loadAlbums(artist);
-
-        // 앨범 목록이 다시 나타날 때 애니메이션 적용 (개선 사항 2 수정): fade-in 애니메이션 추가
-        const albumsGrid = document.querySelector('.albums-grid');
-        albumsGrid.classList.add('slide-in-left'); // slide-in-left 애니메이션 적용
-        albumsGrid.style.opacity = 1; // opacity를 1로 설정하여 보이게 함
-        albumsGrid.style.transform = 'translateX(0)'; // transform 초기화
-        albumsGrid.addEventListener('animationend', function() {
-            albumsGrid.classList.remove('slide-in-left'); // 애니메이션 클래스 제거
-        }, { once: true }); // animationend 이벤트 리스너 추가 및 once: true 설정
     }
 
 
@@ -558,19 +550,11 @@
     function showAlbumTracks(album) {
         currentAlbum = album;
         document.querySelector('.albums-grid').style.display = 'none';
-        document.querySelector('.tracks-list').style.display = 'block';
         const tracksList = document.querySelector('.tracks-list');
+        tracksList.style.display = 'block';
+        tracksList.classList.remove('slide-out-right'); // 수정 2: 애니메이션 클래스 제거
         tracksList.innerHTML = '';
         album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
-
-        // 트랙 목록이 나타날 때 애니메이션 적용 (개선 사항 3과 유사하게 slide-in-left 애니메이션 적용)
-        const tracksListElement = document.querySelector('.tracks-list');
-        tracksListElement.classList.add('slide-in-left'); // slide-in-left 애니메이션 적용
-        tracksListElement.style.opacity = 1; // opacity를 1로 설정하여 보이게 함
-        tracksListElement.style.transform = 'translateX(0)'; // transform 초기화
-        tracksListElement.addEventListener('animationend', function() {
-            tracksListElement.classList.remove('slide-in-left'); // 애니메이션 클래스 제거
-        }, { once: true }); // animationend 이벤트 리스너 추가 및 once: true 설정
     }
 
     function createTrackItem(track) {
@@ -747,58 +731,35 @@
     const backButton = document.querySelector('.back-button');
 
     if (document.querySelector('.tracks-list').style.display === 'block') {
-        // 트랙 목록 숨김 애니메이션 (개선 사항 3)
-        const tracksList = document.querySelector('.tracks-list');
-        tracksList.classList.add('slide-out-right'); // slide-out-right 애니메이션 적용
-        tracksList.addEventListener('animationend', function() {
-            tracksList.style.display = 'none';
-            tracksList.classList.remove('slide-out-right'); // 애니메이션 클래스 제거
-            document.querySelector('.albums-grid').style.display = 'grid';
-
-            // 앨범 목록 표시 애니메이션 (개선 사항 3)
-            const albumsGrid = document.querySelector('.albums-grid');
-            albumsGrid.classList.add('slide-in-left'); // slide-in-left 애니메이션 적용
-            albumsGrid.style.opacity = 1; // opacity를 1로 설정하여 보이게 함
-            albumsGrid.style.transform = 'translateX(0)'; // transform 초기화
-            albumsGrid.addEventListener('animationend', function() {
-                albumsGrid.classList.remove('slide-in-left'); // 애니메이션 클래스 제거
-            }, { once: true }); // animationend 이벤트 리스너 추가 및 once: true 설정
-
-        }, { once: true }); // animationend 이벤트 리스너 추가 및 once: true 설정
+      document.querySelector('.tracks-list').classList.add('slide-out-right');
+      setTimeout(() => {
+        document.querySelector('.tracks-list').style.display = 'none';
+        document.querySelector('.tracks-list').classList.remove('slide-out-right'); // 수정 2: 클래스 제거
+        document.querySelector('.albums-grid').style.display = 'grid';
+        document.querySelector('.albums-grid').classList.add('slide-in-left');
+      }, 300);
+      setTimeout(() => {
+        document.querySelector('.albums-grid').classList.remove('slide-in-left'); // 수정 2: 클래스 제거 (애니메이션 후)
+      }, 600); // 애니메이션 시간 고려하여 조금 더 늦게 제거
 
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-        // 앨범 목록 및 아티스트 섹션 숨김 애니메이션 (개선 사항 3)
-        const albumsGrid = document.querySelector('.albums-grid');
-        const artistSection = document.querySelector('.artist-section');
+      document.querySelector('.albums-grid').classList.add('slide-out-right');
+      document.querySelector('.artist-section').classList.add('slide-out-right');
 
-        albumsGrid.classList.add('slide-out-right'); // albumsGrid slide-out-right 애니메이션 적용
-        artistSection.classList.add('slide-out-right'); // artistSection slide-out-right 애니메이션 적용
-
-
-        albumsGrid.addEventListener('animationend', function() {
-            albumsGrid.style.display = 'none';
-            albumsGrid.classList.remove('slide-out-right'); // albumsGrid 애니메이션 클래스 제거
-        }, { once: true }); // albumsGrid animationend 이벤트 리스너 추가 및 once: true 설정
-
-        artistSection.addEventListener('animationend', function() {
-            artistSection.style.display = 'none';
-            artistSection.classList.remove('slide-out-right'); // artistSection 애니메이션 클래스 제거
+       setTimeout(() => {
+            document.querySelector('.artist-section').style.display = 'none';
+            document.querySelector('.albums-grid').style.display = 'none';
             document.querySelector('.artists-grid').style.display = 'grid';
+            document.querySelector('.artists-grid').classList.add('slide-in-left');
             document.querySelector('.back-button').style.display = 'none';
-
-            // 아티스트 목록 표시 애니메이션 (개선 사항 3)
-            const artistsGrid = document.querySelector('.artists-grid');
-            artistsGrid.classList.add('slide-in-left'); // slide-in-left 애니메이션 적용
-            artistsGrid.style.opacity = 1; // opacity를 1로 설정하여 보이게 함
-            artistsGrid.style.transform = 'translateX(0)'; // transform 초기화
-            artistsGrid.addEventListener('animationend', function() {
-                artistsGrid.classList.remove('slide-in-left'); // 애니메이션 클래스 제거
-            }, { once: true }); // animationend 이벤트 리스너 추가 및 once: true 설정
-
-        }, { once: true }); // artistSection animationend 이벤트 리스너 추가 및 once: true 설정
+        }, 300);
+        setTimeout(() => {
+            document.querySelector('.artists-grid').classList.remove('slide-in-left'); // 수정 2: 클래스 제거 (애니메이션 후)
+            document.querySelector('.artist-section').classList.remove('slide-out-right'); // 수정 2: 클래스 제거
+            document.querySelector('.albums-grid').classList.remove('slide-out-right'); // 수정 2: 클래스 제거
+        }, 600);
     }
 }
-
 
     function goToHome() {
       document.querySelector('.artist-section').style.display = 'none';
@@ -897,10 +858,7 @@
         audio.currentTime = percent * audio.duration;
 
         document.querySelector('.progress').style.width = `${percent * 100}%`;
-        // progress knob 위치 업데이트 (개선 사항 1)
-        const knob = document.querySelector('.progress-knob');
-        knob.style.left = `${percent * 100}%`;
-
+        document.querySelector('.progress-knob').style.left = `${percent * 100}%`;
         }
     }
 
@@ -912,8 +870,7 @@
       const knob = document.querySelector('.progress-knob');
       const percentage = (audio.currentTime / audio.duration) * 100;
       progress.forEach(p => p.style.width = `${percentage}%`);
-      // progress knob 위치 업데이트 (개선 사항 1)
-      knob.style.left = `${percentage}%`;
+      knob.style.left = `${percentage}%`
       currentTimeDisplays.forEach(display => display.textContent = formatTime(audio.currentTime));
       totalTimeDisplays.forEach(display => display.textContent = formatTime(audio.duration));
       updateLyrics();
