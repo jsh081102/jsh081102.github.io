@@ -61,7 +61,7 @@
     /* Control Buttons */
     .control-button { background: none; border: none; cursor: pointer; padding: 6px; transition: transform 0.2s; color: #555; }
     .mini-player .control-button { font-size: 18px; }
-    .full-player .control-button { font-size: 28px; margin: 0 8px; color: #fff; }
+    .full-player .control-button { font-size: 28px; margin: 0 8px; color: #fff; } /* 풀플레이어 컨트롤러 색상 흰색 변경 */
     .control-button:hover { transform: scale(1.1); }
 
     /* Full Player */
@@ -196,10 +196,10 @@
     /* Animations */
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
     @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0;} to { transform: translateX(0); opacity: 1;}} /* 추가된 부분 */
-    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0;} } /* 추가된 부분 */
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } /* 추가된 부분 */
-    @keyframes fadeOutAndSlideUp { /* Full Player 닫힐 때 */
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0;} to { transform: translateX(0); opacity: 1;}}
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0;} }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } /* Fade In 애니메이션 */
+    @keyframes fadeOutAndSlideUp { /* Full Player 닫힐 때 애니메이션 (페이드 아웃 + 위로 슬라이드) */
         from {
             opacity: 1;
             transform: translateY(0);
@@ -213,10 +213,10 @@
     /* Animation Classes */
     .slide-out-right { animation: slideOutRight 0.3s ease-in-out both; }
     .slide-in-left { animation: slideInLeft 0.3s ease-in-out both; }
-    .slide-in-right { animation: slideInRight 0.3s ease-in-out both; } /* 추가된 부분 */
-    .slide-out-left { animation: slideOutLeft 0.3s ease-in-out both; }  /* 추가된 부분 */
-    .fade-in { animation: fadeIn 0.5s ease; } /* 추가된 부분 */
-      .fade-out-and-slide-up { animation: fadeOutAndSlideUp 0.3s ease-out forwards; } /* Full Player 닫힐 때 */
+    .slide-in-right { animation: slideInRight 0.3s ease-in-out both; }
+    .slide-out-left { animation: slideOutLeft 0.3s ease-in-out both; }
+    .fade-in { animation: fadeIn 0.3s ease-in-out both; } /* Fade In 애니메이션 클래스 */
+    .fade-out-and-slide-up { animation: fadeOutAndSlideUp 0.3s ease-out forwards; } /* Full Player 닫힐 때 애니메이션 클래스 */
 
   </style>
 </head>
@@ -626,28 +626,28 @@
             document.querySelector('.tracks-list').style.display = 'none';
             document.querySelector('.tracks-list').classList.remove('slide-out-right');
             document.querySelector('.albums-grid').style.display = 'grid';
-            document.querySelector('.albums-grid').classList.add('slide-in-left'); // Slide in albums
+            document.querySelector('.albums-grid').classList.add('fade-in'); // Fade in albums 애니메이션 변경
         }, 300);
         setTimeout(() => {
-            document.querySelector('.albums-grid').classList.remove('slide-in-left');
+            document.querySelector('.albums-grid').classList.remove('fade-in');
         }, 600);
 
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
         // If albums are visible, go back to artists
-        document.querySelector('.albums-grid').classList.add('slide-out-right');
-        document.querySelector('.artist-section').classList.add('slide-out-right'); // Also slide out artist section
+        document.querySelector('.albums-grid').classList.add('fade-out-and-slide-up'); // fade-out 애니메이션 변경
+        document.querySelector('.artist-section').classList.add('fade-out-and-slide-up'); // Also fade out artist section 애니메이션 변경
 
         setTimeout(() => {
             document.querySelector('.artist-section').style.display = 'none';
             document.querySelector('.albums-grid').style.display = 'none';
             document.querySelector('.artists-grid').style.display = 'grid';
-            document.querySelector('.artists-grid').classList.add('slide-in-left');  // Slide in artists grid
+            document.querySelector('.artists-grid').classList.add('fade-in');  // Fade in artists grid 애니메이션 변경
             document.querySelector('.back-button').style.display = 'none';
         }, 300);
         setTimeout(() => {
-            document.querySelector('.artists-grid').classList.remove('slide-in-left');
-            document.querySelector('.artist-section').classList.remove('slide-out-right');
-            document.querySelector('.albums-grid').classList.remove('slide-out-right');
+            document.querySelector('.artists-grid').classList.remove('fade-in');
+            document.querySelector('.artist-section').classList.remove('fade-out-and-slide-up');
+            document.querySelector('.albums-grid').classList.remove('fade-out-and-slide-up');
         }, 600);
     }
 }
@@ -666,15 +666,15 @@
       artistVideo.style.display = 'none';
 
        // Reset animations in case they were interrupted
-        document.querySelector('.artists-grid').classList.remove('slide-out-left', 'slide-in-left');
-        document.querySelector('.artist-section').classList.remove('slide-out-right','slide-in-right');
-        document.querySelector('.albums-grid').classList.remove('slide-out-left', 'slide-in-left','slide-out-right');
+        document.querySelector('.artists-grid').classList.remove('slide-out-left', 'slide-in-left', 'fade-in');
+        document.querySelector('.artist-section').classList.remove('slide-out-right','slide-in-right', 'fade-out-and-slide-up');
+        document.querySelector('.albums-grid').classList.remove('slide-out-left', 'slide-in-left','slide-out-right', 'fade-in', 'fade-out-and-slide-up');
         document.querySelector('.tracks-list').classList.remove('slide-out-right', 'slide-in-right');
     }
 
     // Show Full Player
     function showFullPlayer() {
-        document.querySelector('.full-player').classList.add('fade-in');
+        document.querySelector('.full-player').classList.add('fade-in'); // fade-in 애니메이션 적용
       document.querySelector('.full-player').style.display = 'flex';
       document.querySelector('.full-player .full-player-album-art').src = currentAlbum.cover;
       document.querySelector('.full-player .track-name').textContent = currentTrack.title;
@@ -709,7 +709,7 @@
     // Hide Full Player
  function hideFullPlayer() {
     const fullPlayer = document.querySelector('.full-player');
-    fullPlayer.classList.add('fade-out-and-slide-up'); // Apply the animation
+    fullPlayer.classList.add('fade-out-and-slide-up'); // Apply the fade-out-and-slide-up animation
 
     const miniPlayer = document.querySelector('.mini-player');
 
