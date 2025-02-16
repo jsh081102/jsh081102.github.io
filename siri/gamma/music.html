@@ -200,7 +200,7 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        right: -8px; /* 수정 1: 데스크탑 knob 위치 조정 */
+        right: -8px;
         width: 16px;
         height: 16px;
         background-color: #a8b8fc;
@@ -224,6 +224,10 @@
         max-height: calc(100vh - 450px);
         padding: 10px;
         margin-bottom: 20px;
+        -webkit-overflow-scrolling: touch; /* 수정 5: iOS 스크롤 부드럽게 */
+        display: flex; /* 수정 6: Flexbox 레이아웃 적용 */
+        flex-direction: column; /* 수정 6: 세로 방향 정렬 */
+        align-items: center; /* 수정 6: 가로축 가운데 정렬 */
     }
     .lyrics-container::-webkit-scrollbar {
         display: none;
@@ -232,13 +236,15 @@
     .lyrics-line {
         padding: 10px;
         margin: 5px 0;
-        transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out, background-color 0.3s ease; /* 수정 4: 가사 애니메이션 부드럽게 변경 */
+        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, background-color 0.3s ease; /* 수정 4: 가사 애니메이션 부드럽게 변경 */
         opacity: 0.7;
         border-radius: 10px;
         cursor: pointer;
         font-size: 1em;
         color: #eee;
         text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+        white-space: pre-line; /* 수정 7: 가사 줄바꿈 처리 */
+        word-break: keep-all; /* 수정 7: 단어 단위 줄바꿈 */
     }
     .lyrics-line.active {
         font-size: 1.4em;
@@ -349,6 +355,23 @@
       }
       .full-player .player-controls, .full-player .progress-container, .full-player .time-display {
         text-shadow: none;
+      }
+      .lyrics-container { /* 수정 6: lyrics-container max-height 조정 및 flex 적용 */
+        max-height: calc(100vh - 380px); /* Adjusted max-height for mobile */
+        margin-bottom: 15px; /* Reduced margin-bottom */
+        padding: 5px; /* Reduced padding */
+      }
+      .lyrics-line {
+          font-size: 0.95em; /* Mobile lyrics font-size 조정 */
+          padding: 8px; /* Mobile lyrics line padding 조정 */
+          margin: 3px 0; /* Mobile lyrics line margin 조정 */
+      }
+      .lyrics-line.active {
+          font-size: 1.2em; /* Mobile active lyrics font-size 조정 */
+          padding: 10px; /* Mobile active lyrics line padding 조정 */
+      }
+      .progress-knob {
+         right: -6px; /* 수정 8: 모바일 knob 위치 조정 */
       }
     }
       @keyframes slideOutRight { /* 수정 3: slideOutRight 애니메이션 */
@@ -517,7 +540,8 @@
         document.querySelector('.artist-section').style.display = 'block';
         const albumsGrid = document.querySelector('.albums-grid');
         albumsGrid.style.display = 'grid';
-        albumsGrid.classList.remove('slide-out-right'); // 수정 2: 애니메이션 클래스 제거
+        albumsGrid.classList.remove('slide-out-right');
+        albumsGrid.classList.add('slide-in-left'); // 수정 2: 들어가는 애니메이션 추가
         document.querySelector('.back-button').style.display = 'block';
         const artistVideo = document.querySelector('.artist-video');
         artistVideo.src = artist.video;
@@ -552,7 +576,8 @@
         document.querySelector('.albums-grid').style.display = 'none';
         const tracksList = document.querySelector('.tracks-list');
         tracksList.style.display = 'block';
-        tracksList.classList.remove('slide-out-right'); // 수정 2: 애니메이션 클래스 제거
+        tracksList.classList.remove('slide-out-right');
+        tracksList.classList.add('slide-in-left'); // 수정 2: 들어가는 애니메이션 추가
         tracksList.innerHTML = '';
         album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
     }
@@ -734,13 +759,14 @@
       document.querySelector('.tracks-list').classList.add('slide-out-right');
       setTimeout(() => {
         document.querySelector('.tracks-list').style.display = 'none';
-        document.querySelector('.tracks-list').classList.remove('slide-out-right'); // 수정 2: 클래스 제거
+        document.querySelector('.tracks-list').classList.remove('slide-out-right');
         document.querySelector('.albums-grid').style.display = 'grid';
         document.querySelector('.albums-grid').classList.add('slide-in-left');
       }, 300);
-      setTimeout(() => {
-        document.querySelector('.albums-grid').classList.remove('slide-in-left'); // 수정 2: 클래스 제거 (애니메이션 후)
-      }, 600); // 애니메이션 시간 고려하여 조금 더 늦게 제거
+       setTimeout(() => {
+        document.querySelector('.albums-grid').classList.remove('slide-in-left');
+      }, 600);
+
 
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
       document.querySelector('.albums-grid').classList.add('slide-out-right');
@@ -754,9 +780,9 @@
             document.querySelector('.back-button').style.display = 'none';
         }, 300);
         setTimeout(() => {
-            document.querySelector('.artists-grid').classList.remove('slide-in-left'); // 수정 2: 클래스 제거 (애니메이션 후)
-            document.querySelector('.artist-section').classList.remove('slide-out-right'); // 수정 2: 클래스 제거
-            document.querySelector('.albums-grid').classList.remove('slide-out-right'); // 수정 2: 클래스 제거
+            document.querySelector('.artists-grid').classList.remove('slide-in-left');
+            document.querySelector('.artist-section').classList.remove('slide-out-right');
+            document.querySelector('.albums-grid').classList.remove('slide-out-right');
         }, 600);
     }
 }
