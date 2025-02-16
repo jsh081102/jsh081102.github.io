@@ -200,7 +200,7 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        right: -8px;
+        /* 수정 1: 데스크탑 knob 위치 조정 */
         width: 16px;
         height: 16px;
         background-color: #a8b8fc;
@@ -209,6 +209,7 @@
         transition: opacity 0.2s ease;
         pointer-events: none;
         box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #f9f9f9;
+        right: -8px; /* Modified position of knob for desktop */
     }
     .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
     .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #eee; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); color: #fff; }
@@ -224,10 +225,7 @@
         max-height: calc(100vh - 450px);
         padding: 10px;
         margin-bottom: 20px;
-        -webkit-overflow-scrolling: touch; /* 수정 5: iOS 스크롤 부드럽게 */
-        display: flex; /* 수정 6: Flexbox 레이아웃 적용 */
-        flex-direction: column; /* 수정 6: 세로 방향 정렬 */
-        align-items: center; /* 수정 6: 가로축 가운데 정렬 */
+        overscroll-behavior: contain; /* 수정 5: 가사 영역 스크롤 동작 개선 */
     }
     .lyrics-container::-webkit-scrollbar {
         display: none;
@@ -236,15 +234,15 @@
     .lyrics-line {
         padding: 10px;
         margin: 5px 0;
-        transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out, background-color 0.3s ease; /* 수정 4: 가사 애니메이션 부드럽게 변경 */
+        transition: transform 0.5s cubic-bezier(0.86, 0, 0.07, 1), opacity 0.5s cubic-bezier(0.86, 0, 0.07, 1), background-color 0.3s ease, font-size 0.5s cubic-bezier(0.86, 0, 0.07, 1), padding 0.5s cubic-bezier(0.86, 0, 0.07, 1); /* 수정 4: easeOutQuint와 유사한 cubic-bezier 적용 및 padding 애니메이션 추가 */
         opacity: 0.7;
         border-radius: 10px;
         cursor: pointer;
         font-size: 1em;
         color: #eee;
         text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-        white-space: pre-line; /* 수정 7: 가사 줄바꿈 처리 */
-        word-break: keep-all; /* 수정 7: 단어 단위 줄바꿈 */
+        line-height: 1.6; /* 수정 6: 가사 줄 간격 조정 */
+        white-space: pre-line; /* 수정 7: 가사 줄바꿈 유지 */
     }
     .lyrics-line.active {
         font-size: 1.4em;
@@ -356,49 +354,44 @@
       .full-player .player-controls, .full-player .progress-container, .full-player .time-display {
         text-shadow: none;
       }
-      .lyrics-container { /* 수정 6: lyrics-container max-height 조정 및 flex 적용 */
-        max-height: calc(100vh - 380px); /* Adjusted max-height for mobile */
-        margin-bottom: 15px; /* Reduced margin-bottom */
-        padding: 5px; /* Reduced padding */
+      .lyrics-container {
+        max-height: 50vh; /* 수정 8: 모바일 가사 컨테이너 max-height 조정 */
+        padding: 0 20px 20px; /* 수정 9: 모바일 가사 컨테이너 padding 조정 */
+        margin-bottom: 0; /* 수정 10: lyrics-container margin 제거 */
       }
-      .lyrics-line {
-          font-size: 0.95em; /* Mobile lyrics font-size 조정 */
-          padding: 8px; /* Mobile lyrics line padding 조정 */
-          margin: 3px 0; /* Mobile lyrics line margin 조정 */
-      }
-      .lyrics-line.active {
-          font-size: 1.2em; /* Mobile active lyrics font-size 조정 */
-          padding: 10px; /* Mobile active lyrics line padding 조정 */
+      .full-player .player-right {
+          padding-top: 20px; /* 수정 11: player-right 상단 padding 조정 */
+          padding-bottom: 0; /* 수정 12: player-right 하단 padding 제거 */
       }
       .progress-knob {
-         right: -6px; /* 수정 8: 모바일 knob 위치 조정 */
+          right: -7px; /* 수정 13: 모바일 progress knob 위치 조정 */
       }
     }
       @keyframes slideOutRight { /* 수정 3: slideOutRight 애니메이션 */
-          from {
+          0% {
             transform: translateX(0);
             opacity: 1;
           }
-          to {
+          100% {
             transform: translateX(100%);
             opacity: 0;
           }
         }
       @keyframes slideInLeft { /* 수정 3: slideInLeft 애니메이션 */
-          from {
+          0% {
             transform: translateX(-100%);
             opacity: 0;
           }
-          to {
+          100% {
             transform: translateX(0);
             opacity: 1;
           }
         }
     .slide-out-right {
-      animation: slideOutRight 0.3s ease-in-out both; /* 수정 3: slide-out-right 클래스 */
+      animation: slideOutRight 0.3s cubic-bezier(.25,.46,.45,.94) both; /* 수정 3: slide-out-right 클래스, easeOutQuint와 유사한 cubic-bezier 적용 */
     }
     .slide-in-left {
-      animation: slideInLeft 0.3s ease-in-out both; /* 수정 3: slide-in-left 클래스 */
+      animation: slideInLeft 0.3s cubic-bezier(.25,.46,.45,.94) both; /* 수정 3: slide-in-left 클래스, easeOutQuint와 유사한 cubic-bezier 적용 */
     }
     .fade-out { /* 기존 fadeOut 제거 및 slide-out-right 사용으로 대체 */
      opacity: 0; /* fade-out 클래스 본래 기능 제거 및 slide-out-right로 대체 */
@@ -536,17 +529,31 @@
 
     function showArtist(artist) {
         currentArtist = artist;
-        document.querySelector('.artists-grid').style.display = 'none';
-        document.querySelector('.artist-section').style.display = 'block';
+        const artistsGrid = document.querySelector('.artists-grid');
+        const artistSection = document.querySelector('.artist-section');
         const albumsGrid = document.querySelector('.albums-grid');
+        const backButton = document.querySelector('.back-button');
+
         albumsGrid.style.display = 'grid';
         albumsGrid.classList.remove('slide-out-right');
-        albumsGrid.classList.add('slide-in-left'); // 수정 2: 들어가는 애니메이션 추가
-        document.querySelector('.back-button').style.display = 'block';
-        const artistVideo = document.querySelector('.artist-video');
+        backButton.style.display = 'block';
+
+        artistVideo = document.querySelector('.artist-video');
         artistVideo.src = artist.video;
         artistVideo.style.display = 'block';
         document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
+
+        artistsGrid.classList.add('slide-out-right');
+        artistSection.style.display = 'block';
+        artistSection.classList.add('slide-in-left');
+
+        setTimeout(() => {
+            artistsGrid.style.display = 'none';
+            artistsGrid.classList.remove('slide-out-right');
+            artistSection.classList.remove('slide-in-left');
+        }, 300);
+
+
         loadAlbums(artist);
     }
 
@@ -573,11 +580,23 @@
 
     function showAlbumTracks(album) {
         currentAlbum = album;
-        document.querySelector('.albums-grid').style.display = 'none';
+        const albumsGrid = document.querySelector('.albums-grid');
         const tracksList = document.querySelector('.tracks-list');
+
         tracksList.style.display = 'block';
         tracksList.classList.remove('slide-out-right');
-        tracksList.classList.add('slide-in-left'); // 수정 2: 들어가는 애니메이션 추가
+
+        albumsGrid.classList.add('slide-out-right');
+        tracksList.classList.add('slide-in-left');
+
+
+        setTimeout(() => {
+            albumsGrid.style.display = 'none';
+            albumsGrid.classList.remove('slide-out-right');
+            tracksList.classList.remove('slide-in-left');
+        }, 300);
+
+
         tracksList.innerHTML = '';
         album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
     }
@@ -756,33 +775,45 @@
     const backButton = document.querySelector('.back-button');
 
     if (document.querySelector('.tracks-list').style.display === 'block') {
-      document.querySelector('.tracks-list').classList.add('slide-out-right');
+      const tracksList = document.querySelector('.tracks-list');
+      const albumsGrid = document.querySelector('.albums-grid');
+
+      tracksList.classList.add('slide-out-right');
+      albumsGrid.classList.remove('slide-out-right'); // Ensure remove for re-entry
+
       setTimeout(() => {
-        document.querySelector('.tracks-list').style.display = 'none';
-        document.querySelector('.tracks-list').classList.remove('slide-out-right');
-        document.querySelector('.albums-grid').style.display = 'grid';
-        document.querySelector('.albums-grid').classList.add('slide-in-left');
+        tracksList.style.display = 'none';
+        albumsGrid.style.display = 'grid';
+        albumsGrid.classList.add('slide-in-left');
       }, 300);
-       setTimeout(() => {
-        document.querySelector('.albums-grid').classList.remove('slide-in-left');
+      setTimeout(() => {
+        albumsGrid.classList.remove('slide-in-left');
+        tracksList.classList.remove('slide-out-right'); // Ensure remove for re-entry
       }, 600);
 
 
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-      document.querySelector('.albums-grid').classList.add('slide-out-right');
-      document.querySelector('.artist-section').classList.add('slide-out-right');
+      const albumsGrid = document.querySelector('.albums-grid');
+      const artistSection = document.querySelector('.artist-section');
+      const artistsGrid = document.querySelector('.artists-grid');
+
+
+      albumsGrid.classList.add('slide-out-right');
+      artistSection.classList.add('slide-out-right');
+      artistsGrid.classList.remove('slide-out-right'); // Ensure remove for re-entry
+
 
        setTimeout(() => {
-            document.querySelector('.artist-section').style.display = 'none';
-            document.querySelector('.albums-grid').style.display = 'none';
-            document.querySelector('.artists-grid').style.display = 'grid';
-            document.querySelector('.artists-grid').classList.add('slide-in-left');
-            document.querySelector('.back-button').style.display = 'none';
+            artistSection.style.display = 'none';
+            albumsGrid.style.display = 'none';
+            artistsGrid.style.display = 'grid';
+            artistsGrid.classList.add('slide-in-left');
+            backButton.style.display = 'none';
         }, 300);
         setTimeout(() => {
-            document.querySelector('.artists-grid').classList.remove('slide-in-left');
-            document.querySelector('.artist-section').classList.remove('slide-out-right');
-            document.querySelector('.albums-grid').classList.remove('slide-out-right');
+            artistsGrid.classList.remove('slide-in-left');
+            artistSection.classList.remove('slide-out-right'); // Ensure remove for re-entry
+            albumsGrid.classList.remove('slide-out-right'); // Ensure remove for re-entry
         }, 600);
     }
 }
