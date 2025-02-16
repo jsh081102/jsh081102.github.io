@@ -200,17 +200,27 @@
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        right: -8px; /* 수정: knob이 bar 안에 있도록 조정 */
+        /* 수정: right: 0px -> left: 0px 및 transform 조정 */
+        left: 0px;
         width: 16px;
         height: 16px;
         background-color: #a8b8fc;
         border-radius: 50%;
         opacity: 0;
-        transition: opacity 0.2s ease;
+        transition: opacity 0.2s ease, transform 0.2s ease; /* transform transition 추가 */
         pointer-events: none;
         box-shadow: 3px 3px 6px #d1d9e6, -3px -3px 6px #f9f9f9;
     }
-    .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; }
+    /* 수정: 호버 시 knob이 bar를 벗어나지 않도록 transform: translateX 적용 */
+    .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob {
+        opacity: 1;
+        transform: translateY(-50%) translateX(0); /* 초기 위치 설정 */
+    }
+    .progress-container:hover:hover .progress-knob {
+        transform: translateY(-50%) translateX(calc(100% - 16px)); /* 최대 이동 범위 설정, knob width 고려 */
+    }
+
+
     .time-display { display: flex; justify-content: space-between; width: 95%; max-width: 400px; color: #eee; font-size: 12px; text-shadow: 0 1px 1px rgba(0,0,0,0.2); color: #fff; }
 
     .lyrics-container {
@@ -232,7 +242,7 @@
     .lyrics-line {
         padding: 10px;
         margin: 5px 0;
-        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease, background-color 0.3s ease; /* 수정: transition 속도 및 easing 변경 */
+        transition: transform 0.3s ease-out, opacity 0.3s ease-out, background-color 0.3s ease; /* transition 변경 (개선 사항 4) */
         opacity: 0.7;
         border-radius: 10px;
         cursor: pointer;
@@ -244,11 +254,11 @@
         font-size: 1.4em;
         font-weight: bold;
         opacity: 1;
-        transform: scale(1.05);
+        transform: scale(1.03); /* scale 값 약간 줄임 (개선 사항 4) */
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
         color: #fff;
         padding: 12px;
-        background-color: rgba(255,255,255,0.1); /* 추가: active 가사 배경색상 추가 */
+        background-color: rgba(255,255,255,0.1); /* active line에 배경색 추가 (개선 사항 4) */
     }
      .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
 
@@ -289,15 +299,7 @@
       .player-right { padding-top: 50px; }
       .full-player-album-art { width: 300px; height: 300px; border-radius: 20px; margin-bottom: 20px; }
       .progress-container { max-width: 800px; height: 12px; margin: 25px 0; }
-      .progress-knob {
-        top: 50%;
-        transform: translateY(-50%);
-        right: -9px; /* 수정: 데스크탑 knob 위치 조정 */
-        width: 18px;
-        height: 18px;
-        opacity: 1; /* 수정: 데스크탑에서 knob 항상 보이도록 설정 */
-      }
-      .progress-container:hover .progress-knob, .progress-container.dragging .progress-knob { opacity: 1; } /* 수정: hover시 opacity 변화 없앰 */
+      .progress-knob { top: -3px; width: 18px; height: 18px; }
       .time-display { max-width: 800px; font-size: 14px; }
       .lyrics-container { max-height: 60vh; }
       .lyrics-line { padding: 8px; font-size: 1em; }
@@ -357,34 +359,47 @@
         text-shadow: none;
       }
     }
-      @keyframes slideOutRight { /* 오른쪽으로 슬라이드 아웃 애니메이션 (개선 사항 3) */
-        from {
-          transform: translateX(0);
-          opacity: 1;
+      @keyframes fadeOut {
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
         }
-        to {
-          transform: translateX(100%);
-          opacity: 0;
-        }
+      @keyframes slideOutRight { /* slideOutRight 애니메이션 추가 (개선 사항 3) */
+          from {
+              transform: translateX(0);
+              opacity: 1;
+          }
+          to {
+              transform: translateX(100%);
+              opacity: 0;
+              display: none; /* 애니메이션 완료 후 display: none 처리 */
+          }
       }
 
-      @keyframes slideInLeft { /* 왼쪽으로 슬라이드 인 애니메이션 (개선 사항 3) */
-        from {
-          transform: translateX(-100%);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(0);
-          opacity: 1;
-        }
+      @keyframes slideInLeft { /* slideInLeft 애니메이션 추가 (개선 사항 3) */
+          from {
+              transform: translateX(-100%);
+              opacity: 0;
+          }
+          to {
+              transform: translateX(0);
+              opacity: 1;
+          }
       }
 
-    .slide-out-right {
-      animation: slideOutRight 0.3s ease-in-out both; /* slideOutRight 클래스 (개선 사항 3) */
+
+    .fade-out {
+      animation: fadeOut 0.3s ease-in-out both;
+    }
+    .slide-out-right { /* slide-out-right 클래스 추가 (개선 사항 3) */
+        animation: slideOutRight 0.3s ease-in-out both;
     }
 
-    .slide-in-left {
-      animation: slideInLeft 0.3s ease-in-out both; /* slideInLeft 클래스 (개선 사항 3) */
+    .slide-in-left { /* slide-in-left 클래스 추가 (개선 사항 3) */
+        animation: slideInLeft 0.3s ease-in-out both;
     }
 
 
@@ -493,6 +508,7 @@
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
     let isUserScrollingLyrics = false;
     let lyricScrollTimeout;
+    let lastArtist = null; // 마지막으로 보여진 아티스트 저장 (개선 사항 2)
 
     function initializeMusicPlayer() {
         loadArtists();
@@ -502,7 +518,6 @@
 
     function loadArtists() {
       const artistsGrid = document.querySelector('.artists-grid');
-      artistsGrid.innerHTML = ''; // 수정: 아티스트 목록 초기화
       musicLibrary.artists.forEach(artist => {
         const artistCard = createArtistCard(artist);
         artistsGrid.appendChild(artistCard);
@@ -530,6 +545,7 @@
         artistVideo.style.display = 'block';
         document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
         loadAlbums(artist);
+        lastArtist = artist; // 현재 아티스트 저장 (개선 사항 2)
     }
 
 
@@ -736,32 +752,36 @@
     const backButton = document.querySelector('.back-button');
 
     if (document.querySelector('.tracks-list').style.display === 'block') {
-      document.querySelector('.tracks-list').classList.add('slide-out-right'); // 수정: slide-out 애니메이션 적용 (개선 사항 3)
+      document.querySelector('.tracks-list').classList.add('slide-out-right'); // slide-out-right 애니메이션 적용 (개선 사항 3)
       setTimeout(() => {
         document.querySelector('.tracks-list').style.display = 'none';
-        document.querySelector('.tracks-list').classList.remove('slide-out-right'); // slide-out 클래스 제거 (개선 사항 3)
-        document.querySelector('.albums-grid').classList.add('slide-in-left'); // 수정: slide-in 애니메이션 적용 (개선 사항 3)
+        document.querySelector('.tracks-list').classList.remove('slide-out-right'); // 클래스 제거 (개선 사항 3)
+        document.querySelector('.albums-grid').classList.add('slide-in-left'); // slide-in-left 애니메이션 적용 (개선 사항 3)
         document.querySelector('.albums-grid').style.display = 'grid';
         setTimeout(() => {
-          document.querySelector('.albums-grid').classList.remove('slide-in-left'); // slide-in 클래스 제거 (개선 사항 3)
-        }, 300); // 애니메이션 시간과 동일하게 설정
-      }, 300);
+          document.querySelector('.albums-grid').classList.remove('slide-in-left'); // 클래스 제거 (개선 사항 3)
+        }, 300); // slide-in 애니메이션 시간과 동일하게 설정
+      }, 300); // slide-out 애니메이션 시간과 동일하게 설정
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-      document.querySelector('.albums-grid').classList.add('slide-out-right'); // 수정: slide-out 애니메이션 적용 (개선 사항 3)
-      document.querySelector('.artist-section').classList.add('slide-out-right'); // 수정: slide-out 애니메이션 적용 (개선 사항 3)
+        document.querySelector('.albums-grid').classList.add('slide-out-right'); // slide-out-right 애니메이션 적용 (개선 사항 3)
+        document.querySelector('.artist-section').classList.add('slide-out-right'); // slide-out-right 애니메이션 적용 (개선 사항 3)
 
        setTimeout(() => {
             document.querySelector('.artist-section').style.display = 'none';
             document.querySelector('.albums-grid').style.display = 'none';
             document.querySelector('.artists-grid').style.display = 'grid';
             document.querySelector('.back-button').style.display = 'none';
-            loadArtists(); // 수정: 아티스트 섹션으로 돌아갈 때 loadArtists() 호출 (개선 사항 2)
 
-             document.querySelector('.artists-grid').classList.add('slide-in-left'); // 수정: slide-in 애니메이션 적용 (개선 사항 3)
+             document.querySelector('.artists-grid').classList.add('slide-in-left'); // slide-in-left 애니메이션 적용 (개선 사항 3)
              setTimeout(() => {
-                document.querySelector('.artists-grid').classList.remove('slide-in-left'); // slide-in 클래스 제거 (개선 사항 3)
-             }, 300); // 애니메이션 시간과 동일하게 설정
-        }, 300);
+                document.querySelector('.artists-grid').classList.remove('slide-in-left'); // 클래스 제거 (개선 사항 3)
+             }, 300); // slide-in 애니메이션 시간과 동일하게 설정
+
+             if (lastArtist) { // 마지막 아티스트 정보가 있다면 앨범 다시 로드 (개선 사항 2)
+                 loadAlbums(lastArtist);
+                 document.querySelector('.albums-grid').style.display = 'grid'; // 앨범 그리드 display 복원 (개선 사항 2)
+             }
+        }, 300); // slide-out 애니메이션 시간과 동일하게 설정
 
 
     }
@@ -864,7 +884,8 @@
         audio.currentTime = percent * audio.duration;
 
         document.querySelector('.progress').style.width = `${percent * 100}%`;
-        document.querySelector('.progress-knob').style.left = `${percent * 100}%`;
+        // 수정: progress knob 위치 업데이트 시, knob width 절반만큼 보정하여 중앙으로 이동 (개선 사항 1)
+        document.querySelector('.progress-knob').style.transform = `translateY(-50%) translateX(calc(${percent * 100}% - 8px))`;
         }
     }
 
@@ -876,7 +897,8 @@
       const knob = document.querySelector('.progress-knob');
       const percentage = (audio.currentTime / audio.duration) * 100;
       progress.forEach(p => p.style.width = `${percentage}%`);
-      knob.style.left = `${percentage}%`
+      // 수정: progress knob 위치 업데이트 시, knob width 절반만큼 보정하여 중앙으로 이동 (개선 사항 1)
+      knob.style.transform = `translateY(-50%) translateX(calc(${percentage}% - 8px))`;
       currentTimeDisplays.forEach(display => display.textContent = formatTime(audio.currentTime));
       totalTimeDisplays.forEach(display => display.textContent = formatTime(audio.duration));
       updateLyrics();
