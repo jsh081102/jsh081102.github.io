@@ -218,15 +218,15 @@
         text-align: center;
         color: rgba(255, 255, 255, 0.8);
         overflow-y: auto;
-        overflow-x: hidden; /* 가사 스크롤 바 제거 및 좌우 움직임 방지 (개선 사항 1) */
-        -ms-overflow-style: none; /* IE, Edge에서 스크롤바 제거 (개선 사항 1) */
-        scrollbar-width: none; /* Firefox에서 스크롤바 제거 (개선 사항 1) */
+        overflow-x: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
         max-height: calc(100vh - 450px);
         padding: 10px;
         margin-bottom: 20px;
     }
     .lyrics-container::-webkit-scrollbar {
-        display: none; /* Chrome, Safari, Opera에서 스크롤바 제거 (개선 사항 1) */
+        display: none;
     }
 
     .lyrics-line {
@@ -348,7 +348,7 @@
         text-shadow: none;
       }
     }
-      @keyframes fadeOut { /* fadeOut 애니메이션 (개선 사항 2) */
+      @keyframes fadeOut {
           from {
             opacity: 1;
           }
@@ -357,7 +357,7 @@
           }
         }
     .fade-out {
-      animation: fadeOut 0.3s ease-in-out both; /* fadeOut 클래스 (개선 사항 2) */
+      animation: fadeOut 0.3s ease-in-out both;
     }
 
 
@@ -464,8 +464,8 @@
     };
 
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
-    let isUserScrollingLyrics = false; // 사용자 가사 스크롤 여부 플래그 (개선 사항 4)
-    let lyricScrollTimeout; // 가사 스크롤 타임아웃 (개선 사항 4)
+    let isUserScrollingLyrics = false;
+    let lyricScrollTimeout;
 
     function initializeMusicPlayer() {
         loadArtists();
@@ -667,7 +667,7 @@
         document.addEventListener('mouseup', stopDragging);
 
       const lyricsContainer = document.querySelector('.lyrics-container');
-      lyricsContainer.addEventListener('scroll', handleLyricsScroll); // 가사 컨테이너 스크롤 이벤트 리스너 추가 (개선 사항 4)
+      lyricsContainer.addEventListener('scroll', handleLyricsScroll);
     }
 
     function handleLyricsScroll() {
@@ -675,7 +675,7 @@
       clearTimeout(lyricScrollTimeout);
       lyricScrollTimeout = setTimeout(() => {
         isUserScrollingLyrics = false;
-      }, 3000); // 3초 후 자동 스크롤 활성화 (개선 사항 4)
+      }, 3000);
     }
 
 
@@ -708,15 +708,15 @@
     const backButton = document.querySelector('.back-button');
 
     if (document.querySelector('.tracks-list').style.display === 'block') {
-      document.querySelector('.tracks-list').classList.add('fade-out'); // fadeOut 애니메이션으로 변경 (개선 사항 2)
+      document.querySelector('.tracks-list').classList.add('fade-out');
       setTimeout(() => {
         document.querySelector('.tracks-list').style.display = 'none';
-        document.querySelector('.tracks-list').classList.remove('fade-out'); // fadeOut 클래스 제거 (개선 사항 2)
+        document.querySelector('.tracks-list').classList.remove('fade-out');
         document.querySelector('.albums-grid').style.display = 'grid';
-      }, 300); // 애니메이션 시간과 맞춤 (개선 사항 2)
+      }, 300);
     } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-      document.querySelector('.albums-grid').classList.add('fade-out'); // fadeOut 애니메이션으로 변경 (개선 사항 2)
-      document.querySelector('.artist-section').classList.add('fade-out'); // fadeOut 애니메이션으로 변경 (개선 사항 2)
+      document.querySelector('.albums-grid').classList.add('fade-out');
+      document.querySelector('.artist-section').classList.add('fade-out');
 
        setTimeout(() => {
             document.querySelector('.artist-section').style.display = 'none';
@@ -724,9 +724,9 @@
             document.querySelector('.artists-grid').style.display = 'grid';
             document.querySelector('.back-button').style.display = 'none';
 
-             document.querySelector('.artists-grid').classList.remove('fade-out'); // fadeOut 클래스 제거 (개선 사항 2)
-             document.querySelector('.artist-section').classList.remove('fade-out'); // fadeOut 클래스 제거 (개선 사항 2)
-        }, 300); // 애니메이션 시간과 맞춤 (개선 사항 2)
+             document.querySelector('.artists-grid').classList.remove('fade-out');
+             document.querySelector('.artist-section').classList.remove('fade-out');
+        }, 300);
 
 
     }
@@ -857,7 +857,7 @@
 
    function updateLyrics() {
     if (!currentLyrics.length) return;
-    if (isUserScrollingLyrics) return; // 사용자가 스크롤 중이면 자동 스크롤 하지 않음 (개선 사항 4)
+    if (isUserScrollingLyrics) return;
 
     const currentTime = audio.currentTime;
     let nextLyricIndex = -1;
