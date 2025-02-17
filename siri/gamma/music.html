@@ -19,54 +19,74 @@
     .back-button:active { transform: scale(0.95); box-shadow: inset 5px 5px 9px #d1d9e6, inset -5px -5px 9px #f9f9f9; }
 
     /* Main Container */
-    .container { max-width: 1200px; margin: 0 auto; padding: 80px 15px 20px; position: relative; /* Added for animation context */ }
+    .container { max-width: 1200px; margin: 0 auto; padding: 80px 15px 20px; position: relative; /* for absolute positioning of grids */ }
 
-    /* Sections - Artists, Artist Detail, Albums, Tracks - 기본적으로 숨김 */
-    .artists-grid,
-    .artist-section,
-    .albums-grid,
-    .tracks-list {
-        position: absolute; /* Changed to absolute positioning */
-        top: 0;
-        left: 0;
-        width: 100%;
-        opacity: 0; /* Initially hidden */
-        transition: opacity 0.4s ease-out, transform 0.4s ease-out; /* Added opacity and transform transition */
-        padding-top: 80px; /* Ensure content starts below the fixed header */
-        padding-bottom: 20px; /* Maintain padding at the bottom */
-        overflow-y: auto; /* Enable vertical scrolling when content overflows */
-        display: none; /* Hidden by default, JS will control display */
-    }
-
+    /* Artist Grid */
     .artists-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 15px;
         margin-top: 20px;
-        position: static; /* artists-grid는 초기 화면이므로 absolute position 제거 */
-        opacity: 1; /* artists-grid는 초기 화면이므로 opacity 1로 시작 */
-        display: grid; /* artists-grid는 초기 화면이므로 display grid로 시작 */
-        padding-top: 80px; /* Ensure content starts below the fixed header */
-        padding-bottom: 20px; /* Maintain padding at the bottom */
-        transition: none; /* artists-grid는 초기 화면이므로 transition 제거 */
+        position: absolute; /* Absolute positioning */
+        top: 80px; /* Align with container padding-top */
+        left: 15px;
+        right: 15px;
+        opacity: 1;
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .artists-grid.hidden {
+        opacity: 0;
+        transform: translateY(20px);
+        pointer-events: none; /* Prevent interaction when hidden */
     }
 
-
-    /* Artist Grid */
     .artist-card { background-color: #ecf0f3; border-radius: 15px; overflow: hidden; box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; transition: transform 0.2s; cursor: pointer; position: relative; }
     .artist-card:hover { transform: translateY(-3px); box-shadow: 9px 9px 12px #d1d9e6, -9px -9px 12px #f9f9f9; }
     .artist-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
     .artist-name-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 10px; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.6)); color: #fff; font-size: 1.4em; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); }
 
     /* Artist Section */
-    .artist-section { margin-bottom: 30px; }
+    .artist-section {
+        display: none; /* Initially hidden */
+        position: absolute; /* Absolute positioning */
+        top: 80px; /* Align with container padding-top */
+        left: 0;
+        right: 0;
+        padding: 0 15px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .artist-section.active {
+        display: block; /* Override display:none when active */
+        opacity: 1;
+        transform: translateY(0);
+    }
+    .artist-section .artist-info { margin-bottom: 30px; } /* Added margin to artist info */
     .artist-video-container { position: relative; width: 100%; height: 250px; border-radius: 25px; overflow: hidden; box-shadow: 9px 9px 16px #d1d9e6, -9px -9px 16px #f9f9f9; }
     .artist-video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
     .artist-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4) 90%); pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 15px; }
     .artist-section .artist-info h2 { color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); font-size: 1.6em; }
 
     /* Albums Grid */
-    .albums-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 15px; margin-top: 20px;  } /* Removed overflow: hidden; to allow scroll */
+    .albums-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+        position: absolute; /* Absolute positioning */
+        top: auto; /* Reset top, will be positioned below artist info */
+        left: 15px;
+        right: 15px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .albums-grid.active {
+        display: grid; /* Override display:none when active */
+        opacity: 1;
+        transform: translateY(0);
+    }
     .album-card { background-color: #ecf0f3; border-radius: 12px; overflow: hidden; box-shadow: 6px 6px 9px #d1d9e6, -6px -6px 9px #f9f9f9; transition: transform 0.2s; cursor: pointer; }
     .album-card:hover { transform: translateY(-3px); box-shadow: 8px 8px 11px #d1d9e6, -8px -8px 11px #f9f9f9; }
     .album-image { width: 100%; aspect-ratio: 1; object-fit: cover; }
@@ -74,7 +94,27 @@
     .album-number { color: #777; font-size: 0.8em; margin-bottom: 3px; }
 
     /* Tracks List */
-    .tracks-list { background-color: #ecf0f3; border-radius: 15px; padding: 20px; margin-top: 20px; box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; overflow-y: auto; } /* Added overflow-y: auto; for scroll */
+    .tracks-list {
+        display: none;
+        background-color: #ecf0f3;
+        border-radius: 15px;
+        padding: 20px;
+        margin-top: 20px;
+        box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9;
+        overflow-y: auto;
+        position: absolute; /* Absolute positioning */
+        top: 80px; /* Align with container padding-top */
+        left: 15px;
+        right: 15px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s, transform 0.3s;
+    }
+    .tracks-list.active {
+        display: block; /* Override display:none when active */
+        opacity: 1;
+        transform: translateY(0);
+    }
     .track-item { display: flex; align-items: center; padding: 10px; cursor: pointer; border-radius: 10px; }
     .track-item:hover { background-color: #e2e8ec; }
     .track-number { width: 25px; color: #777; font-size: 0.9em; }
@@ -299,8 +339,8 @@
     }
 
     @keyframes pageSlideOut { /* 슬라이드 아웃 애니메이션 - 왼쪽으로 부드럽게 사라짐 */
-      from { transform: translateX(0); opacity: 1; }
-      to { transform: translateX(-100%); opacity: 0; }
+      from { transform: translateX(-100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
 
     @keyframes pageFadeIn { /* Fade-in 애니메이션 */
@@ -318,8 +358,6 @@
     .slide-page-out { animation: pageSlideOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; } /* 개선된 Cubic Bezier 적용 */
     .fade-page-in { animation: pageFadeIn 0.3s ease-out both; }
     .fade-page-out { animation: pageFadeOut 0.3s ease-in both; }
-    .fade-in-element { animation: fadeIn 0.4s ease-out both; }
-    .fade-out-element { animation: fadeOut 0.3s ease-in both; }
 
 
     /* 미니 플레이어 등장 애니메이션 */
@@ -342,14 +380,14 @@
   <div class="container">
     <div class="artists-grid"></div>
     <div class="artist-section">
+      <div class="artist-info"><h2></h2></div> <!-- Added artist info div for layout -->
       <div class="artist-video-container">
         <video class="artist-video" autoplay muted loop><source src="" type="video/mp4"></video>
         <div class="artist-video-overlay">
-          <div class="artist-info"><h2></h2></div>
         </div>
       </div>
+      <div class="albums-grid"></div> <!-- Albums grid moved inside artist section -->
     </div>
-    <div class="albums-grid"></div>
     <div class="tracks-list"></div>
   </div>
 
@@ -397,26 +435,35 @@
 
   <script>
     // Image and Video Cache
-    const assetCache = new Map();
+    const imageCache = new Map();
+    const videoCache = new Map();
 
-    async function getCachedOrFetch(url, type = 'image') {
-        if (assetCache.has(url)) {
-            return assetCache.get(url);
+    async function getCachedImage(url) {
+        if (imageCache.has(url)) {
+            return imageCache.get(url);
         }
+        const image = new Image();
+        image.src = url;
+        await new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = reject;
+        });
+        imageCache.set(url, image);
+        return image;
+    }
 
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch ${type}: ${response.status} ${response.statusText}`);
-            }
-            const blob = await response.blob();
-            const objectUrl = URL.createObjectURL(blob);
-            assetCache.set(url, objectUrl);
-            return objectUrl;
-        } catch (error) {
-            console.error(`Error caching ${type} from ${url}:`, error);
-            return url; // Fallback to original URL in case of error
+    async function getCachedVideo(url) {
+        if (videoCache.has(url)) {
+            return videoCache.get(url);
         }
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch video: ${response.status}`);
+        }
+        const blob = await response.blob();
+        const videoURL = URL.createObjectURL(blob);
+        videoCache.set(url, videoURL);
+        return videoURL;
     }
 
 
@@ -465,96 +512,89 @@
     let isUserScrollingLyrics = false;
     let lyricScrollTimeout;
     let historyStack = []; // Added history stack for navigation
-    let activeSection = null; // Track the currently active section
-
 
     // Initialization
-    async function initializeMusicPlayer() {
-        await loadArtists(); // Load artists first and wait for it to complete
+    function initializeMusicPlayer() {
+        loadArtists();
         setupEventListeners();
         setupAudioEventListeners();
         audio.volume = 0.5; // Set initial volume
         historyStack.push('artists'); // Initial view is artists grid
-        activeSection = 'artists-grid'; // Set initial active section
-        document.querySelector('.artists-grid').style.display = 'grid'; // Show initial artists grid
-        document.querySelector('.artists-grid').style.opacity = 1; // Make initial artists grid visible
-
     }
 
     // Load Artists
     async function loadArtists() {
       const artistsGrid = document.querySelector('.artists-grid');
       artistsGrid.innerHTML = ''; // Clear previous content
+      artistsGrid.classList.remove('hidden'); // Ensure artist grid is visible
+      const artistSection = document.querySelector('.artist-section');
+      artistSection.classList.remove('active');
+      const albumsGrid = document.querySelector('.albums-grid');
+      albumsGrid.classList.remove('active');
+      const tracksList = document.querySelector('.tracks-list');
+      tracksList.classList.remove('active');
+
       for (const artist of musicLibrary.artists) {
-        const artistCard = await createArtistCard(artist); // Await the creation of each card
+        const artistCard = await createArtistCard(artist);
         artistsGrid.appendChild(artistCard);
       }
     }
-
 
     // Create Artist Card
     async function createArtistCard(artist) {
       const card = document.createElement('div');
       card.className = 'artist-card';
-      const cachedImage = await getCachedOrFetch(artist.image, 'image'); // Cache artist image
-      card.innerHTML = `<img src="${cachedImage}" class="artist-image" alt="${artist.name}">
+      const artistImage = await getCachedImage(artist.image); // Use cached image
+      card.innerHTML = `<img src="${artist.image}" class="artist-image" alt="${artist.name}">
                         <div class="artist-name-overlay">${artist.name}</div>`;
       card.addEventListener('click', () => showArtist(artist));
       return card;
     }
 
     // Show Artist Details
-    async function showArtist(artist) {
-        if (activeSection === 'artist-section' && currentArtist === artist) {
-            return; // Prevent re-entry if already in the same artist section
-        }
+  async function showArtist(artist) {
+    currentArtist = artist;
+    const artistsGrid = document.querySelector('.artists-grid');
+    const artistSection = document.querySelector('.artist-section');
+    const albumsGrid = document.querySelector('.albums-grid');
 
-        currentArtist = artist;
-        const artistsGrid = document.querySelector('.artists-grid');
-        const artistSection = document.querySelector('.artist-section');
-        const albumsGrid = document.querySelector('.albums-grid');
+    const artistVideo = document.querySelector('.artist-video');
+    artistVideo.style.display = 'block';
+    artistVideo.src = await getCachedVideo(artist.video); // Use cached video
+    document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
+    loadAlbums(artist);
 
-        document.querySelector('.back-button').style.display = 'block';
+    artistsGrid.classList.add('hidden'); // Hide artists grid with animation
+    artistSection.classList.add('active'); // Show artist section with animation
+    albumsGrid.classList.add('active');    // Show albums grid
 
-        const artistVideo = document.querySelector('.artist-video');
-        const cachedVideo = await getCachedOrFetch(artist.video, 'video'); // Cache artist video
-        artistVideo.src = cachedVideo;
-        artistVideo.style.display = 'block';
-        document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
-        await loadAlbums(artist);
+    document.querySelector('.back-button').style.display = 'block';
 
-        artistSection.style.display = 'block';
-        albumsGrid.style.display = 'grid';
-
-        await transitionSections(activeSection, 'artist-section');
-        activeSection = 'artist-section';
-
-
-        if (historyStack[historyStack.length - 1] !== 'artist') {
-            historyStack.push('artist'); // Update history for artist view
-        }
+    if (historyStack[historyStack.length - 1] !== 'artist') {
+        historyStack.push('artist'); // Update history for artist view
     }
-
+  }
 
     // Load Albums
     async function loadAlbums(artist) {
       const albumsGrid = document.querySelector('.albums-grid');
       albumsGrid.innerHTML = '';
       for (const album of artist.albums) {
-        const albumCard = await createAlbumCard(album); // Await album card creation
+        const albumCard = await createAlbumCard(album, artist.albums.indexOf(album) + 1);
         albumsGrid.appendChild(albumCard);
       }
     }
 
+
     // Create Album Card
-    async function createAlbumCard(album) {
+    async function createAlbumCard(album, albumNumber) {
       const card = document.createElement('div');
       card.className = 'album-card';
-      const cachedCover = await getCachedOrFetch(album.cover, 'image'); // Cache album cover
+      await getCachedImage(album.cover); // Pre-cache album cover if not already cached
       card.innerHTML = `
-        <img src="${cachedCover}" class="album-image" alt="${album.name}">
+        <img src="${album.cover}" class="album-image" alt="${album.name}">
         <div class="album-info">
-          <div class="album-number">#${1}</div>
+          <div class="album-number">#${albumNumber}</div>
           <h3>${album.name}</h3>
         </div>`;
       card.addEventListener('click', () => showAlbumTracks(album));
@@ -562,29 +602,20 @@
     }
 
     // Show Album Tracks
-    async function showAlbumTracks(album) {
-        if (activeSection === 'tracks-list' && currentAlbum === album) {
-            return; // Prevent re-entry if already in the same album tracks section
-        }
+   async function showAlbumTracks(album) {
+    currentAlbum = album;
+    const albumsGrid = document.querySelector('.albums-grid');
+    const tracksList = document.querySelector('.tracks-list');
 
-        currentAlbum = album;
-        const albumsGrid = document.querySelector('.albums-grid');
-        const tracksList = document.querySelector('.tracks-list');
+    albumsGrid.classList.remove('active'); // Hide albums grid with animation (opacity and transform)
+    tracksList.classList.add('active');    // Show tracks list with animation
 
-        tracksList.innerHTML = '';
-        album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
-        tracksList.style.display = 'block';
-
-
-        await transitionSections(activeSection, 'tracks-list');
-        activeSection = 'tracks-list';
-
-
-        if (historyStack[historyStack.length - 1] !== 'album') {
-            historyStack.push('album'); // Update history for album view
-        }
+    tracksList.innerHTML = '';
+    album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
+    if (historyStack[historyStack.length - 1] !== 'album') {
+        historyStack.push('album'); // Update history for album view
     }
-
+}
 
     // Create Track Item
     function createTrackItem(track) {
@@ -611,16 +642,12 @@
     }
 
     // Extract dominant colors from album cover
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    const cachedCover = await getCachedOrFetch(currentAlbum.cover, 'image');
-    img.src = cachedCover;
-    img.onload = () => {
-        const colorThief = new ColorThief();
-        const colors = colorThief.getPalette(img, 2); // Get two dominant colors
-        currentGradientColors = colors.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        updateFullPlayerBackground();
-    };
+    const img = await getCachedImage(currentAlbum.cover); // Ensure image is cached
+    const colorThief = new ColorThief();
+    const colors = colorThief.getPalette(img, 2); // Get two dominant colors
+    currentGradientColors = colors.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+    updateFullPlayerBackground();
+
 
     updateMiniPlayer();
     updateFullPlayer();
@@ -634,9 +661,7 @@
         miniPlayer.style.display = 'flex';
         miniPlayer.classList.add('mini-player-enter');
       }
-      getCachedOrFetch(currentAlbum.cover, 'image').then(cachedCover => {
-          miniPlayer.querySelector('.mini-player-album-art').src = cachedCover;
-      });
+      miniPlayer.querySelector('.mini-player-album-art').src = currentAlbum.cover;
       miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
       miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
       document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶');
@@ -648,9 +673,7 @@
       if (fullPlayer.style.display === 'flex') {
         fullPlayer.querySelector('.track-name').textContent = currentTrack.title;
         fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
-        getCachedOrFetch(currentAlbum.cover, 'image').then(cachedCover => {
-            fullPlayer.querySelector('.full-player-album-art').src = cachedCover;
-        });
+        fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
         document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶'); // Full player buttons
 
       }
@@ -804,20 +827,17 @@
       const fullPlayer = document.querySelector('.full-player');
 
 
-      if (tracksList.style.display === 'block') {
-          await transitionSections(activeSection, 'albums-grid');
-          tracksList.style.display = 'none';
-          activeSection = 'albums-grid';
-      } else if (albumsGrid.style.display === 'grid') {
-          await transitionSections(activeSection, 'artist-section');
-          albumsGrid.style.display = 'none';
-          activeSection = 'artist-section';
-      } else if (artistSection.style.display === 'block') {
-          await transitionSections(activeSection, 'artists-grid');
-          artistSection.style.display = 'none';
-          artistsGrid.style.display = 'grid'; // Show artists grid again
+      if (tracksList.classList.contains('active')) {
+          tracksList.classList.remove('active');
+          albumsGrid.classList.add('active');
+      } else if (albumsGrid.classList.contains('active')) {
+          albumsGrid.classList.remove('active');
+          artistSection.classList.remove('active');
+          artistsGrid.classList.remove('hidden');
+      } else if (artistSection.classList.contains('active')) {
+          artistSection.classList.remove('active');
+          artistsGrid.classList.remove('hidden');
           backButton.style.display = 'none';
-          activeSection = 'artists-grid';
       } else if (fullPlayer.style.display === 'flex') {
           hideFullPlayer();
           historyStack.push('full-player'); // Keep 'full-player' in history so next back behaves correctly. Then pop it in `hideFullPlayer`
@@ -833,63 +853,27 @@
     }
 
 
-    // Improved transition handler with direction awareness and class cleanup
-    async function transitionSections(currentSection, targetSection) {
-        const currentSectionElement = document.querySelector(`.${currentSection}`);
-        const targetSectionElement = document.querySelector(`.${targetSection}`);
-
-        if (!currentSectionElement || !targetSectionElement) {
-            console.error("Section elements not found");
-            return;
-        }
-
-        // Prepare target section to be visible but fully transparent and positioned correctly
-        targetSectionElement.style.opacity = 0;
-        targetSectionElement.style.display = 'block'; // Or 'grid', 'flex' as appropriate
-
-        // Force reflow to ensure transitions are properly applied - important for back navigation
-        targetSectionElement.offsetHeight;
-
-        // Apply fade-out to current section and fade-in to target section
-        currentSectionElement.classList.add('fade-out-element');
-        targetSectionElement.classList.add('fade-in-element');
-
-        await new Promise(resolve => setTimeout(resolve, 400)); // Duration matches CSS transition
-
-        // After transition, hide current section and reset classes
-        currentSectionElement.style.display = 'none';
-        currentSectionElement.classList.remove('fade-out-element');
-        targetSectionElement.classList.remove('fade-in-element');
-
-        // Reset scroll for target section
-        targetSectionElement.scrollTop = 0;
-    }
-
-
     // Go to Home Page (Reset to Artist Grid)
-    function goToHome() {
+    async function goToHome() {
       // Hide all sections except artists grid
-      document.querySelector('.artist-section').style.display = 'none';
-      document.querySelector('.albums-grid').style.display = 'none';
-      document.querySelector('.tracks-list').style.display = 'none';
+      document.querySelector('.artist-section').classList.remove('active');
+      document.querySelector('.albums-grid').classList.remove('active');
+      document.querySelector('.tracks-list').classList.remove('active');
       document.querySelector('.full-player').style.display = 'none';
-      document.querySelector('.artists-grid').style.display = 'grid'; // Show artists grid
+      document.querySelector('.artists-grid').classList.remove('hidden'); // Show artists grid
       document.querySelector('.back-button').style.display = 'none';
 
       const artistVideo = document.querySelector('.artist-video');
       artistVideo.style.display = 'none';
 
       historyStack = ['artists']; // Reset history to home state.
-      activeSection = 'artists-grid'; // Reset active section
     }
 
     // Show Full Player
     function showFullPlayer() {
       document.querySelector('.full-player').classList.add('fade-page-in');
       document.querySelector('.full-player').style.display = 'flex';
-      getCachedOrFetch(currentAlbum.cover, 'image').then(cachedCover => {
-          document.querySelector('.full-player .full-player-album-art').src = cachedCover;
-      });
+      document.querySelector('.full-player .full-player-album-art').src = currentAlbum.cover;
       document.querySelector('.full-player .track-name').textContent = currentTrack.title;
       document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
 
