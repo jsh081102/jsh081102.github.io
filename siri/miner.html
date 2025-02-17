@@ -1,95 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>XMRig Web Miner</title>
-    <style>
-        body {
-            font-family: sans-serif;
-        }
-        #status {
-            margin-bottom: 10px;
-        }
-        #hashes {
-            font-weight: bold;
-        }
-        #threads {
-            width: 50px;
-        }
-    </style>
+    <title>Mining Simulation</title>
 </head>
 <body>
-    <h1>XMRig Web Miner</h1>
-
-    <div id="status">Not mining</div>
-    <div>Hashes: <span id="hashes">0</span></div>
-    <div>
-        Threads: <input type="number" id="threads" value="1">
-        <button id="startButton">Start</button>
-        <button id="stopButton">Stop</button>
-    </div>
+    <h1>Mining Simulation</h1>
+    <div id="status">Click "Start Mining" to begin.</div>
+    <button onclick="startMining()">Start Mining</button>
+    <button onclick="stopMining()">Stop Mining</button>
 
     <script>
-      //XMRig wasm 및 기타 라이브러리 설정(중요).  실제 채굴을 위해서는 이 부분이 필요합니다.
-       //이 예제는 개념적인 구조를 보여주기 위한 것입니다.
+        let miningInterval;
+        let nonce = 0;
 
-        let miner;
-        let threads = 1;
-        let isMining = false;
-        let totalHashes = 0;
-
-        const statusEl = document.getElementById('status');
-        const hashesEl = document.getElementById('hashes');
-        const threadsEl = document.getElementById('threads');
-        const startButton = document.getElementById('startButton');
-        const stopButton = document.getElementById('stopButton');
-      
-
-        // WASM module loading, initialization, and function calls.
         function startMining() {
-          if (!isMining) {
-             isMining = true;
-            statusEl.textContent = 'Mining...';
-            startButton.disabled = true;
-            stopButton.disabled = false;
-              threads = parseInt(threadsEl.value, 10);
-
-               // XMRig WASM과 관련된 함수 호출을 여기서 처리, start, setThreads 등 (구현 필요)
-              //  updateHashes()를 주기적으로 호출해서 해시값 업데이트.
-              console.log("Start mining"); //로그 추가
-              updateHashes();
-
-
-          }
+            document.getElementById("status").innerText = "Mining in progress...";
+            miningInterval = setInterval(() => {
+                nonce++;
+                const hash = simulateHash(nonce);
+                if (hash.startsWith("0000")) { // Simulate finding a valid hash
+                    clearInterval(miningInterval);
+                    document.getElementById("status").innerText = `Block mined! Nonce: ${nonce}, Hash: ${hash}`;
+                }
+            }, 100); // Simulate computational delay
         }
-       function stopMining() {
-          if (isMining) {
-             isMining = false;
-              statusEl.textContent = 'Not mining';
-              startButton.disabled = false;
-              stopButton.disabled = true;
-               // Stop XMRig. (구현 필요)
-              console.log("Stop mining"); // 로그 추가
-           }
-       }
 
-
-        function updateHashes() {
-            //  WASM으로부터 해시값 받아옴 (구현 필요)
-
-            totalHashes += 1; // 단순화를 위한 예시.
-            hashesEl.textContent = totalHashes;
-            if(isMining){
-                setTimeout(updateHashes, 1000); //1초마다 업데이트
-            }
+        function stopMining() {
+            clearInterval(miningInterval);
+            document.getElementById("status").innerText = "Mining stopped.";
         }
-        startButton.addEventListener('click', startMining);
-        stopButton.addEventListener('click', stopMining);
-        threadsEl.addEventListener('change', () => {
-            threads = parseInt(threadsEl.value, 10);
-             // Update threads in XMRig if it's running. (구현 필요)
 
-        });
-
+        function simulateHash(nonce) {
+            return CryptoJS.SHA256(nonce.toString()).toString();
+        }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
