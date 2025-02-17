@@ -1,6 +1,163 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
+  <!-- 기존 메타 태그 유지 -->
+  <style>
+    /* 개선된 애니메이션 섹션 */
+    .lyrics-line {
+        padding: 12px 15px;
+        margin: 8px 0;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        opacity: 0.5;
+        transform: translateY(0) scale(1);
+        will-change: transform, opacity;
+    }
+
+    .lyrics-line.active {
+        opacity: 1;
+        transform: translateY(-5px) scale(1.05);
+        background-color: rgba(255,255,255,0.15);
+        backdrop-filter: blur(5px);
+        transition-duration: 0.4s;
+    }
+
+    /* 개선된 네비게이션 애니메이션 */
+    .slide-out-left { 
+        animation: slideOutToLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+    
+    .slide-in-right {
+        animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) both 0.1s;
+    }
+
+    @keyframes slideOutToLeft {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(-50px); opacity: 0; }
+    }
+
+    @keyframes slideInFromRight {
+        from { transform: translateX(50px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* 미니 플레이어 개선 */
+    .mini-player {
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+                    opacity 0.3s ease;
+    }
+
+    /* 풀 플레이어 열기/닫기 애니메이션 */
+    .full-player {
+        animation: fullPlayerEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    @keyframes fullPlayerEnter {
+        from { 
+            opacity: 0; 
+            transform: translateY(100%) scale(0.95);
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .full-player-exit {
+        animation: fullPlayerExit 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    @keyframes fullPlayerExit {
+        to { 
+            opacity: 0; 
+            transform: translateY(50px) scale(0.98);
+        }
+    }
+
+    /* 앨범 아트 회전 애니메이션 */
+    .full-player-album-art.playing {
+        animation: albumRotate 20s linear infinite;
+    }
+
+    @keyframes albumRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <!-- 기존 HTML 구조 유지 -->
+
+  <script>
+    // 개선된 가사 스크롤 로직
+    function updateLyrics() {
+        // ... 기존 로직 ...
+        
+        // 부드러운 스크롤 구현
+        if (lyricLine) {
+            const targetPosition = lyricLine.offsetTop - container.offsetHeight/2 + lyricLine.offsetHeight/2;
+            container.scrollTo({
+                top: targetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    // 개선된 플레이어 컨트롤 애니메이션
+    function togglePlayPause() {
+        const albumArt = document.querySelector('.full-player-album-art');
+        if (isPlaying) {
+            albumArt.classList.remove('playing');
+            albumArt.style.animationPlayState = 'paused';
+        } else {
+            albumArt.classList.add('playing');
+            albumArt.style.animationPlayState = 'running';
+        }
+        // ... 기존 로직 ...
+    }
+
+    // 개선된 네비게이션 핸들러
+    function handleBack() {
+        // 방향 인지 애니메이션 적용
+        const currentSection = document.querySelector('.tracks-list').style.display === 'block' 
+            ? document.querySelector('.tracks-list') 
+            : document.querySelector('.albums-grid');
+        
+        currentSection.classList.add('slide-out-left');
+        setTimeout(() => {
+            // 다음 섹션에 slide-in-right 적용
+        }, 300);
+    }
+
+    // 개선된 풀 플레이어 열기/닫기
+    function showFullPlayer() {
+        document.querySelector('.full-player').classList.remove('full-player-exit');
+        document.querySelector('.mini-player').style.transform = 'translateY(120%) scale(0.9)';
+        document.querySelector('.mini-player').style.opacity = 0;
+    }
+
+    function hideFullPlayer() {
+        document.querySelector('.full-player').classList.add('full-player-exit');
+        document.querySelector('.mini-player').style.transform = 'translateY(0)';
+        document.querySelector('.mini-player').style.opacity = 1;
+    }
+
+    // 물리 기반 드래그 애니메이션
+    function seekAudio(e) {
+        // ... 기존 로직 ...
+        const delta = clientX - progressRect.left;
+        const spring = 0.4; // 스프링 계수
+        const damping = 0.7; // 감쇠 계수
+        knob.style.transform = `translateX(${delta}px) scale(${1 + Math.abs(delta * 0.002)})`;
+    }
+  </script>
+</body>
+</html>
+
+위 코드(개선부분)와 아래 코드(원본)을 병합해줘.
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Siri Music</title>
@@ -51,8 +208,7 @@
     .track-info { flex-grow: 1; font-size: 0.95em; color: #444; }
 
     /* Mini Player */
-    .mini-player { position: fixed; bottom: 15px; right: 15px; background-color: #ecf0f3; border-radius: 12px; padding: 12px; box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; display: none; align-items: center; gap: 10px; cursor: pointer; z-index: 1000; width: calc(100% - 30px); max-width: 350px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                    opacity 0.3s ease; }
+    .mini-player { position: fixed; bottom: 15px; right: 15px; background-color: #ecf0f3; border-radius: 12px; padding: 12px; box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; display: none; align-items: center; gap: 10px; cursor: pointer; z-index: 1000; width: calc(100% - 30px); max-width: 350px; transition: transform 0.3s ease; }
     .mini-player img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; transition: transform 0.5s ease; }
     .mini-player .track-info{ flex-grow: 1; overflow: hidden; }
     .mini-player .track-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; color: #333; }
@@ -73,9 +229,6 @@
     .player-left, .player-right { flex: none; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .player-right { overflow-y: auto; padding-top: 30px; }
     .full-player-album-art { width: 200px; height: 200px; border-radius: 15px; margin-bottom: 15px; transition: transform 0.5s ease, opacity 0.5s ease; opacity: 1; transform: scale(1); }
-    .full-player-album-art.playing {
-        animation: albumRotate 20s linear infinite;
-    }
 
     /* Progress Bar */
     .progress-container {
@@ -139,90 +292,33 @@
     }
     .lyrics-container::-webkit-scrollbar { display: none; }
 
-    /* 개선된 애니메이션 섹션 */
-    .lyrics-line {
-        padding: 12px 15px;
-        margin: 8px 0;
-        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        opacity: 0.5;
-        transform: translateY(0) scale(1);
-        will-change: transform, opacity;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1em;
-        color: #eee;
-        text-shadow: 0 1px 1px rgba(0,0,0,0.3);
-        line-height: 1.4; /* Added line-height for readability */
-    }
+    /* Lyrics Line */
+.lyrics-line {
+    padding: 8px 10px;  /* Adjusted padding for better touch targets */
+    margin: 5px 0;
+    transition: transform 0.3s ease, opacity 0.3s ease, background-color 0.3s ease, font-size 0.3s ease; /* Added font-size transition for smoother effect */
+    opacity: 0.7;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #eee;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    line-height: 1.4; /* Added line-height for readability */
+}
 
-    .lyrics-line.active {
-        opacity: 1;
-        transform: translateY(-5px) scale(1.05);
-        background-color: rgba(255,255,255,0.15);
-        backdrop-filter: blur(5px);
-        transition-duration: 0.4s;
-        font-size: 1.2em; /* Slightly reduced active font size for better flow */
-        font-weight: bold;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-        color: #fff;
-        padding: 10px 12px; /* Adjusted padding for active state */
-    }
+.lyrics-line.active {
+    font-size: 1.2em; /* Slightly reduced active font size for better flow */
+    font-weight: bold;
+    opacity: 1;
+    transform: scale(1.02) translateY(-1px); /* Reduced scale and translateY for smoother animation */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 10px 12px; /* Adjusted padding for active state */
+    background-color: rgba(255,255,255,0.1); /* Subtle background for active line */
+}
     .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
 
-    /* 개선된 네비게이션 애니메이션 */
-    .slide-out-left {
-        animation: slideOutToLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-    }
-
-    .slide-in-right {
-        animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) both 0.1s;
-    }
-
-    @keyframes slideOutToLeft {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(-50px); opacity: 0; }
-    }
-
-    @keyframes slideInFromRight {
-        from { transform: translateX(50px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-
-    /* 미니 플레이어 개선 */
-    .mini-player {
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                    opacity 0.3s ease;
-    }
-
-    /* 풀 플레이어 열기/닫기 애니메이션 */
-    .full-player {
-        animation: fullPlayerEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) both;
-    }
-
-    @keyframes fullPlayerEnter {
-        from {
-            opacity: 0;
-            transform: translateY(100%) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    .full-player-exit {
-        animation: fullPlayerExit 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
-    }
-
-    @keyframes fullPlayerExit {
-        to {
-            opacity: 0;
-            transform: translateY(50px) scale(0.98);
-        }
-    }
-
-    /* 앨범 아트 회전 애니메이션 */
-
+    .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
 
     /* Responsive Design */
     @media (min-width: 768px) {
@@ -294,6 +390,8 @@
     /* Animations */
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
     @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0;} to { transform: translateX(0); opacity: 1;}} /* 추가된 부분 */
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0;} } /* 추가된 부분 */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } /* 추가된 부분 */
     @keyframes fadeOutAndSlideUp { /* Full Player 닫힐 때 */
         from {
@@ -309,20 +407,14 @@
         from { opacity: 0.8; transform: translateY(5px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes albumRotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
 
     /* Animation Classes */
     .slide-out-right { animation: slideOutRight 0.3s ease-in-out both; }
     .slide-in-left { animation: slideInLeft 0.3s ease-in-out both; }
+    .slide-in-right { animation: slideInRight 0.3s ease-in-out both, subtleFadeIn 0.2s ease-out 0.3s forwards; } /* Added subtle fade-in */
+    .slide-out-left { animation: slideOutLeft 0.3s ease-in-out both; }  /* 추가된 부분 */
     .fade-in { animation: fadeIn 0.3s ease-out both; } /* Modified fade-in duration and timing */
     .fade-out-and-slide-up { animation: fadeOutAndSlideUp 0.3s ease-out forwards; } /* Full Player 닫힐 때 */
-    .slide-in-right {
-        animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) both 0.1s, subtleFadeIn 0.2s ease-out 0.4s forwards; } /* Added subtle fade-in */
-    .slide-out-left { animation: slideOutToLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }  /* 추가된 부분 */
-
 
   </style>
 </head>
@@ -584,14 +676,7 @@
         fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
         fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
         document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶'); // Full player buttons
-        const albumArt = document.querySelector('.full-player-album-art');
-        if (isPlaying) {
-            albumArt.classList.add('playing');
-            albumArt.style.animationPlayState = 'running';
-        } else {
-            albumArt.classList.remove('playing');
-            albumArt.style.animationPlayState = 'paused';
-        }
+
       }
     }
 
@@ -711,13 +796,6 @@
     e.preventDefault();
     if (isDragging) {
         seekAudio(e);
-        const progressRect = document.querySelector('.progress-container').getBoundingClientRect();
-        const knob = document.querySelector('.progress-knob');
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const delta = clientX - progressRect.left;
-        const spring = 0.4; // 스프링 계수
-        const damping = 0.7; // 감쇠 계수
-        knob.style.transform = `translateX(${delta}px) scale(${1 + Math.abs(delta * 0.002)})`;
     }
 }
 
@@ -726,8 +804,6 @@
      if (isDragging) {
         isDragging = false;
         document.querySelector('.progress-container').classList.remove('dragging');
-        const knob = document.querySelector('.progress-knob');
-        knob.style.transform = `translateX(${parseFloat(knob.style.transform.replace('translateX(','').replace('px) scale(','').split(' ')[0])}px) scale(1)`; // Reset scale
         }
     }
 
@@ -739,39 +815,40 @@
 
     // Handle Back Button Click
  function handleBack() {
-        // 방향 인지 애니메이션 적용
-        const currentSection = document.querySelector('.tracks-list').style.display === 'block'
-            ? document.querySelector('.tracks-list')
-            : document.querySelector('.albums-grid');
+    const backButton = document.querySelector('.back-button');
 
-        currentSection.classList.add('slide-out-left');
+    if (document.querySelector('.tracks-list').style.display === 'block') {
+        // If tracks are visible, go back to albums
+        document.querySelector('.tracks-list').classList.add('slide-out-right');
         setTimeout(() => {
-            if (document.querySelector('.tracks-list').style.display === 'block') {
-                // If tracks are visible, go back to albums
-                document.querySelector('.tracks-list').style.display = 'none';
-                document.querySelector('.tracks-list').classList.remove('slide-out-left');
-                document.querySelector('.albums-grid').style.display = 'grid';
-                document.querySelector('.albums-grid').classList.add('slide-in-right'); // Slide in albums
-            } else if (document.querySelector('.albums-grid').style.display === 'grid') {
-                // If albums are visible, go back to artists
-                document.querySelector('.albums-grid').classList.add('slide-out-left');
-                document.querySelector('.artist-section').classList.add('slide-out-left'); // Also slide out artist section
-
-                setTimeout(() => {
-                    document.querySelector('.artist-section').style.display = 'none';
-                    document.querySelector('.albums-grid').style.display = 'none';
-                    document.querySelector('.artists-grid').style.display = 'grid';
-                    document.querySelector('.artists-grid').classList.add('slide-in-right');  // Slide in artists grid
-                    document.querySelector('.back-button').style.display = 'none';
-                }, 300);
-                setTimeout(() => {
-                    document.querySelector('.artists-grid').classList.remove('slide-in-right');
-                    document.querySelector('.artist-section').classList.remove('slide-out-left');
-                    document.querySelector('.albums-grid').classList.remove('slide-out-left');
-                }, 400);
-            }
+            document.querySelector('.tracks-list').style.display = 'none';
+            document.querySelector('.tracks-list').classList.remove('slide-out-right');
+            document.querySelector('.albums-grid').style.display = 'grid';
+            document.querySelector('.albums-grid').classList.add('slide-in-left'); // Slide in albums
         }, 300);
+        setTimeout(() => {
+            document.querySelector('.albums-grid').classList.remove('slide-in-left');
+        }, 600);
+
+    } else if (document.querySelector('.albums-grid').style.display === 'grid') {
+        // If albums are visible, go back to artists
+        document.querySelector('.albums-grid').classList.add('slide-out-right');
+        document.querySelector('.artist-section').classList.add('slide-out-right'); // Also slide out artist section
+
+        setTimeout(() => {
+            document.querySelector('.artist-section').style.display = 'none';
+            document.querySelector('.albums-grid').style.display = 'none';
+            document.querySelector('.artists-grid').style.display = 'grid';
+            document.querySelector('.artists-grid').classList.add('slide-in-left');  // Slide in artists grid
+            document.querySelector('.back-button').style.display = 'none';
+        }, 300);
+        setTimeout(() => {
+            document.querySelector('.artists-grid').classList.remove('slide-in-left');
+            document.querySelector('.artist-section').classList.remove('slide-out-right');
+            document.querySelector('.albums-grid').classList.remove('slide-out-right');
+        }, 600);
     }
+}
 
     // Go to Home Page (Reset to Artist Grid)
     function goToHome() {
@@ -787,24 +864,41 @@
       artistVideo.style.display = 'none';
 
        // Reset animations in case they were interrupted
-        document.querySelector('.artists-grid').classList.remove('slide-out-left', 'slide-in-right');
-        document.querySelector('.artist-section').classList.remove('slide-out-left','slide-in-right');
-        document.querySelector('.albums-grid').classList.remove('slide-out-left', 'slide-in-right','slide-out-left');
-        document.querySelector('.tracks-list').classList.remove('slide-out-left', 'slide-in-right');
+        document.querySelector('.artists-grid').classList.remove('slide-out-left', 'slide-in-left');
+        document.querySelector('.artist-section').classList.remove('slide-out-right','slide-in-right');
+        document.querySelector('.albums-grid').classList.remove('slide-out-left', 'slide-in-left','slide-out-right');
+        document.querySelector('.tracks-list').classList.remove('slide-out-right', 'slide-in-right');
     }
 
     // Show Full Player
     function showFullPlayer() {
-        document.querySelector('.full-player').classList.remove('full-player-exit');
-        document.querySelector('.full-player').classList.add('full-player');
-        document.querySelector('.full-player').style.display = 'flex';
-        document.querySelector('.full-player .full-player-album-art').src = currentAlbum.cover;
-        document.querySelector('.full-player .track-name').textContent = currentTrack.title;
-        document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
+        document.querySelector('.full-player').classList.add('fade-in');
+      document.querySelector('.full-player').style.display = 'flex';
+      document.querySelector('.full-player .full-player-album-art').src = currentAlbum.cover;
+      document.querySelector('.full-player .track-name').textContent = currentTrack.title;
+      document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
 
-        document.querySelector('.mini-player').style.transform = 'translateY(120%) scale(0.9)';
-        document.querySelector('.mini-player').style.opacity = 0;
+      const miniPlayer = document.querySelector('.mini-player');
+      miniPlayer.style.transform = 'translateY(100%)'; // Slide down
+      setTimeout(() => {
+        miniPlayer.style.display = 'none';
+        miniPlayer.style.transform = 'translateY(0)'; // Reset
 
+        // Album art transition (optional, for a smoother visual)
+        const miniPlayerAlbumArt = document.querySelector('.mini-player-album-art');
+        miniPlayerAlbumArt.style.opacity = 0;
+        miniPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+        const fullPlayerAlbumArt = document.querySelector('.full-player-album-art');
+        fullPlayerAlbumArt.style.opacity = 0;
+        fullPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+        setTimeout(() => {
+          fullPlayerAlbumArt.style.opacity = 1;
+          fullPlayerAlbumArt.style.transform = 'scale(1)';
+        }, 50);
+
+      }, 300); // Wait for mini-player to slide down
 
       updateFullPlayerBackground(); // Set the background
       updateLyrics(); // Update lyrics immediately
@@ -812,29 +906,44 @@
 
     // Hide Full Player
  function hideFullPlayer() {
-        document.querySelector('.full-player').classList.remove('full-player');
-        document.querySelector('.full-player').classList.add('full-player-exit');
+    const fullPlayer = document.querySelector('.full-player');
+    fullPlayer.classList.add('fade-out-and-slide-up'); // Apply the animation
 
-        document.querySelector('.mini-player').style.transform = 'translateY(0)';
-        document.querySelector('.mini-player').style.opacity = 1;
+    const miniPlayer = document.querySelector('.mini-player');
+
+    // Album art transition - fade out full player, fade in mini player
+    const fullPlayerAlbumArt = document.querySelector('.full-player-album-art');
+    fullPlayerAlbumArt.style.opacity = 0;
+    fullPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+    const miniPlayerAlbumArt = document.querySelector('.mini-player-album-art');
+    miniPlayerAlbumArt.style.opacity = 0;
+    miniPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+    setTimeout(() => {
+        fullPlayer.style.display = 'none'; // Hide after animation
+        fullPlayer.classList.remove('fade-out-and-slide-up'); // Clean up
+
+        miniPlayer.style.display = 'flex';
+        miniPlayer.style.transform = 'translateY(0)';
+
+        // Fade in mini player album art
         setTimeout(() => {
-            document.querySelector('.full-player').style.display = 'none';
-        }, 400);
-    }
+            miniPlayerAlbumArt.style.opacity = 1;
+            miniPlayerAlbumArt.style.transform = 'scale(1)';
+        }, 50); // Short delay
+
+    }, 300); // Match the animation duration
+}
 
     // Toggle Play/Pause
     function togglePlayPause() {
-        const albumArt = document.querySelector('.full-player-album-art');
-        if (isPlaying) {
-            albumArt.classList.remove('playing');
-            albumArt.style.animationPlayState = 'paused';
-            audio.pause();
-            isPlaying = false;
-        } else {
-            albumArt.classList.add('playing');
-            albumArt.style.animationPlayState = 'running';
+        if (audio.paused) {
             audio.play();
             isPlaying = true;
+        } else {
+            audio.pause();
+            isPlaying = false;
         }
       updateMiniPlayer(); // Update mini-player
       updateFullPlayer(); // Update full-player (if visible)
@@ -907,52 +1016,59 @@ function seekAudio(e) {
     }
 
     // Update Lyrics Highlighting
-    function updateLyrics() {
-        if (!currentLyrics.length) return; // No lyrics available
-        if (isUserScrollingLyrics) return;  // Don't update if user is manually scrolling
+   function updateLyrics() {
+    if (!currentLyrics.length) return; // No lyrics available
+    if (isUserScrollingLyrics) return;  // Don't update if user is manually scrolling
 
-        const currentTime = audio.currentTime;
-        let nextLyricIndex = -1;
+    const currentTime = audio.currentTime;
+    let nextLyricIndex = -1;
 
-        // Find the index of the *next* lyric to be displayed.
-        for (let i = 0; i < currentLyrics.length; i++) {
-            if (currentLyrics[i].time > currentTime) {
-                nextLyricIndex = i;
-                break;
-            }
-        }
-
-        // The current lyric index is one before the next, or the last one if no next lyric.
-        let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
-
-
-        // Remove active class from the previously highlighted lyric.
-        if (highlightedLyric) {
-            highlightedLyric.classList.remove('active');
-            highlightedLyric = null;
-        }
-
-        // Highlight the current lyric
-        if (currentLyricIndex >= 0) {
-            const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
-            if (lyricLine) {
-                lyricLine.classList.add('active');
-                highlightedLyric = lyricLine;
-
-                // --- Smooth Scrolling ---
-                const container = document.querySelector('.lyrics-container');
-                // 부드러운 스크롤 구현
-                if (lyricLine) {
-                    const targetPosition = lyricLine.offsetTop - container.offsetHeight/2 + lyricLine.offsetHeight/2;
-                    container.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
-                    });
-                }
-            }
+    // Find the index of the *next* lyric to be displayed.
+    for (let i = 0; i < currentLyrics.length; i++) {
+        if (currentLyrics[i].time > currentTime) {
+            nextLyricIndex = i;
+            break;
         }
     }
 
+    // The current lyric index is one before the next, or the last one if no next lyric.
+    let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
+
+
+    // Remove active class from the previously highlighted lyric.
+    if (highlightedLyric) {
+        highlightedLyric.classList.remove('active');
+        highlightedLyric = null;
+    }
+
+       // Highlight the current lyric
+    if (currentLyricIndex >= 0) {
+        const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
+        if (lyricLine) {
+            lyricLine.classList.add('active');
+            highlightedLyric = lyricLine;
+
+            // --- Smooth Scrolling ---
+            const container = document.querySelector('.lyrics-container');
+            const containerHeight = container.offsetHeight;
+            const lineTop = lyricLine.offsetTop;
+            const lineBottom = lineTop + lyricLine.offsetHeight;
+
+            const scrollTop = container.scrollTop;
+            const scrollBottom = scrollTop + containerHeight;
+
+            // Calculate the offset needed to center the active line
+            const offsetToCenter = lineTop - scrollTop - (containerHeight / 2) + (lyricLine.offsetHeight / 2);
+
+            // Use smooth scrolling for a better visual experience
+            container.scrollBy({
+              top: offsetToCenter,
+              behavior: 'smooth'
+            });
+
+        }
+    }
+}
 
     // Initialize the Player
     document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
