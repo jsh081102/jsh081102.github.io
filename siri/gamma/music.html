@@ -51,8 +51,7 @@
     .track-info { flex-grow: 1; font-size: 0.95em; color: #444; }
 
     /* Mini Player */
-    .mini-player { position: fixed; bottom: 15px; right: 15px; background-color: #ecf0f3; border-radius: 12px; padding: 12px; box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; display: none; align-items: center; gap: 10px; cursor: pointer; z-index: 1000; width: calc(100% - 30px); max-width: 350px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                    opacity 0.3s ease; }
+    .mini-player { position: fixed; bottom: 15px; right: 15px; background-color: #ecf0f3; border-radius: 12px; padding: 12px; box-shadow: 7px 7px 10px #d1d9e6, -7px -7px 10px #f9f9f9; display: none; align-items: center; gap: 10px; cursor: pointer; z-index: 1000; width: calc(100% - 30px); max-width: 350px; transition: transform 0.3s ease; }
     .mini-player img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; transition: transform 0.5s ease; }
     .mini-player .track-info{ flex-grow: 1; overflow: hidden; }
     .mini-player .track-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; color: #333; }
@@ -137,22 +136,31 @@
     .lyrics-container::-webkit-scrollbar { display: none; }
 
     /* Lyrics Line */
-    .lyrics-line {
-        padding: 12px 15px;
-        margin: 8px 0;
-        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        opacity: 0.5;
-        transform: translateY(0) scale(1);
-        will-change: transform, opacity;
-    }
+.lyrics-line {
+    padding: 8px 10px;  /* Adjusted padding for better touch targets */
+    margin: 5px 0;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease, font-size 0.3s ease; /* Added font-size transition for smoother effect */
+    opacity: 0.7;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1em;
+    color: #eee;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    line-height: 1.4; /* Added line-height for readability */
+    will-change: transform, opacity; /* 하드웨어 가속 최적화 */
+}
 
-    .lyrics-line.active {
-        opacity: 1;
-        transform: translateY(-5px) scale(1.05);
-        background-color: rgba(255,255,255,0.15);
-        backdrop-filter: blur(5px);
-        transition-duration: 0.4s;
-    }
+.lyrics-line.active {
+    font-size: 1.2em; /* Slightly reduced active font size for better flow */
+    font-weight: bold;
+    opacity: 1;
+    transform: scale(1.05) translateY(-3px);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* 쫀득한 스프링 효과 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 10px 12px; /* Adjusted padding for active state */
+    background-color: rgba(255,255,255,0.1); /* Subtle background for active line */
+}
     .lyrics-line:hover { background-color: rgba(255,255,255,0.05); }
 
     .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
@@ -227,14 +235,8 @@
     /* Animations */
     @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
     @keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-    @keyframes slideInRight {
-        from { transform: translateX(50px); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOutLeft {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(-50px); opacity: 0; }
-    }
+    @keyframes slideInRight { from { transform: translateX(100%); opacity: 0;} to { transform: translateX(0); opacity: 1;}} /* 추가된 부분 */
+    @keyframes slideOutLeft { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0;} } /* 추가된 부분 */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } /* 추가된 부분 */
     @keyframes fadeOutAndSlideUp { /* Full Player 닫힐 때 */
         from {
@@ -250,40 +252,36 @@
         from { opacity: 0.8; transform: translateY(5px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    @keyframes albumRotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    @keyframes fullPlayerEnter {
-        from {
-            opacity: 0;
-            transform: translateY(100%) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    @keyframes fullPlayerExit {
-        to {
-            opacity: 0;
-            transform: translateY(50px) scale(0.98);
-        }
-    }
 
     /* Animation Classes */
     .slide-out-right { animation: slideOutRight 0.3s ease-in-out both; }
     .slide-in-left { animation: slideInLeft 0.3s ease-in-out both; }
-    .slide-in-right { animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) both 0.1s, subtleFadeIn 0.2s ease-out 0.3s forwards; } /* Added subtle fade-in */
-    .slide-out-left { animation: slideOutLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }  /* 추가된 부분 */
+    .slide-in-right { animation: slideInRight 0.3s ease-in-out both, subtleFadeIn 0.2s ease-out 0.3s forwards; } /* Added subtle fade-in */
+    .slide-out-left { animation: slideOutLeft 0.3s ease-in-out both; }  /* 추가된 부분 */
     .fade-in { animation: fadeIn 0.3s ease-out both; } /* Modified fade-in duration and timing */
     .fade-out-and-slide-up { animation: fadeOutAndSlideUp 0.3s ease-out forwards; } /* Full Player 닫힐 때 */
-    .full-player { animation: fullPlayerEnter 0.6s cubic-bezier(0.4, 0, 0.2, 1) both; }
-    .full-player-exit { animation: fullPlayerExit 0.4s cubic-bezier(0.4, 0, 0.2, 1) both; }
-    .full-player-album-art.playing {
-        animation: albumRotate 20s linear infinite;
+
+    /* 개선된 애니메이션 추가 */
+    @keyframes pageSlide {
+      0% { transform: translateX(10%); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
     }
+
+    @keyframes pageSlideOut {
+      0% { transform: translateX(0); opacity: 1; }
+      100% { transform: translateX(-10%); opacity: 0; }
+    }
+
+    .slide-in { animation: pageSlide 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+    .slide-out { animation: pageSlideOut 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+
+    /* 미니 플레이어 등장 애니메이션 */
+    @keyframes miniPlayerEnter {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .mini-player-enter { animation: miniPlayerEnter 0.3s ease-out; }
+
   </style>
 </head>
 <body>
@@ -424,33 +422,25 @@
     }
 
     // Show Artist Details
-  function showArtist(artist) {
+  async function showArtist(artist) {
     currentArtist = artist;
     const artistsGrid = document.querySelector('.artists-grid');
     const artistSection = document.querySelector('.artist-section');
+
+    await transitionViews(artistsGrid, artistSection);
+
     const albumsGrid = document.querySelector('.albums-grid');
-    const backButton = document.querySelector('.back-button');
+    albumsGrid.style.display = 'grid';
 
-    artistsGrid.classList.add('slide-out-left'); // Fade out
-    setTimeout(() => {
-        artistsGrid.style.display = 'none';
-        artistsGrid.classList.remove('slide-out-left'); // Remove class after
 
-        artistSection.style.display = 'block';
-        artistSection.classList.add('slide-in-right');
+    document.querySelector('.back-button').style.display = 'block';
 
-        albumsGrid.style.display = 'grid';
-        albumsGrid.classList.add('fade-in');  // fade-in 효과 추가
 
-        backButton.style.display = 'block';
-        backButton.classList.add('fade-in');
-
-        const artistVideo = document.querySelector('.artist-video');
-        artistVideo.src = artist.video;
-        artistVideo.style.display = 'block';
-        document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
-        loadAlbums(artist);
-    }, 300); // Wait for the fade-out animation
+    const artistVideo = document.querySelector('.artist-video');
+    artistVideo.src = artist.video;
+    artistVideo.style.display = 'block';
+    document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
+    loadAlbums(artist);
   }
 
     // Load Albums
@@ -475,21 +465,15 @@
     }
 
     // Show Album Tracks
-   function showAlbumTracks(album) {
+   async function showAlbumTracks(album) {
     currentAlbum = album;
     const albumsGrid = document.querySelector('.albums-grid');
     const tracksList = document.querySelector('.tracks-list');
 
-    albumsGrid.classList.add('slide-out-left');
-    setTimeout(() => {
-        albumsGrid.style.display = 'none';
-        albumsGrid.classList.remove('slide-out-left');
+    await transitionViews(albumsGrid, tracksList);
 
-        tracksList.style.display = 'block';
-        tracksList.classList.add('slide-in-right'); // Use slide-in-right for entry
-        tracksList.innerHTML = '';
-        album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
-    }, 300);
+    tracksList.innerHTML = '';
+    album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
 }
 
     // Create Track Item
@@ -516,16 +500,6 @@
         isPlaying = false;
     }
 
-    const albumArt = document.querySelector('.full-player-album-art');
-    if (isPlaying) {
-        albumArt.classList.add('playing');
-        albumArt.style.animationPlayState = 'running';
-    } else {
-        albumArt.classList.remove('playing');
-        albumArt.style.animationPlayState = 'paused';
-    }
-
-
     // Extract dominant colors from album cover
     const img = new Image();
     img.crossOrigin = "Anonymous";
@@ -545,7 +519,10 @@
     // Update Mini Player
     function updateMiniPlayer() {
       const miniPlayer = document.querySelector('.mini-player');
-      miniPlayer.style.display = 'flex';
+      if (!miniPlayer.style.display || miniPlayer.style.display === 'none') {
+        miniPlayer.style.display = 'flex';
+        miniPlayer.classList.add('mini-player-enter');
+      }
       miniPlayer.querySelector('.mini-player-album-art').src = currentAlbum.cover;
       miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
       miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
@@ -560,12 +537,15 @@
         fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
         fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
         document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶'); // Full player buttons
+
       }
     }
 
     // Update Full Player Background
     function updateFullPlayerBackground() {
-      document.querySelector('.full-player').style.background = `linear-gradient(to bottom right, ${currentGradientColors[0]}, ${currentGradientColors[1]})`;
+      const fullPlayer = document.querySelector('.full-player');
+      fullPlayer.style.transition = 'background 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+      fullPlayer.style.background = `linear-gradient(to bottom right, ${currentGradientColors[0]}, ${currentGradientColors[1]})`;
     }
 
    // Parse LRC Lyrics
@@ -697,39 +677,42 @@
     }
 
     // Handle Back Button Click
-    function handleBack() {
-        // 방향 인지 애니메이션 적용
+ async function handleBack() {
+    const backButton = document.querySelector('.back-button');
+
+    if (document.querySelector('.tracks-list').style.display === 'block') {
+        // If tracks are visible, go back to albums
         const tracksList = document.querySelector('.tracks-list');
         const albumsGrid = document.querySelector('.albums-grid');
-        const artistsGrid = document.querySelector('.artists-grid');
+        await transitionViews(tracksList, albumsGrid, 'backward');
+
+
+    } else if (document.querySelector('.albums-grid').style.display === 'grid') {
+        // If albums are visible, go back to artists
+        const albumsGrid = document.querySelector('.albums-grid');
         const artistSection = document.querySelector('.artist-section');
+        const artistsGrid = document.querySelector('.artists-grid');
 
-        let currentSection;
-        let previousSection;
+        await transitionViews(albumsGrid, artistSection, 'backward');
+        artistSection.style.display = 'none'; // artistSection은 transitionViews에서 display none 안하므로 여기서 none 처리
+        artistsGrid.style.display = 'grid';
+        document.querySelector('.back-button').style.display = 'none';
 
-        if (tracksList.style.display === 'block') {
-            currentSection = tracksList;
-            previousSection = albumsGrid;
-        } else if (albumsGrid.style.display === 'grid') {
-            currentSection = albumsGrid;
-            previousSection = artistsGrid;
-        } else {
-            return; // Home screen, no back action
-        }
+    }
+}
 
-        currentSection.classList.add('slide-out-left');
-        setTimeout(() => {
-            currentSection.style.display = 'none';
-            currentSection.classList.remove('slide-out-left');
-            previousSection.style.display = 'grid'; // or 'block' depending on previous section type
-            previousSection.classList.add('slide-in-right');
-            if (previousSection === artistsGrid) {
-                document.querySelector('.back-button').style.display = 'none'; // Hide back button on home screen
-            }
-        }, 300);
-        setTimeout(() => {
-            previousSection.classList.remove('slide-in-right');
-        }, 700); // Animation duration + some buffer
+    // 개선된 페이지 전환 핸들러
+    async function transitionViews(outElement, inElement, direction = 'forward') {
+      outElement.classList.add(direction === 'forward' ? 'slide-out' : 'slide-out-reverse'); // slide-out-reverse 클래스명은 slide-out과 동일하게 적용하면 됨.
+      await new Promise(r => setTimeout(r, 300));
+      outElement.style.display = 'none';
+      inElement.style.display = 'block';
+      inElement.classList.add(direction === 'forward' ? 'slide-in' : 'slide-in-reverse'); // slide-in-reverse 클래스명은 slide-in과 동일하게 적용하면 됨.
+
+      // 애니메이션 클래스 제거 (transitionViews 함수 내에서 처리)
+      await new Promise(r => setTimeout(r, 400)); // 애니메이션 시간과 동일하게 설정
+      outElement.classList.remove(direction === 'forward' ? 'slide-out' : 'slide-out-reverse');
+      inElement.classList.remove(direction === 'forward' ? 'slide-in' : 'slide-in-reverse');
     }
 
 
@@ -742,63 +725,91 @@
       document.querySelector('.artists-grid').style.display = 'grid';
       document.querySelector('.back-button').style.display = 'none';
       document.querySelector('.full-player').style.display = 'none';
-      document.querySelector('.mini-player').style.display = 'none';
 
       const artistVideo = document.querySelector('.artist-video');
       artistVideo.style.display = 'none';
 
        // Reset animations in case they were interrupted
-        document.querySelector('.artists-grid').classList.remove('slide-out-left', 'slide-in-right');
-        document.querySelector('.artist-section').classList.remove('slide-out-left','slide-in-right');
-        document.querySelector('.albums-grid').classList.remove('slide-out-left', 'slide-in-right','slide-out-right');
+        document.querySelector('.artists-grid').classList.remove('slide-out-left', 'slide-in-left');
+        document.querySelector('.artist-section').classList.remove('slide-out-right','slide-in-right');
+        document.querySelector('.albums-grid').classList.remove('slide-out-left', 'slide-in-left','slide-out-right');
         document.querySelector('.tracks-list').classList.remove('slide-out-right', 'slide-in-right');
     }
 
     // Show Full Player
     function showFullPlayer() {
-        document.querySelector('.full-player').classList.remove('full-player-exit');
-        document.querySelector('.full-player').classList.add('full-player');
-        document.querySelector('.full-player').style.display = 'flex';
-        document.querySelector('.full-player .full-player-album-art').src = currentAlbum.cover;
-        document.querySelector('.full-player .track-name').textContent = currentTrack.title;
-        document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
+        document.querySelector('.full-player').classList.add('fade-in');
+      document.querySelector('.full-player').style.display = 'flex';
+      document.querySelector('.full-player .full-player-album-art').src = currentAlbum.cover;
+      document.querySelector('.full-player .track-name').textContent = currentTrack.title;
+      document.querySelector('.full-player .artist-name').textContent = currentArtist.name;
 
-        const miniPlayer = document.querySelector('.mini-player');
-        miniPlayer.style.transform = 'translateY(120%) scale(0.9)';
-        miniPlayer.style.opacity = 0;
+      const miniPlayer = document.querySelector('.mini-player');
+      miniPlayer.style.transform = 'translateY(100%)'; // Slide down
+      setTimeout(() => {
+        miniPlayer.style.display = 'none';
+        miniPlayer.style.transform = 'translateY(0)'; // Reset
 
+        // Album art transition (optional, for a smoother visual)
+        const miniPlayerAlbumArt = document.querySelector('.mini-player-album-art');
+        miniPlayerAlbumArt.style.opacity = 0;
+        miniPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+        const fullPlayerAlbumArt = document.querySelector('.full-player-album-art');
+        fullPlayerAlbumArt.style.opacity = 0;
+        fullPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+        setTimeout(() => {
+          fullPlayerAlbumArt.style.opacity = 1;
+          fullPlayerAlbumArt.style.transform = 'scale(1)';
+        }, 50);
+
+      }, 300); // Wait for mini-player to slide down
 
       updateFullPlayerBackground(); // Set the background
       updateLyrics(); // Update lyrics immediately
     }
 
     // Hide Full Player
-    function hideFullPlayer() {
-        document.querySelector('.full-player').classList.remove('full-player');
-        document.querySelector('.full-player').classList.add('full-player-exit');
+ function hideFullPlayer() {
+    const fullPlayer = document.querySelector('.full-player');
+    fullPlayer.classList.add('fade-out-and-slide-up'); // Apply the animation
 
-        document.querySelector('.mini-player').style.transform = 'translateY(0)';
-        document.querySelector('.mini-player').style.opacity = 1;
+    const miniPlayer = document.querySelector('.mini-player');
+
+    // Album art transition - fade out full player, fade in mini player
+    const fullPlayerAlbumArt = document.querySelector('.full-player-album-art');
+    fullPlayerAlbumArt.style.opacity = 0;
+    fullPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+    const miniPlayerAlbumArt = document.querySelector('.mini-player-album-art');
+    miniPlayerAlbumArt.style.opacity = 0;
+    miniPlayerAlbumArt.style.transform = 'scale(0.5)';
+
+    setTimeout(() => {
+        fullPlayer.style.display = 'none'; // Hide after animation
+        fullPlayer.classList.remove('fade-out-and-slide-up'); // Clean up
+
+        miniPlayer.style.display = 'flex';
+        miniPlayer.style.transform = 'translateY(0)';
+
+        // Fade in mini player album art
         setTimeout(() => {
-            document.querySelector('.full-player').style.display = 'none';
-            document.querySelector('.full-player').classList.remove('full-player-exit');
-        }, 400);
-    }
+            miniPlayerAlbumArt.style.opacity = 1;
+            miniPlayerAlbumArt.style.transform = 'scale(1)';
+        }, 50); // Short delay
 
+    }, 300); // Match the animation duration
+}
 
     // Toggle Play/Pause
     function togglePlayPause() {
-        const albumArt = document.querySelector('.full-player-album-art');
-        if (isPlaying) {
-            albumArt.classList.remove('playing');
-            albumArt.style.animationPlayState = 'paused';
-            audio.pause();
-            isPlaying = false;
-        } else {
-            albumArt.classList.add('playing');
-            albumArt.style.animationPlayState = 'running';
+        if (audio.paused) {
             audio.play();
             isPlaying = true;
+        } else {
+            audio.pause();
+            isPlaying = false;
         }
       updateMiniPlayer(); // Update mini-player
       updateFullPlayer(); // Update full-player (if visible)
@@ -822,25 +833,23 @@
     }
 
    // Seek Audio
-    function seekAudio(e) {
-        if (isDragging) {
-            const progressContainer = document.querySelector('.progress-container');
-            const progress = document.querySelector('.progress');
-            const knob = document.querySelector('.progress-knob');
-            const progressRect = progressContainer.getBoundingClientRect();
-            const clientX = e.clientX !== undefined ? e.clientX : e.touches[0].clientX; // touch or mouse
+function seekAudio(e) {
+    if (isDragging) {
+        const container = document.querySelector('.progress-container');
+        const rect = container.getBoundingClientRect();
 
-            let delta = clientX - progressRect.left;
-            delta = Math.max(0, Math.min(delta, progressRect.width));
+        // Check for touch or mouse event
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 
-            const seekTime = (delta / progressRect.width) * audio.duration;
-            audio.currentTime = seekTime;
-            progress.style.width = `${(seekTime / audio.duration) * 100}%`;
-            knob.style.transform = `translateX(${delta}px) scale(${1 + Math.abs(delta * 0.002)})`; // Knob spring effect
-            knob.style.left = `${delta}px`; // Keep knob horizontally aligned
-        }
+        let percent = (clientX - rect.left) / rect.width;
+        percent = Math.max(0, Math.min(1, percent)); // Clamp between 0 and 1
+        audio.currentTime = percent * audio.duration;
+
+        // Update progress bar and knob position immediately
+        document.querySelector('.progress').style.width = `${percent * 100}%`;
+        document.querySelector('.progress-knob').style.left = `${clientX - rect.left}px`;
     }
-
+}
 
     // Update Progress Bar and Time Display
     function updateProgress() {
@@ -857,9 +866,7 @@
         if (!isDragging) {
           const progressRect = document.querySelector('.progress-container').getBoundingClientRect();
             knob.style.left = `${(percentage / 100) * progressRect.width}px`;
-             knob.style.transform = `translateX(${(percentage / 100) * progressRect.width}px) scale(1)`; // Reset scale when not dragging
         }
-
 
       currentTimeDisplays.forEach(display => display.textContent = formatTime(audio.currentTime));
       totalTimeDisplays.forEach(display => display.textContent = formatTime(audio.duration));
@@ -875,35 +882,60 @@
     }
 
     // Update Lyrics Highlighting
-    function updateLyrics() {
-        if (!currentLyrics.length) return;
-        if (isUserScrollingLyrics) return;
+   function updateLyrics() {
+    if (!currentLyrics.length) return; // No lyrics available
+    if (isUserScrollingLyrics) return;  // Don't update if user is manually scrolling
 
-        const currentTime = audio.currentTime;
-        let lyricLine = null;
-        let previousLine = null;
+    const currentTime = audio.currentTime;
+    let nextLyricIndex = -1;
 
-        currentLyrics.forEach((line, index) => {
-            const lyricElement = document.querySelector(`.lyrics-line[data-time="${line.time}"]`);
-            if (lyricElement) {
-                lyricElement.classList.remove('active'); // Reset all lines
-                if (line.time <= currentTime) {
-                    lyricLine = lyricElement;
-                }
-            }
-        });
-
-        if (lyricLine) {
-            lyricLine.classList.add('active');
-            const container = document.querySelector('.lyrics-container');
-            const targetPosition = lyricLine.offsetTop - container.offsetHeight/2 + lyricLine.offsetHeight/2;
-            container.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
+    // Find the index of the *next* lyric to be displayed.
+    for (let i = 0; i < currentLyrics.length; i++) {
+        if (currentLyrics[i].time > currentTime) {
+            nextLyricIndex = i;
+            break;
         }
     }
 
+    // The current lyric index is one before the next, or the last one if no next lyric.
+    let currentLyricIndex = nextLyricIndex === -1 ? currentLyrics.length - 1 : nextLyricIndex - 1;
+
+
+    // Remove active class from the previously highlighted lyric.
+    if (highlightedLyric) {
+        highlightedLyric.classList.remove('active');
+        highlightedLyric = null;
+    }
+
+       // Highlight the current lyric
+    if (currentLyricIndex >= 0) {
+        const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
+        if (lyricLine) {
+            lyricLine.classList.add('active');
+            highlightedLyric = lyricLine;
+
+            // --- Smooth Scrolling ---
+            const container = document.querySelector('.lyrics-container');
+            const containerHeight = container.offsetHeight;
+            const lineTop = lyricLine.offsetTop;
+            const lineBottom = lineTop + lyricLine.offsetHeight;
+
+            const scrollTop = container.scrollTop;
+            const scrollBottom = scrollTop + containerHeight;
+
+            // Calculate the offset needed to center the active line
+            const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2);
+
+
+            // Use smooth scrolling for a better visual experience
+            container.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
+            });
+
+        }
+    }
+}
 
     // Initialize the Player
     document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
