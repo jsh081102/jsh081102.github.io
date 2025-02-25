@@ -91,10 +91,10 @@
 </head>
 <body>
     <div class="artist">
-        <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans.jpg" alt="NewJeans">
+        <img src="http://www.applesodam.kro.kr/music/뉴진스/NewJeans.jpg" alt="NewJeans">
     </div>
     <div class="album" onclick="selectAlbum()">
-        <img src="http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/NewJeans2ndEP'GetUp'.jpg" alt="NewJeans Album">
+        <img src="http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/NewJeans 2nd EP 'Get Up'.jpg" alt="NewJeans Album">
     </div>
     <div class="controls">
         <button onclick="sortPlaylist()">정렬</button>
@@ -107,11 +107,11 @@
     </ul>
     <div class="mini-player" onclick="togglePlay()">
         <audio id="audioPlayer"></audio>
-        <button id="playButton">Play</button>
+        <button id="playButton">재생</button>
     </div>
     <div class="full-player" id="fullPlayer">
         <div class="lyrics" id="lyrics"></div>
-        <button onclick="closeFullPlayer()">Close</button>
+        <button onclick="closeFullPlayer()">닫기</button>
     </div>
     <script>
         let isPlaying = false;
@@ -127,10 +127,10 @@
         }
 
         function playSong(song) {
-            const songPath = `http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/${song}.mp3`;
+            const songPath = `http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/${song}.mp3`;
             audioPlayer.src = songPath;
             audioPlayer.play();
-            playButton.textContent = 'Pause';
+            playButton.textContent = '일시정지';
             isPlaying = true;
             fetchLyrics(song);
         }
@@ -156,7 +156,7 @@
         }
 
         async function fetchLyrics(song) {
-            let response = await fetch(`http://www.applesodam.kro.kr/music/NewJeans/NewJeans2ndEP'GetUp'/${song}.srt`);
+            let response = await fetch(`http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/${song}.lrc`);
             if (response.ok) {
                 let lyrics = await response.text();
                 document.getElementById('lyrics').textContent = lyrics;
