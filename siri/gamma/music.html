@@ -28,7 +28,8 @@
             border-radius: 50px;
         }
         .album {
-            width: 80%;
+            width: 300px;
+            height: 300px;
             margin: 20px;
             border-radius: 20px;
             overflow: hidden;
@@ -37,6 +38,8 @@
         }
         .album img {
             width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .mini-player {
             position: fixed;
@@ -51,6 +54,7 @@
             align-items: center;
             justify-content: center;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
         .full-player {
             position: fixed;
@@ -64,6 +68,7 @@
             justify-content: center;
             color: white;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
         .lyrics {
             max-width: 500px;
@@ -90,7 +95,7 @@
     </style>
 </head>
 <body>
-    <div class="artist">
+    <div class="artist" id="artist">
         <img src="http://www.applesodam.kro.kr/music/뉴진스/NewJeans.jpg" alt="NewJeans">
     </div>
     <div class="album" onclick="selectAlbum()">
@@ -102,14 +107,25 @@
         <button onclick="toggleLoop()">반복: 꺼짐</button>
     </div>
     <ul class="playlist" id="playlist">
-        <li class="playlist-item" onclick="playSong('ETA')">ETA - NewJeans</li>
-        <!-- 추가 곡은 여기에 추가 -->
+        <li class="playlist-item" onclick="playSong('Super Shy')">Super Shy - NewJeans</li>
+        <li class="playlist-item" onclick="playSong('Cool With You')">Cool With You - NewJeans</li>
+        <li class="playlist-item" onclick="playSong('Get Up')">Get Up - NewJeans</li>
+        <li class="playlist-item" onclick="playSong('ASAP')">ASAP - NewJeans</li>
+        <li class="playlist-item" onclick="playSong('REBEL HEART')">REBEL HEART - IVE</li>
+        <li class="playlist-item" onclick="playSong('FLU')">FLU - IVE</li>
+        <li class="playlist-item" onclick="playSong('You Wanna Cry')">You Wanna Cry - IVE</li>
+        <li class="playlist-item" onclick="playSong('Thank U')">Thank U - IVE</li>
+        <li class="playlist-item" onclick="playSong('ATTITUDE')">ATTITUDE - IVE</li>
+        <li class="playlist-item" onclick="playSong('TKO')">TKO - IVE</li>
     </ul>
-    <div class="mini-player" onclick="togglePlay()">
+    <div class="mini-player" onclick="toggleFullPlayer()">
         <audio id="audioPlayer"></audio>
         <button id="playButton">재생</button>
     </div>
     <div class="full-player" id="fullPlayer">
+        <video id="artistVideo" controls>
+            <source src="http://www.applesodam.kro.kr/music/아이브/IVE.mp4" type="video/mp4">
+        </video>
         <div class="lyrics" id="lyrics"></div>
         <button onclick="closeFullPlayer()">닫기</button>
     </div>
@@ -122,7 +138,6 @@
         const loopButton = document.querySelector('.controls button:nth-child(3)');
 
         function selectAlbum() {
-            // 앨범 선택 로직
             alert('앨범 선택됨!');
         }
 
@@ -135,20 +150,13 @@
             fetchLyrics(song);
         }
 
-        function togglePlay() {
-            if (isPlaying) {
-                audioPlayer.pause();
-                playButton.textContent = 'Play';
+        function toggleFullPlayer() {
+            const fullPlayer = document.getElementById('fullPlayer');
+            if (fullPlayer.style.display === 'flex') {
+                fullPlayer.style.display = 'none';
             } else {
-                audioPlayer.play();
-                playButton.textContent = 'Pause';
+                fullPlayer.style.display = 'flex';
             }
-            isPlaying = !isPlaying;
-        }
-
-        function showFullPlayer() {
-            document.getElementById('fullPlayer').style.display = 'flex';
-            fetchLyrics();
         }
 
         function closeFullPlayer() {
