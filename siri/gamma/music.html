@@ -14,34 +14,25 @@
             justify-content: center;
             min-height: 100vh;
         }
-        .artist { 
+        .artist-list, .album-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .artist, .album {
             margin: 20px;
             box-shadow: 8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff;
-            border-radius: 50px;
+            border-radius: 20px;
             overflow: hidden;
-            display: inline-block;
+            cursor: pointer;
         }
-        .artist img {
+        .artist img, .album img {
             width: 200px;
             height: 200px;
             object-fit: cover;
-            border-radius: 50px;
         }
-        .album {
-            width: 300px;
-            height: 300px;
-            margin: 20px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 8px 8px 16px #d1d1d1, -8px -8px 16px #ffffff;
-            cursor: pointer;
-        }
-        .album img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .mini-player {
+        .mini-player, .full-player {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -57,7 +48,6 @@
             transition: all 0.3s ease;
         }
         .full-player {
-            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -68,7 +58,6 @@
             justify-content: center;
             color: white;
             flex-direction: column;
-            transition: all 0.3s ease;
         }
         .lyrics {
             max-width: 500px;
@@ -95,12 +84,19 @@
     </style>
 </head>
 <body>
-    <div class="artist" id="artist">
-        <img src="http://www.applesodam.kro.kr/music/뉴진스/NewJeans.jpg" alt="NewJeans">
+    <div class="artist-list">
+        <div class="artist" onclick="selectArtist('NewJeans')">
+            <img src="http://www.applesodam.kro.kr/music/뉴진스/NewJeans.jpg" alt="NewJeans">
+        </div>
+        <div class="artist" onclick="selectArtist('IVE')">
+            <img src="http://www.applesodam.kro.kr/music/아이브/IVE.jpg" alt="IVE">
+        </div>
     </div>
-    <div class="album" onclick="selectAlbum()">
-        <img src="http://www.applesodam.kro.kr/music/뉴진스/NewJeans 2nd EP 'Get Up'/NewJeans 2nd EP 'Get Up'.jpg" alt="NewJeans Album">
+
+    <div class="album-list" id="albumList" style="display:none">
+        <!-- Album images will be inserted here dynamically -->
     </div>
+
     <div class="controls">
         <button onclick="sortPlaylist()">정렬</button>
         <button onclick="shufflePlaylist()">셔플</button>
@@ -108,6 +104,7 @@
     </div>
     <ul class="playlist" id="playlist">
         <li class="playlist-item" onclick="playSong('Super Shy')">Super Shy - NewJeans</li>
+        <li class="playlist-item" onclick="playSong('ETA')">ETA - NewJeans</li>
         <li class="playlist-item" onclick="playSong('Cool With You')">Cool With You - NewJeans</li>
         <li class="playlist-item" onclick="playSong('Get Up')">Get Up - NewJeans</li>
         <li class="playlist-item" onclick="playSong('ASAP')">ASAP - NewJeans</li>
@@ -137,8 +134,25 @@
         const playlistElement = document.getElementById('playlist');
         const loopButton = document.querySelector('.controls button:nth-child(3)');
 
-        function selectAlbum() {
-            alert('앨범 선택됨!');
+        function selectArtist(artist) {
+            const albumList = document.getElementById('albumList');
+            albumList.style.display = 'flex';
+            albumList.innerHTML = '';
+            let albums = artist === 'NewJeans' ? ['NewJeans 2nd EP Get Up'] : ['IVE EMPATHY - EP'];
+            albums.forEach(album => {
+                const div = document.createElement('div');
+                div.className = 'album';
+                div.onclick = () => selectAlbum(album);
+                const img = document.createElement('img');
+                img.src = `http://www.applesodam.kro.kr/music/${artist}/${album}/${album}.jpg`;
+                img.alt = album;
+                div.appendChild(img);
+                albumList.appendChild(div);
+            });
+        }
+
+        function selectAlbum(album) {
+            alert(`${album} 앨범 선택됨!`);
         }
 
         function playSong(song) {
@@ -152,11 +166,7 @@
 
         function toggleFullPlayer() {
             const fullPlayer = document.getElementById('fullPlayer');
-            if (fullPlayer.style.display === 'flex') {
-                fullPlayer.style.display = 'none';
-            } else {
-                fullPlayer.style.display = 'flex';
-            }
+            fullPlayer.style.display = fullPlayer.style.display === 'flex' ? 'none' : 'flex';
         }
 
         function closeFullPlayer() {
