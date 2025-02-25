@@ -381,7 +381,6 @@
     // Global Variables
     let currentArtist = null, currentAlbum = null, currentTrack = null, audio = new Audio(), isPlaying = false, currentLyrics = [], highlightedLyric = null, currentGradientColors = ['#a8b8fc', '#84ccf0'], isDragging = false;
     let isUserScrollingLyrics = false, lyricScrollTimeout, historyStack = ['artists'];
-    let trackList = []; // Track list for current album
 
     // Initialization
     function initializeMusicPlayer() {
@@ -437,8 +436,6 @@
       artistSection.classList.add('active');
       albumsGrid.classList.add('active');
       backButton.classList.add('show');
-      backButton.style.display = 'block'; // Ensure back button is visible
-
 
       if (historyStack[historyStack.length - 1] !== 'artist') historyStack.push('artist');
     }
@@ -478,7 +475,6 @@
       albumsGrid.classList.remove('active');
       tracksList.classList.add('active');
       tracksList.innerHTML = '';
-      trackList = album.tracks; // Store track list
       album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
       if (historyStack[historyStack.length - 1] !== 'album') historyStack.push('album');
     }
@@ -499,7 +495,6 @@
     async function playTrack(track) {
       currentTrack = track;
       audio.src = track.audio;
-      audio.load(); // Load audio source
       try {
         await audio.play();
         isPlaying = true;
@@ -524,9 +519,10 @@
     // Update Mini Player
     function updateMiniPlayer() {
       const miniPlayer = document.querySelector('.mini-player');
-      miniPlayer.style.display = 'flex'; // Ensure display is flex
-      miniPlayer.classList.add('mini-player-enter'); // Re-add animation class for showing again
-
+      if (miniPlayer.style.display !== 'flex') {
+        miniPlayer.style.display = 'flex';
+        miniPlayer.classList.add('mini-player-enter');
+      }
       miniPlayer.querySelector('.mini-player-album-art').src = currentAlbum.cover;
       miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
       miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
@@ -584,16 +580,10 @@
         });
         lyricsContainer.appendChild(lineElement);
       });
-      lyricsContainer.scrollTop = 0; // Reset scroll when new lyrics are loaded
     }
 
     // Load and Display Lyrics
     async function loadAndDisplayLyrics(lyricsUrl) {
-      if (!lyricsUrl) { // Handle no lyrics URL case
-        document.querySelector('.lyrics-container').innerHTML = '<div class="lyrics-line">가사가 없습니다.</div>';
-        currentLyrics = [];
-        return;
-      }
       try {
         const response = await fetch(lyricsUrl);
         if (!response.ok) throw new Error(`가사 가져오기 실패: ${response.status}`);
@@ -640,7 +630,7 @@
     function handleLyricsScroll() {
       isUserScrollingLyrics = true;
       clearTimeout(lyricScrollTimeout);
-      lyricScrollTimeout = setTimeout(() => isUserScrollingLyrics = false, 1000); // Reduced delay
+      lyricScrollTimeout = setTimeout(() => isUserScrollingLyrics = false, 2000);
     }
 
     // Start Dragging Progress
@@ -666,15 +656,12 @@
     function setupAudioEventListeners() {
       audio.addEventListener('timeupdate', updateProgress);
       audio.addEventListener('ended', playNextTrack);
-      audio.addEventListener('play', () => { isPlaying = true; updateMiniPlayer(); updateFullPlayer(); }); // Update play state on audio events
-      audio.addEventListener('pause', () => { isPlaying = false; updateMiniPlayer(); updateFullPlayer(); });
     }
 
     // Handle Back Button Click
     function handleBack() {
-      historyStack.pop(); // Remove current view first
-
-      const currentView = historyStack.pop(); // Now get the previous view
+      const currentView = historyStack.pop();
+      const nextView = historyStack[historyStack.length - 1];
       const artistsGrid = document.querySelector('.artists-grid');
       const artistSection = document.querySelector('.artist-section');
       const albumsGrid = document.querySelector('.albums-grid');
@@ -684,7 +671,6 @@
 
       if (currentView === 'full-player') {
         hideFullPlayer();
-        historyStack.push('full-player'); // if we were going back from full player, it should be still in history if back again.
       } else if (currentView === 'album') {
         tracksList.classList.remove('active');
         albumsGrid.classList.add('active');
@@ -693,23 +679,10 @@
         albumsGrid.classList.remove('active');
         artistsGrid.classList.remove('hidden');
         backButton.classList.remove('show');
-        backButton.style.display = 'none'; // Hide back button on artist grid
-      } else if (currentView === 'artists' || currentView === undefined) { // Go to home from artists list or initial back press
-        goToHome();
-        return; // Prevent pushing 'artists' again
       }
 
-      if (historyStack.length >= 1 ) {
-          backButton.classList.add('show'); // Ensure back button is shown if history is available
-          backButton.style.display = 'block';
-      } else {
-          backButton.classList.remove('show');
-          backButton.style.display = 'none';
-      }
-
-      historyStack.push(currentView); // Restore the previous view to history for next back action (important!)
+      if (historyStack.length === 1 && nextView === 'artists') goToHome();
     }
-
 
     // Go to Home Page
     function goToHome() {
@@ -719,7 +692,6 @@
       document.querySelector('.full-player').style.display = 'none';
       document.querySelector('.artists-grid').classList.remove('hidden');
       document.querySelector('.back-button').classList.remove('show');
-      document.querySelector('.back-button').style.display = 'none'; // Hide back button on home
       document.querySelector('.artist-video').style.display = 'none';
       historyStack = ['artists'];
     }
@@ -753,32 +725,34 @@
         miniPlayer.style.display = 'flex';
         miniPlayer.classList.add('mini-player-enter');
       }, 300);
-      historyStack.push('full-player'); // To keep track of full player in history for back navigation
+      if (historyStack[historyStack.length - 1] === 'full-player') historyStack.pop();
     }
 
     // Toggle Play/Pause
     function togglePlayPause() {
       if (audio.paused) {
         audio.play();
+        isPlaying = true;
       } else {
         audio.pause();
+        isPlaying = false;
       }
+      updateMiniPlayer();
+      updateFullPlayer();
     }
 
     // Play Previous Track
     function playPreviousTrack() {
-      if (!currentAlbum || !currentTrack) return;
-      const currentIndex = trackList.findIndex(t => t === currentTrack); // Use trackList
-      const prevIndex = currentIndex > 0 ? currentIndex - 1 : trackList.length - 1;
-      playTrack(trackList[prevIndex]);
+      const tracks = currentAlbum.tracks;
+      const currentIndex = tracks.findIndex(t => t === currentTrack);
+      playTrack(tracks[currentIndex > 0 ? currentIndex - 1 : tracks.length - 1]);
     }
 
     // Play Next Track
     function playNextTrack() {
-       if (!currentAlbum || !currentTrack) return;
-      const currentIndex = trackList.findIndex(t => t === currentTrack); // Use trackList
-      const nextIndex = currentIndex < trackList.length - 1 ? currentIndex + 1 : 0;
-      playTrack(trackList[nextIndex]);
+      const tracks = currentAlbum.tracks;
+      const currentIndex = tracks.findIndex(t => t === currentTrack);
+      playTrack(tracks[currentIndex < tracks.length - 1 ? currentIndex + 1 : 0]);
     }
 
     // Seek Audio
@@ -821,7 +795,7 @@
     function updateLyrics() {
       if (!currentLyrics.length || isUserScrollingLyrics) return;
       const currentTime = audio.currentTime;
-      let currentLyricIndex = currentLyrics.findIndex((lyric, i) =>
+      let currentLyricIndex = currentLyrics.findIndex((lyric, i) => 
         currentTime >= lyric.time && (i === currentLyrics.length - 1 || currentTime < currentLyrics[i + 1].time)
       );
 
@@ -831,11 +805,9 @@
         if (lyricLine) {
           lyricLine.classList.add('active');
           highlightedLyric = lyricLine;
-          if (!isUserScrollingLyrics) { // Only auto-scroll if user is not manually scrolling
-            const container = document.querySelector('.lyrics-container');
-            const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2);
-            container.scrollTo({ top: targetPosition, behavior: 'smooth' });
-          }
+          const container = document.querySelector('.lyrics-container');
+          const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2);
+          container.scrollTo({ top: targetPosition, behavior: 'smooth' });
         }
       }
     }
