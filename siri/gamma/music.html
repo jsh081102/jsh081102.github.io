@@ -1,5 +1,3 @@
---- START OF FILE musicOS 1.0 Gamma.txt ---
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -272,7 +270,7 @@
     <div class="player-controls">
       <button class="control-button prev-button">⏮</button>
       <button class="control-button play-pause-button">▶</button>
-      <button class="control-button next-button">⏭</button> <!-- Changed to Next Track Icon -->
+      <button class="control-button next-button">⏯</button>
     </div>
   </div>
 
@@ -294,7 +292,7 @@
         <div class="player-controls">
           <button class="control-button prev-button">⏮</button>
           <button class="control-button play-pause-button">▶</button>
-          <button class="control-button next-button">⏭</button> <!-- Changed to Next Track Icon -->
+          <button class="control-button next-button">⏯</button>
         </div>
       </div>
       <div class="player-right">
@@ -309,7 +307,7 @@
     const videoCache = new Map();
 
     async function getCachedImage(url) {
-      if (imageCache.has(url)) return imageCache.get(url).cloneNode(true); // Bugfix 1: Return clone of cached image
+      if (imageCache.has(url)) return imageCache.get(url);
       try {
         const image = new Image();
         image.src = url;
@@ -400,7 +398,7 @@
       document.querySelector('.artist-section').classList.remove('active');
       document.querySelector('.albums-grid').classList.remove('active');
       document.querySelector('.tracks-list').classList.remove('active');
-      document.querySelector('.back-button').classList.remove('show'); // Bugfix 2: Ensure back button is hidden on home
+      document.querySelector('.back-button').style.display = 'none';
 
       for (const artist of musicLibrary.artists) {
         const artistCard = await createArtistCard(artist);
@@ -427,16 +425,10 @@
       const artistSection = document.querySelector('.artist-section');
       const albumsGrid = document.querySelector('.albums-grid');
       const backButton = document.querySelector('.back-button');
+
       const artistVideo = document.querySelector('.artist-video');
-
       const videoSrc = await getCachedVideo(artist.video);
-      if (videoSrc) {
-        artistVideo.src = videoSrc;
-        artistVideo.style.display = 'block'; // Bugfix 3: Show video when artist is selected
-      } else {
-        artistVideo.style.display = 'none'; // Hide video if no video source.
-      }
-
+      if (videoSrc) artistVideo.src = videoSrc;
       document.querySelector('.artist-section .artist-info h2').textContent = artist.name;
       loadAlbums(artist);
 
@@ -514,21 +506,10 @@
       const img = await getCachedImage(currentAlbum.cover);
       if (img) {
         const colorThief = new ColorThief();
-        colorThief.getColorAsync(img) // Bugfix 4: Use getColorAsync for single dominant color. getPalette caused issues if album art doesn't have enough varied colors.
-          .then(color => {
-            currentGradientColors = [`rgb(${color[0]}, ${color[1]}, ${color[2]})`, `#a8b8fc`]; // Set dominant color and fallback. You can adjust the fallback.
-            updateFullPlayerBackground();
-          })
-          .catch(err => {
-            console.error("Color Thief error:", err);
-            currentGradientColors = ['#a8b8fc', '#84ccf0']; // Fallback gradient on error
-            updateFullPlayerBackground();
-          });
-      } else {
-        currentGradientColors = ['#a8b8fc', '#84ccf0']; // Default gradient if no album art.
+        const colors = colorThief.getPalette(img, 2);
+        currentGradientColors = colors.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
         updateFullPlayerBackground();
       }
-
 
       updateMiniPlayer();
       updateFullPlayer();
@@ -569,18 +550,15 @@
     function parseLRC(lrcContent) {
       const lines = lrcContent.trim().split('\n');
       const lyrics = [];
-      const timeRegex = /\[(\d+):(\d{2})(\.(\d{2,3})?)?\]/; // Bugfix 5: Correct regex to handle milliseconds properly and ensure seconds are two digits.
+      const timeRegex = /\[(\d+):(\d+(\.\d+)?)\]/;
 
       lines.forEach(line => {
         const match = line.match(timeRegex);
         if (match) {
           const minutes = parseInt(match[1]);
-          const seconds = parseInt(match[2]);
-          let milliseconds = parseInt(match[4] || 0); // Capture milliseconds part if exists
-          if (match[4] && match[4].length === 2) milliseconds *= 10; // Adjust 2 digit milliseconds to 3 digit scale for comparison.
-
+          const seconds = parseFloat(match[2]);
           const text = line.replace(timeRegex, '').trim();
-          const time = minutes * 60 + seconds + (milliseconds / 1000); // Include milliseconds in time calculation.
+          const time = minutes * 60 + seconds;
           if (text) lyrics.push({ time, text });
         }
       });
@@ -606,11 +584,6 @@
 
     // Load and Display Lyrics
     async function loadAndDisplayLyrics(lyricsUrl) {
-      if (!lyricsUrl) { // Bugfix 6: Handle cases with no lyrics URL.
-        document.querySelector('.lyrics-container').innerHTML = '<div class="lyrics-line">가사가 없습니다.</div>';
-        currentLyrics = [];
-        return;
-      }
       try {
         const response = await fetch(lyricsUrl);
         if (!response.ok) throw new Error(`가사 가져오기 실패: ${response.status}`);
@@ -657,7 +630,7 @@
     function handleLyricsScroll() {
       isUserScrollingLyrics = true;
       clearTimeout(lyricScrollTimeout);
-      lyricScrollTimeout = setTimeout(() => isUserScrollingLyrics = false, 500); // Bugfix 7: Reduced timeout for scroll-lyric sync deactivation.
+      lyricScrollTimeout = setTimeout(() => isUserScrollingLyrics = false, 2000);
     }
 
     // Start Dragging Progress
@@ -683,44 +656,33 @@
     function setupAudioEventListeners() {
       audio.addEventListener('timeupdate', updateProgress);
       audio.addEventListener('ended', playNextTrack);
-      audio.addEventListener('play', () => { isPlaying = true; updateMiniPlayer(); updateFullPlayer(); }); // Bugfix 8: Update UI on audio play/pause events
-      audio.addEventListener('pause', () => { isPlaying = false; updateMiniPlayer(); updateFullPlayer(); });
     }
 
     // Handle Back Button Click
     function handleBack() {
-        historyStack.pop(); // Pop current view immediately
-        const nextView = historyStack.length > 0 ? historyStack[historyStack.length - 1] : 'artists'; // Get next view safely
-        const artistsGrid = document.querySelector('.artists-grid');
-        const artistSection = document.querySelector('.artist-section');
-        const albumsGrid = document.querySelector('.albums-grid');
-        const tracksList = document.querySelector('.tracks-list');
-        const fullPlayer = document.querySelector('.full-player');
-        const backButton = document.querySelector('.back-button');
+      const currentView = historyStack.pop();
+      const nextView = historyStack[historyStack.length - 1];
+      const artistsGrid = document.querySelector('.artists-grid');
+      const artistSection = document.querySelector('.artist-section');
+      const albumsGrid = document.querySelector('.albums-grid');
+      const tracksList = document.querySelector('.tracks-list');
+      const fullPlayer = document.querySelector('.full-player');
+      const backButton = document.querySelector('.back-button');
 
-        if (nextView === 'full-player') {
-            hideFullPlayer(); // Go back to where full player was opened.
-        } else if (nextView === 'album') {
-            tracksList.classList.remove('active');
-            albumsGrid.classList.add('active');
-        } else if (nextView === 'artist') {
-            artistSection.classList.remove('active');
-            albumsGrid.classList.remove('active');
-            artistsGrid.classList.remove('hidden');
-            backButton.classList.remove('show');
-        } else if (nextView === 'artists') { // Ensure home navigation if history is empty after pops
-            goToHome();
-        } else {
-            historyStack.push(nextView); // If somehow invalid state, push it back for next navigation attempts.
-            goToHome(); // Fallback to home
-        }
+      if (currentView === 'full-player') {
+        hideFullPlayer();
+      } else if (currentView === 'album') {
+        tracksList.classList.remove('active');
+        albumsGrid.classList.add('active');
+      } else if (currentView === 'artist') {
+        artistSection.classList.remove('active');
+        albumsGrid.classList.remove('active');
+        artistsGrid.classList.remove('hidden');
+        backButton.classList.remove('show');
+      }
 
-
-        if (historyStack.length <= 1 && nextView === 'artists') {
-            goToHome(); // Double check for home if issues in stack.
-        }
+      if (historyStack.length === 1 && nextView === 'artists') goToHome();
     }
-
 
     // Go to Home Page
     function goToHome() {
@@ -770,28 +732,27 @@
     function togglePlayPause() {
       if (audio.paused) {
         audio.play();
+        isPlaying = true;
       } else {
         audio.pause();
+        isPlaying = false;
       }
-      // isPlaying state and UI update is now handled by 'play' and 'pause' event listeners on audio element (Bugfix 8).
+      updateMiniPlayer();
+      updateFullPlayer();
     }
 
     // Play Previous Track
     function playPreviousTrack() {
-      if (!currentAlbum || !currentAlbum.tracks) return; // Bugfix 9: Prevent errors if no album or tracks are loaded.
       const tracks = currentAlbum.tracks;
       const currentIndex = tracks.findIndex(t => t === currentTrack);
-      const prevIndex = currentIndex > 0 ? currentIndex - 1 : tracks.length - 1;
-      playTrack(tracks[prevIndex]);
+      playTrack(tracks[currentIndex > 0 ? currentIndex - 1 : tracks.length - 1]);
     }
 
     // Play Next Track
     function playNextTrack() {
-      if (!currentAlbum || !currentAlbum.tracks) return; // Bugfix 10: Prevent errors if no album or tracks are loaded.
       const tracks = currentAlbum.tracks;
       const currentIndex = tracks.findIndex(t => t === currentTrack);
-      const nextIndex = currentIndex < tracks.length - 1 ? currentIndex + 1 : 0;
-      playTrack(tracks[nextIndex]);
+      playTrack(tracks[currentIndex < tracks.length - 1 ? currentIndex + 1 : 0]);
     }
 
     // Seek Audio
@@ -834,7 +795,7 @@
     function updateLyrics() {
       if (!currentLyrics.length || isUserScrollingLyrics) return;
       const currentTime = audio.currentTime;
-      let currentLyricIndex = currentLyrics.findIndex((lyric, i) =>
+      let currentLyricIndex = currentLyrics.findIndex((lyric, i) => 
         currentTime >= lyric.time && (i === currentLyrics.length - 1 || currentTime < currentLyrics[i + 1].time)
       );
 
@@ -844,11 +805,9 @@
         if (lyricLine) {
           lyricLine.classList.add('active');
           highlightedLyric = lyricLine;
-          if (!isUserScrollingLyrics) { // Bugfix 11: Only scroll lyrics if user isn't scrolling manually
-            const container = document.querySelector('.lyrics-container');
-            const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2);
-            container.scrollTo({ top: targetPosition, behavior: 'smooth' });
-          }
+          const container = document.querySelector('.lyrics-container');
+          const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2);
+          container.scrollTo({ top: targetPosition, behavior: 'smooth' });
         }
       }
     }
