@@ -15,7 +15,7 @@
     <link rel="apple-touch-icon" sizes="144x144" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-144x144.png">
     <link rel="apple-touch-icon" sizes="152x152" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192"  href="http://applesodam.kro.kr/logo/favicon/chat/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="http://applesodam.kro.kr/logo/favicon/chat/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="http://applesodam.kro.kr/logo/favicon/chat/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="http://applesodam.kro.kr/logo/favicon/chat/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="http://applesodam.kro.kr/logo/favicon/chat/favicon-16x16.png">
@@ -38,36 +38,38 @@
     <style>
         /* CSS Variables for Light and Dark Mode */
         :root {
-            --bg-color: #ffffff;
-            --text-color: #000000;
-            --user-bubble-color: #007aff;
-            --ai-bubble-color: #e9e9eb;
-            --input-bg-color: #f0f0f0;
-            --header-color: #f2f2f7;
-            --toggle-bg: #e9e9eb;
+            --bg-color: rgba(255, 255, 255, 0.85);
+            --text-color: #333333;
+            --user-bubble-color: rgba(0, 122, 255, 0.9);
+            --ai-bubble-color: rgba(233, 233, 235, 0.85);
+            --input-bg-color: rgba(240, 240, 240, 0.75);
+            --header-color: rgba(242, 242, 247, 0.85);
+            --toggle-bg: rgba(233, 233, 235, 0.9);
             --toggle-circle: #ffffff;
-            --body-bg-color: #f0f0f0;
+            --body-bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             --input-radius: 1000px;
             --outer-radius: 40px;
             --input-padding: 10px;
-            --input-border-color: #c7c7cc;
-            --input-area-bg-color: #ffffff;
-            --button-bg-color: #007aff;
+            --input-border-color: rgba(200, 200, 200, 0.5);
+            --input-area-bg-color: rgba(255, 255, 255, 0.7);
+            --button-bg-color: rgba(0, 122, 255, 0.9);
             --button-text-color: #ffffff;
             --modal-header-height: 0px;
+            --blur-effect: blur(10px);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
         .dark-mode {
-            --bg-color: #1a1a1a;
-            --text-color: #ffffff;
-            --user-bubble-color: #0a84ff;
-            --ai-bubble-color: #2c2c2e;
-            --input-bg-color: #2c2c2e;
-            --header-color: #2c2c2e;
-            --toggle-bg: #32d74b;
-            --body-bg-color: #000000;
-            --input-border-color: #4c4c4e;
-            --input-area-bg-color: #1a1a1a;
-            --button-bg-color: #0a84ff;
+            --bg-color: rgba(26, 26, 26, 0.85);
+            --text-color: #e0e0e0;
+            --user-bubble-color: rgba(10, 132, 255, 0.9);
+            --ai-bubble-color: rgba(44, 44, 46, 0.85);
+            --input-bg-color: rgba(44, 44, 46, 0.75);
+            --header-color: rgba(44, 44, 46, 0.85);
+            --toggle-bg: rgba(50, 215, 75, 0.9);
+            --body-bg-color: linear-gradient(135deg, #1f1f1f 0%, #434343 100%);
+            --input-border-color: rgba(76, 76, 78, 0.5);
+            --input-area-bg-color: rgba(26, 26, 26, 0.7);
+            --button-bg-color: rgba(10, 132, 255, 0.9);
         }
 
         /* General Body and HTML Styles */
@@ -76,9 +78,9 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background-color: var(--body-bg-color);
+            background: var(--body-bg-color);
             color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         body {
             display: flex;
@@ -93,26 +95,30 @@
             height: 100%;
             width: 100%;
             max-width: 600px;
-            background-color: var(--bg-color);
-            transition: background-color 0.3s ease, border-radius 0.3s ease;
+            background: var(--bg-color);
+            backdrop-filter: var(--blur-effect);
+            border-radius: var(--outer-radius);
+            border: 1px solid var(--input-border-color);
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
 
         /* Chat Header Styles */
         .chat-header {
-            background-color: var(--header-color);
+            background: var(--header-color);
+            backdrop-filter: var(--blur-effect);
             color: var(--text-color);
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            border-bottom: 1px solid var(--input-border-color);
+            transition: all 0.3s ease;
         }
         .chat-title-container {
             display: flex;
             align-items: center;
-            height: 100%;
         }
         .chat-title {
             font-weight: bold;
@@ -123,31 +129,31 @@
             content: 'chatOS 2.1.1 Developer Beta';
             margin-left: 5px;
             font-size: 0.6em;
-            color: #888;
+            color: rgba(136, 136, 136, 0.8);
         }
         .header-buttons {
             display: flex;
             align-items: center;
-            height: 100%;
         }
         .header-button {
-            background-color: var(--button-bg-color);
+            background: var(--button-bg-color);
             color: var(--button-text-color);
             border: none;
-            padding: 5px 7.5px;
+            padding: 5px 10px;
             border-radius: 100px;
             cursor: pointer;
             font-size: 0.8em;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.2s ease;
             margin-right: 10px;
+            box-shadow: var(--shadow);
         }
         .header-button:hover {
-            opacity: 0.8;
+            opacity: 0.9;
+            transform: scale(1.05);
         }
         .dark-mode-toggle-container {
             display: flex;
             align-items: center;
-            height: 100%;
         }
         .dark-mode-label {
             font-size: 0.8em;
@@ -161,25 +167,29 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
+            background: transparent;
         }
         .message {
             max-width: 70%;
             margin-bottom: 10px;
             padding: 15px;
             border-radius: 25px;
-            line-height: 1;
+            line-height: 1.2;
             animation: fadeIn 0.3s ease;
             word-wrap: break-word;
-            transition: border-radius 0.3s ease;
+            backdrop-filter: var(--blur-effect);
+            border: 1px solid var(--input-border-color);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
         .user-message {
-            background-color: var(--user-bubble-color);
+            background: var(--user-bubble-color);
             color: white;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
         }
         .ai-message {
-            background-color: var(--ai-bubble-color);
+            background: var(--ai-bubble-color);
             color: var(--text-color);
             align-self: flex-start;
             border-bottom-left-radius: 4px;
@@ -199,11 +209,13 @@
             display: flex;
             align-items: center;
             padding: 10px;
-            background-color: var(--input-area-bg-color);
-            border: 2px solid var(--input-border-color);
+            background: var(--input-area-bg-color);
+            backdrop-filter: var(--blur-effect);
+            border: 1px solid var(--input-border-color);
             border-radius: var(--outer-radius);
             margin: 10px;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
         #user-input {
             flex-grow: 1;
@@ -211,16 +223,19 @@
             border: none;
             border-radius: var(--input-radius);
             font-size: 16px;
-            margin: 0 8px; /* 여백 조정 */
-            background-color: var(--input-bg-color);
+            margin: 0 8px;
+            background: var(--input-bg-color);
+            backdrop-filter: var(--blur-effect);
             color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
         }
         #user-input:focus {
             outline: none;
+            background: rgba(255, 255, 255, 0.9);
         }
         #send-button {
-            background-color: var(--user-bubble-color);
+            background: var(--user-bubble-color);
             color: white;
             border: none;
             border-radius: var(--input-radius);
@@ -231,7 +246,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        #send-button:hover {
+            transform: scale(1.05);
         }
 
         /* Dark Mode Toggle Switch Styles */
@@ -239,10 +258,12 @@
             position: relative;
             width: 50px;
             height: 28px;
-            background-color: var(--toggle-bg);
+            background: var(--toggle-bg);
+            backdrop-filter: var(--blur-effect);
             border-radius: 14px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
         .mode-toggle::after {
             content: '';
@@ -250,9 +271,10 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background-color: var(--toggle-circle);
+            background: var(--toggle-circle);
             top: 2px;
             left: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
         }
         .dark-mode .mode-toggle::after {
@@ -269,10 +291,10 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
+            transition: all 0.3s ease;
         }
         .modal.show {
             display: flex;
@@ -282,19 +304,20 @@
             justify-content: center;
         }
         .modal-content {
-            background-color: var(--bg-color);
+            background: var(--bg-color);
+            backdrop-filter: var(--blur-effect);
             color: var(--text-color);
             border-radius: 40px;
             padding: 20px;
             width: 90%;
             max-width: 600px;
-            margin: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border-color);
             overflow: hidden;
             max-height: 80vh;
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
         .modal-header {
             display: flex;
@@ -323,16 +346,20 @@
             border-radius: 100%;
             margin-right: 10px;
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .close-button:hover {
+            transform: scale(1.2);
         }
         .close {
-            background-color: #ed6a5e;
+            background: #ed6a5e;
         }
         .minimize, .maximize {
-            background-color: #ced1d3;
+            background: #ced1d3;
         }
         .dark-mode .minimize,
         .dark-mode .maximize {
-            background-color: #50565a;
+            background: #50565a;
         }
         #updateHistoryList {
             padding: 0 20px;
@@ -357,17 +384,17 @@
         }
         .update-date {
             font-size: 0.9em;
-            color: #888;
+            color: rgba(136, 136, 136, 0.8);
             margin-bottom: 5px;
         }
         .dark-mode .update-date {
-            color: #aaa;
+            color: rgba(170, 170, 170, 0.8);
         }
         .update-description {
             font-size: 0.9em;
             margin-bottom: 10px;
             color: var(--text-color);
-            opacity: 0.8;
+            opacity: 0.9;
         }
         .update-list {
             padding-left: 15px;
@@ -388,14 +415,8 @@
 
         /* Animations */
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -411,7 +432,7 @@
         }
         .message code {
             font-family: monospace;
-            background-color: rgba(0, 0, 0, 0.1);
+            background: rgba(0, 0, 0, 0.1);
             padding: 2px 4px;
             border-radius: 4px;
         }
@@ -421,7 +442,8 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: var(--ai-bubble-color);
+            background: var(--ai-bubble-color);
+            backdrop-filter: var(--blur-effect);
             padding: 16px 12px;
             border-radius: 25px;
             border-bottom-left-radius: 4px;
@@ -429,11 +451,13 @@
             margin-bottom: 10px;
             align-self: flex-start;
             animation: fadeIn 0.3s ease;
+            border: 1px solid var(--input-border-color);
+            box-shadow: var(--shadow);
         }
         .typing-indicator span {
             height: 8px;
             width: 8px;
-            background-color: var(--text-color);
+            background: var(--text-color);
             display: block;
             border-radius: 50%;
             opacity: 0.4;
@@ -448,9 +472,7 @@
             animation: 1s blink infinite 0.9999s;
         }
         @keyframes blink {
-            50% {
-                opacity: 1;
-            }
+            50% { opacity: 1; }
         }
 
         /* Media Queries for Responsiveness */
@@ -481,7 +503,7 @@
                 height: 100%;
                 margin: 0;
                 border-radius: 0;
-                max-height: 128vh; /* 모바일 환경에서 모달 최대 높이 조정 */
+                max-height: 128vh;
             }
             .modal-header {
                 padding: 15px 20px;
@@ -505,29 +527,13 @@
         }
         @media (min-width: 601px) {
             body {
-                background-color: var(--body-bg-color);
+                background: var(--body-bg-color);
             }
             .chat-window {
                 height: 90vh;
                 max-height: 800px;
                 border-radius: var(--outer-radius);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             }
-        }
-
-        /* Dark Mode Specific Styles for Modal */
-        .dark-mode .modal-content {
-            background-color: #1a1a1a;
-            color: #ffffff;
-        }
-        .dark-mode .update-version {
-            color: var(--user-bubble-color);
-        }
-        .dark-mode .update-description {
-            color: #cccccc;
-        }
-        .dark-mode .update-list li::before {
-            color: var(--user-bubble-color);
         }
 
         /* Image Upload Button Styles */
@@ -544,13 +550,14 @@
             width: 40px;
             height: 40px;
             border-radius: var(--input-radius);
-            background-color: var(--user-bubble-color);
+            background: var(--user-bubble-color);
             color: white;
             font-size: 18px;
-            transition: background-color 0.3s ease;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
         }
         .image-upload-label:hover {
-            opacity: 0.8;
+            transform: scale(1.05);
         }
         .image-upload-input {
             display: none;
@@ -560,7 +567,8 @@
             max-height: 200px;
             margin-top: 10px;
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border-color);
         }
     </style>
 </head>
