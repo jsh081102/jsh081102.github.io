@@ -27,37 +27,36 @@
             width: 100%;
             z-index: 1000;
             top: 0;
-            min-height: 4rem; /* 두께 유지 */
+            min-height: 4rem;
         }
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.25rem 0; /* 패딩 조정 */
+            padding: 1.25rem 0; /* 패딩 약간 줄임 */
             min-height: 3rem;
         }
         .logo {
-            font-size: clamp(1.25rem, 2.5vw, 1.75rem); /* 텍스트 크기 약간 축소 */
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem); /* 최대 크기 줄임 */
             font-weight: bold;
             color: #000;
-            line-height: 1; /* 수직 정렬 보정 */
+            line-height: 1; /* 수직 정렬 보조 */
         }
         .logo a {
             text-decoration: none;
             color: inherit;
-            display: block; /* 수직 정렬 보장 */
         }
         .nav-links {
             display: flex;
             align-items: center;
         }
         .nav-links a {
-            margin-left: 1.25rem; /* 여백 조정 */
+            margin-left: 1.5rem;
             text-decoration: none;
             color: #000;
-            font-size: clamp(0.9rem, 1.5vw, 1.125rem); /* 텍스트 크기 축소 */
+            font-size: clamp(0.9rem, 1.5vw, 1.125rem); /* 최대 크기 줄임 */
             transition: color 0.3s;
-            line-height: 1; /* 수직 정렬 보정 */
+            line-height: 1; /* 수직 정렬 보조 */
         }
         .nav-links a:hover {
             color: #0071e3;
