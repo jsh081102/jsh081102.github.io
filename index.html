@@ -21,40 +21,43 @@
             padding: 0 1rem;
         }
         header {
-            background-color: rgba(255, 255, 255, 0.9); /* 투명도 약간 조정 */
+            background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(20px);
             position: fixed;
             width: 100%;
             z-index: 1000;
             top: 0;
-            min-height: 4rem; /* 최소 높이 추가 */
+            min-height: 4rem; /* 두께 유지 */
         }
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 0; /* 패딩 증가 */
-            min-height: 3rem; /* nav 최소 높이 */
+            padding: 1.25rem 0; /* 패딩 조정 */
+            min-height: 3rem;
         }
         .logo {
-            font-size: clamp(1.5rem, 2.8vw, 2rem); /* 글꼴 크기 증가 */
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem); /* 텍스트 크기 약간 축소 */
             font-weight: bold;
             color: #000;
+            line-height: 1; /* 수직 정렬 보정 */
         }
         .logo a {
             text-decoration: none;
             color: inherit;
+            display: block; /* 수직 정렬 보장 */
         }
         .nav-links {
             display: flex;
             align-items: center;
         }
         .nav-links a {
-            margin-left: 1.5rem; /* 여백 증가 */
+            margin-left: 1.25rem; /* 여백 조정 */
             text-decoration: none;
             color: #000;
-            font-size: clamp(1rem, 1.8vw, 1.25rem); /* 글꼴 크기 증가 */
+            font-size: clamp(0.9rem, 1.5vw, 1.125rem); /* 텍스트 크기 축소 */
             transition: color 0.3s;
+            line-height: 1; /* 수직 정렬 보정 */
         }
         .nav-links a:hover {
             color: #0071e3;
@@ -148,7 +151,7 @@
             nav {
                 flex-direction: row;
                 justify-content: space-between;
-                padding: 1rem 0; /* 모바일에서도 적당한 패딩 유지 */
+                padding: 1rem 0;
             }
             .nav-links {
                 justify-content: flex-end;
