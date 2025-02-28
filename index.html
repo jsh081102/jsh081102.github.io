@@ -12,11 +12,13 @@
             line-height: 1.5;
             color: #1d1d1f;
             background-color: #f5f5f7;
+            height: 100%; /* 전체 화면 활용 */
         }
         .container {
-            max-width: 1200px;
-            margin: 10px auto;
-            padding: 0 20px;
+            max-width: 90vw; /* 최대 너비를 뷰포트 비율로 설정 */
+            margin: 1vw auto; /* 상대 단위로 변경 */
+            padding: 0 2vw; /* 상대 단위로 변경 */
+            box-sizing: border-box; /* 패딩 포함 크기 계산 */
         }
         header {
             background-color: rgba(255, 255, 255, 0.8);
@@ -29,105 +31,128 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
+            padding: 1.5vw 0; /* 상대 단위로 변경 */
         }
         .logo {
-            font-size: 24px;
+            font-size: clamp(1.2rem, 2.5vw, 2rem); /* 최소, 선호, 최대 크기 동적 조정 */
             font-weight: bold;
             color: #000;
         }
         .nav-links a {
-            margin-left: 20px;
+            margin-left: 1.5vw; /* 상대 단위로 변경 */
             text-decoration: none;
             color: #000;
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem); /* 동적 크기 조정 */
         }
         .hero {
-            padding: 120px 0 60px;
+            padding: 10vh 0 5vh; /* 뷰포트 높이 단위로 유동적 조정 */
             text-align: center;
             background: linear-gradient(to bottom, #f0f0f0, #fff);
         }
         h1 {
-            font-size: 56px;
-            margin-bottom: 20px;
+            font-size: clamp(2rem, 5vw, 4rem); /* 화면 크기에 따라 동적 조정 */
+            margin-bottom: 1.5vw;
         }
         .subtitle {
-            font-size: 28px;
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
             color: #86868b;
-            margin-bottom: 40px;
+            margin-bottom: 3vw;
         }
         .cta-button {
             display: inline-block;
             background-color: #0071e3;
             color: #fff;
-            padding: 12px 24px;
-            border-radius: 30px;
+            padding: 0.8rem 1.5rem; /* 상대 단위로 변경 */
+            border-radius: 2rem;
             text-decoration: none;
-            font-size: 18px;
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
             transition: background-color 0.3s;
         }
         .cta-button:hover {
             background-color: #0077ed;
         }
         .services {
-            padding: 80px 0;
+            padding: 8vh 0; /* 뷰포트 높이 단위로 조정 */
             background-color: #fff;
         }
         .service {
             display: flex;
             align-items: center;
-            margin-bottom: 80px;
-            flex-wrap: wrap; /* 화면이 작을 때 줄바꿈 */
+            margin-bottom: 6vh; /* 상대 단위로 변경 */
+            flex-wrap: wrap;
+            gap: 2vw; /* 요소 간 간격 추가 */
         }
         .service-content {
             flex: 1;
-            order: 1; /* 작은 화면에서 텍스트가 먼저 나오도록 */
-            min-width: 300px; /* 텍스트 최소 너비 */
-
+            order: 1;
+            min-width: clamp(250px, 30vw, 400px); /* 최소 너비 동적 조정 */
         }
         .service-image {
             flex: 1;
             text-align: center;
-            order: 2;  /* 작은 화면에서 이미지가 나중에 나오도록 */
+            order: 2;
         }
         .service-image img {
-            max-width: 400px; /* 최대 너비 */
-            max-height: 300px; /* 최대 높이 */
-            width: 100%;
+            max-width: 100%; /* 이미지 크기를 컨테이너에 맞춤 */
+            max-height: 25vh; /* 뷰포트 높이에 따라 제한 */
+            width: auto;
             height: auto;
-            object-fit: contain; /* 이미지 비율 유지하면서 채우기 */
+            object-fit: contain;
         }
-
         h2 {
-            font-size: 40px;
-            margin-bottom: 20px;
+            font-size: clamp(1.8rem, 3.5vw, 3rem);
+            margin-bottom: 1.5vw;
         }
         p {
-            font-size: 18px;
+            font-size: clamp(0.9rem, 1.5vw, 1.2rem);
             color: #86868b;
         }
         footer {
             background-color: #f5f5f7;
-            padding: 40px 0;
+            padding: 4vh 0; /* 상대 단위로 변경 */
             text-align: center;
         }
 
-        /* 미디어 쿼리 (화면이 작을 때 이미지 크기 조정) */
-        @media (max-width: 768px) {
+        /* 미디어 쿼리 강화 */
+        @media (max-width: 1024px) {
             .service {
-                flex-direction: column; /* 세로로 배치 */
+                flex-direction: column;
+                gap: 3vh;
             }
-             .service-image img {
-                max-width: 80%; /* 최대 너비를 화면의 80%로 */
-                max-height: 200px;
+            .service-image img {
+                max-height: 20vh;
             }
-
-            .service-content, .service-image{
-                order: 0; /* 순서 원래대로 */
-                min-width: auto;
+            .service-content, .service-image {
+                order: 0;
+                min-width: 100%;
             }
-
         }
-
+        @media (max-width: 768px) {
+            .service-image img {
+                max-width: 80%;
+                max-height: 15vh;
+            }
+            .hero {
+                padding: 8vh 0 4vh;
+            }
+            .cta-button {
+                padding: 0.6rem 1.2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-links a {
+                margin-left: 1vw;
+            }
+            h1 {
+                line-height: 1.2;
+            }
+            .subtitle {
+                margin-bottom: 5vw;
+            }
+            .service-image img {
+                max-height: 12vh;
+            }
+        }
     </style>
 </head>
 <body>
@@ -174,7 +199,7 @@
                 </div>
                 <div class="service">
                     <div class="service-image">
-                        <img src="https://raw.githubusercontent.com/jsh081102/jsh081102.github.io/refs/heads/main/logo/img/SiriMusicApp.png" alt="Siri Translate 이미지">
+                        <img src="https://raw.githubusercontent.com/jsh081102/jsh081102.github.io/refs/heads/main/logo/img/SiriMusicApp.png" alt="Siri Music 이미지">
                     </div>
                     <div class="service-content">
                         <h2>Siri Music</h2>
@@ -186,12 +211,12 @@
         </section>
 
         <section id="about" class="hero">
-          <div class="container">
-            <h2>Apple Sodam 소개</h2>
-            <p>
-                Apple Sodam은 사용자에게 혁신적인 AI 경험을 제공하기 위해 노력합니다. Siri Chat과 Siri Translate를 통해 당신의 디지털 라이프를 더욱 풍요롭게 만들어 보세요. 우리는 AI 기술을 통해 더 나은 미래를 만들어 나갈 것입니다.
-            </p>
-          </div>
+            <div class="container">
+                <h2>Apple Sodam 소개</h2>
+                <p>
+                    Apple Sodam은 사용자에게 혁신적인 AI 경험을 제공하기 위해 노력합니다. Siri Chat과 Siri Translate를 통해 당신의 디지털 라이프를 더욱 풍요롭게 만들어 보세요. 우리는 AI 기술을 통해 더 나은 미래를 만들어 나갈 것입니다.
+                </p>
+            </div>
         </section>
     </main>
 
