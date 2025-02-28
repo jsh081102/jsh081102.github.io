@@ -21,21 +21,23 @@
             padding: 0 1rem;
         }
         header {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.9); /* 투명도 약간 조정 */
             backdrop-filter: blur(20px);
             position: fixed;
             width: 100%;
             z-index: 1000;
             top: 0;
+            min-height: 4rem; /* 최소 높이 추가 */
         }
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
+            padding: 1.5rem 0; /* 패딩 증가 */
+            min-height: 3rem; /* nav 최소 높이 */
         }
         .logo {
-            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            font-size: clamp(1.5rem, 2.8vw, 2rem); /* 글꼴 크기 증가 */
             font-weight: bold;
             color: #000;
         }
@@ -48,10 +50,10 @@
             align-items: center;
         }
         .nav-links a {
-            margin-left: 1.25rem;
+            margin-left: 1.5rem; /* 여백 증가 */
             text-decoration: none;
             color: #000;
-            font-size: clamp(0.9rem, 1.5vw, 1rem);
+            font-size: clamp(1rem, 1.8vw, 1.25rem); /* 글꼴 크기 증가 */
             transition: color 0.3s;
         }
         .nav-links a:hover {
@@ -136,16 +138,17 @@
                 width: 100%;
             }
             .service-content {
-                order: 1; /* 텍스트 먼저 */
+                order: 1;
             }
             .service-image {
-                order: 2; /* 이미지 나중에 */
+                order: 2;
             }
         }
         @media (max-width: 768px) {
             nav {
-                flex-direction: row; /* 가로 유지 */
+                flex-direction: row;
                 justify-content: space-between;
+                padding: 1rem 0; /* 모바일에서도 적당한 패딩 유지 */
             }
             .nav-links {
                 justify-content: flex-end;
