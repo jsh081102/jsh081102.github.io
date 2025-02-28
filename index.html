@@ -12,11 +12,13 @@
             line-height: 1.5;
             color: #1d1d1f;
             background-color: #f5f5f7;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
         }
         .container {
-            max-width: 90vw; /* 상대 단위로 변경 */
-            margin: 1vh auto; /* 상대적인 여백 */
-            padding: 0 2vw;
+            max-width: 1200px;
+            width: 90%; /* 상대 단위로 유동성 확보 */
+            margin: 0 auto;
+            padding: 0 1rem;
         }
         header {
             background-color: rgba(255, 255, 255, 0.8);
@@ -24,15 +26,16 @@
             position: fixed;
             width: 100%;
             z-index: 1000;
+            top: 0;
         }
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2vh 0;
+            padding: 1rem 0;
         }
         .logo {
-            font-size: clamp(20px, 2.5vw, 24px); /* 최소, 이상적, 최대 크기 */
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem); /* 최소, 선호, 최대 크기 */
             font-weight: bold;
             color: #000;
         }
@@ -41,99 +44,116 @@
             color: inherit;
         }
         .nav-links a {
-            margin-left: 2vw;
+            margin-left: 1.25rem;
             text-decoration: none;
             color: #000;
-            font-size: clamp(14px, 1.5vw, 18px);
+            font-size: clamp(0.9rem, 1.5vw, 1rem);
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: #0071e3;
         }
         .hero {
-            padding: 15vh 0 8vh;
+            padding: clamp(4rem, 15vh, 8rem) 0 clamp(2rem, 10vh, 4rem);
             text-align: center;
             background: linear-gradient(to bottom, #f0f0f0, #fff);
         }
         h1 {
-            font-size: clamp(32px, 5vw, 56px);
-            margin-bottom: 2vh;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 1.25rem;
         }
         .subtitle {
-            font-size: clamp(18px, 2.5vw, 28px);
+            font-size: clamp(1.2rem, 2.5vw, 1.75rem);
             color: #86868b;
-            margin-bottom: 4vh;
+            margin-bottom: 2.5rem;
         }
         .cta-button {
             display: inline-block;
             background-color: #0071e3;
             color: #fff;
-            padding: 1.2vh 2.4vw;
-            border-radius: 30px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 1.875rem;
             text-decoration: none;
-            font-size: clamp(14px, 1.5vw, 18px);
-            transition: background-color 0.3s ease;
+            font-size: clamp(0.9rem, 1.5vw, 1.125rem);
+            transition: background-color 0.3s;
         }
         .cta-button:hover {
             background-color: #0077ed;
         }
         .services {
-            padding: 10vh 0;
+            padding: clamp(3rem, 10vh, 5rem) 0;
             background-color: #fff;
         }
         .service {
             display: flex;
             align-items: center;
-            margin-bottom: 8vh;
-            flex-wrap: wrap;
-            gap: 2vw; /* 요소 간 간격 추가 */
-            transition: all 0.3s ease; /* 부드러운 전환 */
+            justify-content: center; /* 중앙 정렬 추가 */
+            margin-bottom: clamp(3rem, 8vh, 5rem);
+            gap: 2rem; /* 요소 간 간격 고정 */
         }
         .service-content {
             flex: 1;
-            min-width: 25vw;
+            min-width: 0; /* 텍스트 오버플로우 방지 */
         }
         .service-image {
             flex: 1;
             text-align: center;
         }
         .service-image img {
-            max-width: 100%;
-            max-height: 30vh;
-            width: auto;
+            width: 100%;
+            max-width: clamp(15rem, 40vw, 25rem);
             height: auto;
+            max-height: clamp(10rem, 25vh, 18.75rem);
             object-fit: contain;
-            transition: max-height 0.3s ease; /* 크기 변화 애니메이션 */
+            transition: all 0.3s ease; /* 부드러운 크기 변화 */
         }
         h2 {
-            font-size: clamp(24px, 3.5vw, 40px);
-            margin-bottom: 2vh;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 1.25rem;
         }
         p {
-            font-size: clamp(14px, 1.5vw, 18px);
+            font-size: clamp(0.9rem, 1.5vw, 1.125rem);
             color: #86868b;
         }
         footer {
             background-color: #f5f5f7;
-            padding: 5vh 0;
+            padding: clamp(2rem, 5vh, 2.5rem) 0;
             text-align: center;
         }
 
-        /* 미디어 쿼리 */
-        @media (max-width: 768px) {
+        /* 반응형 미디어 쿼리 */
+        @media (max-width: 1024px) {
             .service {
                 flex-direction: column;
-                gap: 4vh;
+                text-align: center;
             }
-            .service-image img {
-                max-height: 20vh;
-            }
-            .service-content, .service-image {
-                min-width: 100%;
+            .service-image, .service-content {
+                flex: none;
+                width: 100%;
             }
         }
-        @media (min-width: 1200px) {
-            .container {
-                max-width: 80vw;
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                padding: 1rem 0;
+            }
+            .nav-links {
+                margin-top: 1rem;
+            }
+            .nav-links a {
+                margin: 0 0.5rem;
             }
             .service-image img {
-                max-height: 35vh;
+                max-width: 80%;
+                max-height: 12.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .cta-button {
+                padding: 0.5rem 1rem;
+            }
+            h1 {
+                line-height: 1.2;
             }
         }
     </style>
