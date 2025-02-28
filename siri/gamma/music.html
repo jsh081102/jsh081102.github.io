@@ -9,8 +9,9 @@
     /* General Styles */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-tap-highlight-color: transparent; }
     body { 
-      background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2); /* Improved background */
-      overflow-x: hidden; 
+      /* 개선: 배경색을 파란색에서 더 부드러운 그라디언트로 변경 */
+      background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2);
+      overflow-x: hidden;
     }
 
     /* Brand & Navigation */
@@ -18,22 +19,26 @@
     .brand-title { font-size: 20px; color: #333; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; position: relative; }
     .os-version { font-size: 11px; color: rgba(0, 0, 0, 0.4); position: absolute; bottom: -0.1px; left: 90px; white-space: nowrap; }
 
+    /* 개선: 뒤로가기 버튼 가독성 향상 및 애니메이션 추가 */
     .back-button { 
-      position: fixed; top: 65px; left: 10px; 
-      background: rgba(255, 255, 255, 0.8); /* Improved visibility */
+      position: fixed; 
+      top: 65px; 
+      left: 10px; 
+      background: rgba(255, 255, 255, 0.8); 
       border: 1px solid rgba(0, 0, 0, 0.1); 
       padding: 8px 16px; 
       border-radius: 25px; 
       cursor: pointer; 
       display: none; 
       z-index: 1001; 
-      transition: transform 0.3s ease, opacity 0.3s ease; 
+      transition: transform 0.3s ease, opacity 0.3s ease, background 0.3s ease; 
       font-size: 14px; 
-      color: #222; /* Darker text */
+      color: #333; 
+      font-weight: bold; 
       backdrop-filter: blur(10px); 
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     }
-    .back-button:active { transform: scale(0.95); background: rgba(255, 255, 255, 1); }
+    .back-button:hover { background: rgba(255, 255, 255, 1); }
+    .back-button:active { transform: scale(0.95); background: rgba(200, 200, 200, 0.9); }
     .back-button.show { display: block; animation: slideIn 0.3s ease-out; }
 
     /* Main Container */
@@ -47,6 +52,8 @@
       margin-top: 20px;
       opacity: 1;
       transition: opacity 0.3s, transform 0.3s;
+      /* 개선: 단일 배경으로 인해 구분선 제거 */
+      background: none;
     }
     .artists-grid.hidden {
       opacity: 0;
@@ -62,29 +69,22 @@
     /* Artist Section */
     .artist-section {
       display: none;
-      position: relative;
-      padding: 15px;
+      position: fixed; /* 개선: 상단 고정 */
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 80px 15px 15px; /* 상단 패딩 조정 */
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.3s, transform 0.3s;
+      z-index: 999; /* 뒤로가기 버튼 아래에 표시되도록 */
     }
     .artist-section.active {
       display: block;
       opacity: 1;
       transform: translateY(0);
     }
-    .artist-video-container { 
-      position: sticky; 
-      top: 0; /* Sticks to top */
-      width: 100%; 
-      height: 250px; 
-      border-radius: 25px; 
-      overflow: hidden; 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      backdrop-filter: blur(5px); 
-      margin-top: 0; 
-      z-index: 10; 
-    }
+    .artist-video-container { position: relative; width: 100%; height: 250px; border-radius: 25px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); margin-top: 0; }
     .artist-video { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
     .artist-video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.4) 90%); pointer-events: none; display: flex; flex-direction: column; justify-content: flex-end; padding: 15px; }
     .artist-video-overlay h2 { color: white; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7); font-size: 1.6em; margin: 0; }
@@ -94,7 +94,7 @@
       display: none;
       grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
       gap: 15px;
-      margin-top: 20px;
+      margin-top: 280px; /* 개선: 뮤직비디오 아래로 조정 */
       position: relative;
       opacity: 0;
       transform: translateY(20px);
@@ -117,7 +117,7 @@
       background: rgba(255, 255, 255, 0.15); 
       border-radius: 15px; 
       padding: 20px; 
-      margin-top: 20px; 
+      margin-top: 280px; /* 개선: 뮤직비디오 아래로 조정 */
       border: 1px solid rgba(255, 255, 255, 0.2); 
       overflow-y: auto; 
       position: relative; 
@@ -170,8 +170,8 @@
 
     /* Full Player */
     .full-player { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px); display: none; z-index: 2000; padding: 20px; overflow: hidden; transition: opacity 0.3s ease; }
-    .full-player .back-button { position: absolute; top: 20px; left: 20px; display: block; color: #222; background: rgba(255, 255, 255, 0.8); /* Consistent with main back button */ border: 1px solid rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); }
-    .full-player .back-button:active { background: rgba(255, 255, 255, 1); }
+    .full-player .back-button { position: absolute; top: 20px; left: 20px; display: block; color: #333; background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0, 0, 0, 0.1); backdrop-filter: blur(10px); }
+    .full-player .back-button:active { background: rgba(200, 200, 200, 0.9); }
     .full-player-content { display: flex; flex-direction: column; width: 100%; }
     .player-left, .player-right { flex: none; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .player-right { overflow-y: auto; padding-top: 30px; }
@@ -208,47 +208,48 @@
     .progress-container.dragging .progress-knob { opacity: 1; }
     .time-display { display: flex; justify-content: space-between; width: 95%; color: #fff; font-size: 12px; }
 
-    /* Lyrics */
+    /* 개선: 가사 디자인 및 애니메이션 개선 */
     .lyrics-container {
       width: 100%;
       text-align: center;
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(255, 255, 255, 0.8);
       overflow-y: auto;
       overflow-x: hidden;
       max-height: calc(100vh - 500px);
-      padding: 15px;
+      padding: 20px;
       margin-bottom: 20px;
-      background: rgba(255, 255, 255, 0.1); /* Enhanced design */
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
       backdrop-filter: blur(5px);
     }
-    .lyrics-container::-webkit-scrollbar { display: none; }
+    .lyrics-container::-webkit-scrollbar { width: 5px; }
+    .lyrics-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 5px; }
     .lyrics-line {
-      padding: 10px 12px;
-      margin: 6px 0;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother animation */
-      opacity: 0.7;
-      border-radius: 8px;
+      padding: 10px 15px;
+      margin: 8px 0;
+      transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+      opacity: 0.6;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 1em;
-      color: #eee;
-      text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+      color: #ddd;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
       line-height: 1.5;
       white-space: pre-line;
+      transform: scale(0.98);
     }
     .lyrics-line.active {
-      font-size: 1.25em;
+      font-size: 1.3em;
       font-weight: bold;
       opacity: 1;
-      transform: scale(1.05) translateY(-2px);
+      transform: scale(1);
       background: rgba(255,255,255,0.25);
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
       color: #fff;
-      padding: 12px 14px;
-      box-shadow: 0 0 8px rgba(255,255,255,0.3); /* Glow effect */
+      padding: 12px 18px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
-    .lyrics-line:hover { background: rgba(255,255,255,0.15); }
+    .lyrics-line:hover { background: rgba(255,255,255,0.15); opacity: 0.9; }
     .full-player .track-name, .full-player .artist-name { text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); color: white; text-align: center; margin-bottom: 3px; font-size: 1.2em; }
 
     /* Responsive Design */
@@ -263,9 +264,9 @@
       .artist-video-container { height: 400px; border-radius: 30px; }
       .artist-video-overlay { padding: 25px; }
       .artist-video-overlay h2 { font-size: 2em; }
-      .albums-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 30px; }
+      .albums-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-top: 430px; }
       .album-info { padding: 15px 20px; }
-      .tracks-list { border-radius: 20px; padding: 25px; margin-top: 30px; }
+      .tracks-list { border-radius: 20px; padding: 25px; margin-top: 430px; }
       .mini-player { bottom: 20px; right: 20px; border-radius: 15px; padding: 18px; gap: 15px; width: 300px; }
       .mini-player img { width: 50px; height: 50px; border-radius: 8px; }
       .full-player { padding: 25px; }
@@ -288,12 +289,13 @@
     /* Animations */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes miniPlayerEnter { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes slideIn { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } /* Back button animation */
-    @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(-100%); opacity: 0; } }
+    @keyframes albumArtTransition { from { transform: scale(0.2) translateY(500%); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
     .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     .fade-out { animation: fadeOut 0.3s ease-in forwards; }
     .mini-player-enter { animation: miniPlayerEnter 0.3s ease-out forwards; }
+    .album-art-transition { animation: albumArtTransition 0.5s ease-out forwards; }
   </style>
 </head>
 <body>
@@ -366,7 +368,7 @@
         image.src = url;
         await new Promise((resolve, reject) => {
           image.onload = resolve;
-          image.onerror = () => reject(new Error(`Image load failed: ${url}`));
+          image.onerror = reject;
         });
         imageCache.set(url, image);
         return image;
@@ -593,6 +595,7 @@
         fullPlayer.querySelector('.track-name').textContent = currentTrack.title;
         fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
         fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
+        fullPlayer.querySelector('.full-player-album-art').classList.remove('album-art-transition'); // 애니메이션 초기화
         document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶');
       }
     }
@@ -612,11 +615,11 @@
       lines.forEach(line => {
         const match = line.match(timeRegex);
         if (match) {
-          const minutes = parseInt(match[1], 10);
+          const minutes = parseInt(match[1]);
           const seconds = parseFloat(match[2]);
           const text = line.replace(timeRegex, '').trim();
           const time = minutes * 60 + seconds;
-          if (text && !isNaN(time)) lyrics.push({ time, text });
+          if (text) lyrics.push({ time, text });
         }
       });
       return lyrics.sort((a, b) => a.time - b.time);
@@ -646,7 +649,6 @@
         if (!response.ok) throw new Error(`가사 가져오기 실패: ${response.status}`);
         const text = await response.text();
         currentLyrics = parseLRC(text);
-        if (!currentLyrics.length) throw new Error('가사가 비어 있습니다.');
         displayLyrics(currentLyrics);
         updateLyrics();
       } catch (error) {
@@ -658,8 +660,7 @@
 
     // Setup Event Listeners
     function setupEventListeners() {
-      const backButton = document.querySelector('.back-button');
-      backButton.addEventListener('click', handleBack);
+      document.querySelector('.back-button').addEventListener('click', handleBack);
       document.querySelector('.brand-title').addEventListener('click', goToHome);
 
       const miniPlayer = document.querySelector('.mini-player');
@@ -682,17 +683,7 @@
       document.addEventListener('touchmove', drag, { passive: false });
       document.addEventListener('touchend', stopDragging);
 
-      const lyricsContainer = document.querySelector('.lyrics-container');
-      lyricsContainer.addEventListener('scroll', debounce(handleLyricsScroll, 100));
-    }
-
-    // Debounce Function for Scroll
-    function debounce(func, wait) {
-      let timeout;
-      return function (...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-      };
+      document.querySelector('.lyrics-container').addEventListener('scroll', handleLyricsScroll);
     }
 
     // Handle Lyrics Scroll
@@ -725,38 +716,35 @@
     function setupAudioEventListeners() {
       audio.addEventListener('timeupdate', updateProgress);
       audio.addEventListener('ended', playNextTrack);
-      audio.addEventListener('error', () => console.error('Audio error:', audio.error));
+      audio.addEventListener('loadedmetadata', updateProgress); // 개선: 메타데이터 로드 시 진행률 업데이트
     }
 
     // Handle Back Button Click
     function handleBack() {
+      const currentView = historyStack.pop();
+      const nextView = historyStack[historyStack.length - 1];
+      const artistsGrid = document.querySelector('.artists-grid');
+      const artistSection = document.querySelector('.artist-section');
+      const albumsGrid = document.querySelector('.albums-grid');
+      const tracksList = document.querySelector('.tracks-list');
+      const fullPlayer = document.querySelector('.full-player');
       const backButton = document.querySelector('.back-button');
-      backButton.classList.add('slide-out');
-      setTimeout(() => {
-        const currentView = historyStack.pop();
-        const nextView = historyStack[historyStack.length - 1];
-        const artistsGrid = document.querySelector('.artists-grid');
-        const artistSection = document.querySelector('.artist-section');
-        const albumsGrid = document.querySelector('.albums-grid');
-        const tracksList = document.querySelector('.tracks-list');
-        const fullPlayer = document.querySelector('.full-player');
 
-        if (currentView === 'full-player') {
-          hideFullPlayer();
-        } else if (currentView === 'album') {
-          tracksList.classList.remove('active');
-          albumsGrid.classList.add('active');
-          backButton.style.display = 'block';
-        } else if (currentView === 'artist') {
-          artistSection.classList.remove('active');
-          albumsGrid.classList.remove('active');
-          artistsGrid.classList.remove('hidden');
-          backButton.style.display = 'none';
-        }
+      // 개선: 뒤로가기 애니메이션 추가
+      if (currentView === 'full-player') {
+        hideFullPlayer();
+      } else if (currentView === 'album') {
+        tracksList.classList.remove('active');
+        albumsGrid.classList.add('active');
+        backButton.style.display = 'block';
+      } else if (currentView === 'artist') {
+        artistSection.classList.remove('active');
+        albumsGrid.classList.remove('active');
+        artistsGrid.classList.remove('hidden');
+        backButton.style.display = 'none';
+      }
 
-        if (historyStack.length === 1 && nextView === 'artists') goToHome();
-        backButton.classList.remove('slide-out');
-      }, 300);
+      if (historyStack.length === 1 && nextView === 'artists') goToHome();
     }
 
     // Go to Home Page
@@ -774,41 +762,25 @@
     // Show Full Player with Album Art Transition
     function showFullPlayer() {
       const fullPlayer = document.querySelector('.full-player');
-      const miniPlayer = document.querySelector('.mini-player');
-      const miniArt = miniPlayer.querySelector('.mini-player-album-art');
-      const fullArt = fullPlayer.querySelector('.full-player-album-art');
-
-      // Clone mini art for transition
-      const clone = miniArt.cloneNode();
-      clone.style.position = 'fixed';
-      clone.style.left = `${miniArt.getBoundingClientRect().left}px`;
-      clone.style.top = `${miniArt.getBoundingClientRect().top}px`;
-      clone.style.width = `${miniArt.offsetWidth}px`;
-      clone.style.height = `${miniArt.offsetHeight}px`;
-      clone.style.transition = 'all 0.5s ease';
-      document.body.appendChild(clone);
+      const miniPlayerImg = document.querySelector('.mini-player-album-art');
+      const fullPlayerImg = document.querySelector('.full-player-album-art');
 
       fullPlayer.classList.add('fade-in');
       fullPlayer.style.display = 'flex';
       updateFullPlayer();
       updateFullPlayerBackground();
 
-      setTimeout(() => {
-        const fullRect = fullArt.getBoundingClientRect();
-        clone.style.left = `${fullRect.left}px`;
-        clone.style.top = `${fullRect.top}px`;
-        clone.style.width = `${fullRect.width}px`;
-        clone.style.height = `${fullRect.height}px`;
-      }, 10);
+      // 개선: 앨범 아트 연속성 애니메이션
+      fullPlayerImg.classList.add('album-art-transition');
+      miniPlayerImg.style.opacity = '0';
 
+      const miniPlayer = document.querySelector('.mini-player');
+      miniPlayer.classList.add('fade-out');
       setTimeout(() => {
-        document.body.removeChild(clone);
-        miniPlayer.classList.add('fade-out');
-        setTimeout(() => {
-          miniPlayer.style.display = 'none';
-          miniPlayer.classList.remove('fade-out');
-        }, 300);
-      }, 500);
+        miniPlayer.style.display = 'none';
+        miniPlayer.classList.remove('fade-out');
+        miniPlayerImg.style.opacity = '1';
+      }, 300);
 
       if (historyStack[historyStack.length - 1] !== 'full-player') historyStack.push('full-player');
     }
@@ -830,7 +802,7 @@
     // Toggle Play/Pause
     function togglePlayPause() {
       if (audio.paused) {
-        audio.play().catch(error => console.error('Play error:', error));
+        audio.play().catch(error => console.error('재생 오류:', error));
         isPlaying = true;
       } else {
         audio.pause();
@@ -875,7 +847,7 @@
       progress.style.width = `${percentage}%`;
       if (!isDragging) {
         const progressWidth = document.querySelector('.progress-container').offsetWidth;
-        knob.style.left = `${(percentage / 100) * (progressWidth - knob.offsetWidth)}px`; // Adjusted for knob width
+        knob.style.left = `${(percentage / 100) * progressWidth}px`;
       }
       document.querySelector('.current-time').textContent = formatTime(audio.currentTime);
       document.querySelector('.total-time').textContent = formatTime(audio.duration);
@@ -898,15 +870,18 @@
         currentTime >= lyric.time && (i === currentLyrics.length - 1 || currentTime < currentLyrics[i + 1].time)
       );
 
-      if (highlightedLyric) highlightedLyric.classList.remove('active');
+      // 개선: 가사 하이라이트 버그 수정 및 안정성 강화
+      const lyricsLines = document.querySelectorAll('.lyrics-line');
+      lyricsLines.forEach(line => line.classList.remove('active'));
+      
       if (currentLyricIndex >= 0) {
         const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
         if (lyricLine) {
           lyricLine.classList.add('active');
           highlightedLyric = lyricLine;
           const container = document.querySelector('.lyrics-container');
-          const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2) + (lyricLine.offsetHeight / 2);
-          container.scrollTo({ top: targetPosition, behavior: 'smooth' });
+          const lyricTop = lyricLine.offsetTop - container.offsetHeight / 2 + lyricLine.offsetHeight / 2;
+          container.scrollTo({ top: lyricTop, behavior: 'smooth' });
         }
       }
     }
