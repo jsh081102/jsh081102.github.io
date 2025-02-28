@@ -12,14 +12,11 @@
             line-height: 1.5;
             color: #1d1d1f;
             background-color: #f5f5f7;
-            height: 100%;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-            box-sizing: border-box;
+            max-width: 90vw; /* 상대 단위로 변경 */
+            margin: 1vh auto; /* 상대적인 여백 */
+            padding: 0 2vw;
         }
         header {
             background-color: rgba(255, 255, 255, 0.8);
@@ -27,151 +24,116 @@
             position: fixed;
             width: 100%;
             z-index: 1000;
-            top: 0;
         }
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
+            padding: 2vh 0;
         }
         .logo {
-            font-size: clamp(20px, 5vw, 24px); /* 비율에 따라 크기 조정 */
+            font-size: clamp(20px, 2.5vw, 24px); /* 최소, 이상적, 최대 크기 */
             font-weight: bold;
             color: #000;
-            text-decoration: none;
         }
-        .nav-links {
-            display: flex;
-            gap: 20px;
+        .logo a {
+            text-decoration: none;
+            color: inherit;
         }
         .nav-links a {
+            margin-left: 2vw;
             text-decoration: none;
             color: #000;
-            font-size: clamp(14px, 4vw, 18px);
-            transition: color 0.3s ease;
-        }
-        .nav-links a:hover {
-            color: #0071e3;
+            font-size: clamp(14px, 1.5vw, 18px);
         }
         .hero {
-            padding: 120px 0 60px;
+            padding: 15vh 0 8vh;
             text-align: center;
             background: linear-gradient(to bottom, #f0f0f0, #fff);
-            min-height: 50vh; /* 화면 비율에 따라 최소 높이 유지 */
-            display: flex;
-            align-items: center;
         }
         h1 {
-            font-size: clamp(36px, 10vw, 56px); /* 비율에 따라 크기 조정 */
-            margin-bottom: 20px;
+            font-size: clamp(32px, 5vw, 56px);
+            margin-bottom: 2vh;
         }
         .subtitle {
-            font-size: clamp(18px, 5vw, 28px);
+            font-size: clamp(18px, 2.5vw, 28px);
             color: #86868b;
-            margin-bottom: 40px;
+            margin-bottom: 4vh;
         }
         .cta-button {
             display: inline-block;
             background-color: #0071e3;
             color: #fff;
-            padding: 12px 24px;
+            padding: 1.2vh 2.4vw;
             border-radius: 30px;
             text-decoration: none;
-            font-size: clamp(16px, 4vw, 18px);
+            font-size: clamp(14px, 1.5vw, 18px);
             transition: background-color 0.3s ease;
         }
         .cta-button:hover {
             background-color: #0077ed;
         }
         .services {
-            padding: 80px 0;
+            padding: 10vh 0;
             background-color: #fff;
         }
         .service {
             display: flex;
             align-items: center;
-            margin-bottom: 80px;
-            gap: 40px;
+            margin-bottom: 8vh;
+            flex-wrap: wrap;
+            gap: 2vw; /* 요소 간 간격 추가 */
             transition: all 0.3s ease; /* 부드러운 전환 */
         }
         .service-content {
             flex: 1;
-            min-width: 0; /* 텍스트 영역 축소 방지 */
+            min-width: 25vw;
         }
         .service-image {
             flex: 1;
             text-align: center;
         }
         .service-image img {
-            max-width: 400px;
-            max-height: 300px;
-            width: 100%;
+            max-width: 100%;
+            max-height: 30vh;
+            width: auto;
             height: auto;
             object-fit: contain;
-            transition: max-width 0.3s ease, max-height 0.3s ease; /* 크기 변화 부드럽게 */
+            transition: max-height 0.3s ease; /* 크기 변화 애니메이션 */
         }
         h2 {
-            font-size: clamp(28px, 8vw, 40px);
-            margin-bottom: 20px;
+            font-size: clamp(24px, 3.5vw, 40px);
+            margin-bottom: 2vh;
         }
         p {
-            font-size: clamp(16px, 4vw, 18px);
+            font-size: clamp(14px, 1.5vw, 18px);
             color: #86868b;
         }
         footer {
             background-color: #f5f5f7;
-            padding: 40px 0;
+            padding: 5vh 0;
             text-align: center;
-            font-size: clamp(12px, 3vw, 14px);
         }
 
-        /* 반응형 디자인 강화 */
-        @media (max-width: 1024px) {
+        /* 미디어 쿼리 */
+        @media (max-width: 768px) {
             .service {
                 flex-direction: column;
-                gap: 20px;
+                gap: 4vh;
             }
             .service-image img {
-                max-width: 80%;
-                max-height: 250px;
+                max-height: 20vh;
             }
             .service-content, .service-image {
-                flex: none;
-                width: 100%;
+                min-width: 100%;
             }
         }
-
-        @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                padding: 15px 0;
-            }
-            .nav-links {
-                margin-top: 10px;
-                flex-direction: column;
-                gap: 10px;
-            }
-            .hero {
-                padding: 100px 0 40px;
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 80vw;
             }
             .service-image img {
-                max-height: 200px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            h1 {
-                font-size: clamp(24px, 8vw, 36px);
-            }
-            .subtitle {
-                font-size: clamp(14px, 4vw, 18px);
-            }
-            .cta-button {
-                padding: 10px 20px;
-            }
-            .service-image img {
-                max-height: 150px;
+                max-height: 35vh;
             }
         }
     </style>
@@ -179,7 +141,7 @@
 <body>
     <header>
         <nav class="container">
-            <a href="/" class="logo">Apple Sodam</a>
+            <div class="logo"><a href="/">Apple Sodam</a></div>
             <div class="nav-links">
                 <a href="#services">서비스</a>
                 <a href="#about">소개</a>
