@@ -12,7 +12,7 @@
             line-height: 1.5;
             color: #1d1d1f;
             background-color: #f5f5f7;
-            overflow-x: hidden; /* 가로 스크롤 방지 */
+            height: 100%;
         }
         .container {
             max-width: 1200px;
@@ -36,24 +36,34 @@
             padding: 20px 0;
         }
         .logo {
-            font-size: clamp(20px, 5vw, 24px); /* 화면 크기에 따라 크기 조정 */
+            font-size: clamp(20px, 5vw, 24px); /* 비율에 따라 크기 조정 */
             font-weight: bold;
             color: #000;
             text-decoration: none;
         }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
         .nav-links a {
-            margin-left: 20px;
             text-decoration: none;
             color: #000;
-            font-size: clamp(14px, 3vw, 18px);
+            font-size: clamp(14px, 4vw, 18px);
+            transition: color 0.3s ease;
+        }
+        .nav-links a:hover {
+            color: #0071e3;
         }
         .hero {
-            padding: clamp(60px, 15vh, 120px) 0 clamp(30px, 10vh, 60px);
+            padding: 120px 0 60px;
             text-align: center;
             background: linear-gradient(to bottom, #f0f0f0, #fff);
+            min-height: 50vh; /* 화면 비율에 따라 최소 높이 유지 */
+            display: flex;
+            align-items: center;
         }
         h1 {
-            font-size: clamp(32px, 10vw, 56px);
+            font-size: clamp(36px, 10vw, 56px); /* 비율에 따라 크기 조정 */
             margin-bottom: 20px;
         }
         .subtitle {
@@ -69,34 +79,29 @@
             border-radius: 30px;
             text-decoration: none;
             font-size: clamp(16px, 4vw, 18px);
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
         .cta-button:hover {
             background-color: #0077ed;
         }
         .services {
-            padding: clamp(40px, 10vh, 80px) 0;
+            padding: 80px 0;
             background-color: #fff;
         }
         .service {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: clamp(40px, 10vh, 80px);
-            flex-wrap: wrap;
-            gap: 20px; /* 요소 간 간격 추가 */
-            transition: all 0.3s ease; /* 부드러운 전환 효과 */
+            margin-bottom: 80px;
+            gap: 40px;
+            transition: all 0.3s ease; /* 부드러운 전환 */
         }
         .service-content {
             flex: 1;
-            min-width: 300px;
-            order: 1;
+            min-width: 0; /* 텍스트 영역 축소 방지 */
         }
         .service-image {
             flex: 1;
             text-align: center;
-            order: 2;
-            position: relative; /* 위치 고정 */
         }
         .service-image img {
             max-width: 400px;
@@ -107,58 +112,57 @@
             transition: max-width 0.3s ease, max-height 0.3s ease; /* 크기 변화 부드럽게 */
         }
         h2 {
-            font-size: clamp(24px, 8vw, 40px);
+            font-size: clamp(28px, 8vw, 40px);
             margin-bottom: 20px;
         }
         p {
-            font-size: clamp(14px, 4vw, 18px);
+            font-size: clamp(16px, 4vw, 18px);
             color: #86868b;
         }
         footer {
             background-color: #f5f5f7;
-            padding: clamp(20px, 5vh, 40px) 0;
+            padding: 40px 0;
             text-align: center;
+            font-size: clamp(12px, 3vw, 14px);
         }
 
-        /* 반응형 미디어 쿼리 */
+        /* 반응형 디자인 강화 */
         @media (max-width: 1024px) {
             .service {
-                flex-direction: row; /* 중간 크기에서는 가로 유지 */
+                flex-direction: column;
+                gap: 20px;
             }
             .service-image img {
                 max-width: 80%;
                 max-height: 250px;
             }
+            .service-content, .service-image {
+                flex: none;
+                width: 100%;
+            }
         }
 
         @media (max-width: 768px) {
-            .service {
-                flex-direction: column; /* 작은 화면에서 세로로 */
-                align-items: center;
-            }
-            .service-image img {
-                max-width: 80%;
-                max-height: 200px;
-            }
-            .service-content, .service-image {
-                min-width: unset;
-                width: 100%;
-            }
             nav {
                 flex-direction: column;
-                padding: 10px 0;
+                padding: 15px 0;
             }
             .nav-links {
                 margin-top: 10px;
+                flex-direction: column;
+                gap: 10px;
             }
-            .nav-links a {
-                margin: 0 10px;
+            .hero {
+                padding: 100px 0 40px;
+            }
+            .service-image img {
+                max-height: 200px;
             }
         }
 
         @media (max-width: 480px) {
             h1 {
-                font-size: clamp(24px, 8vw, 32px);
+                font-size: clamp(24px, 8vw, 36px);
             }
             .subtitle {
                 font-size: clamp(14px, 4vw, 18px);
