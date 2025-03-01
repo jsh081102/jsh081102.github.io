@@ -19,8 +19,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
             width: 400px;
+            text-align: center;
         }
         h1 {
             color: #333;
@@ -30,29 +30,29 @@
             width: 100%;
             padding: 10px;
             margin: 10px 0;
-            border-radius: 5px;
             border: 1px solid #ddd;
-            font-size: 16px;
+            border-radius: 5px;
+            box-sizing: border-box;
         }
         button {
             background-color: #28a745;
             color: white;
             cursor: pointer;
-            border: none;
+            font-size: 16px;
         }
         button:hover {
             background-color: #218838;
         }
-        button.stop {
+        #stopBtn {
             background-color: #dc3545;
         }
-        button.stop:hover {
+        #stopBtn:hover {
             background-color: #c82333;
         }
         #status {
             margin-top: 15px;
             font-size: 14px;
-            color: #555;
+            color: #666;
         }
         #hashrate {
             font-weight: bold;
@@ -63,118 +63,104 @@
 <body>
     <div class="container">
         <h1>XMRig Web Miner</h1>
-        <input type="text" id="poolUrl" value="rx.unmineable.com:443" placeholder="Pool URL" readonly>
-        <input type="text" id="poolUser" value="DOGE:D7s1nsk9KQCLJsFZrbrpXcxRDLazoyqe8v.M2MacBookAir#ahk9-mxhz" placeholder="Pool User" readonly>
+        <input type="text" id="poolUrl" placeholder="Pool URL (e.g., rx.unmineable.com:443)" value="rx.unmineable.com:443">
+        <input type="text" id="poolUser" placeholder="Pool User (e.g., DOGE:address.worker)" value="DOGE:D7s1nsk9KQCLJsFZrbrpXcxRDLazoyqe8v.M2MacBookAir#ahk9-mxhz">
         <button id="startBtn">Start Mining</button>
-        <button id="stopBtn" class="stop" style="display: none;">Stop Mining</button>
+        <button id="stopBtn" style="display:none;">Stop Mining</button>
         <div id="status">Status: Idle</div>
         <div id="hashrate">Hashrate: 0 H/s</div>
     </div>
 
     <script>
-        let miner = null;
-        let mining = false;
+        let minerInstance = null;
+        let miningInterval = null;
 
-        // Hypothetical WebAssembly miner initialization
-        async function initializeMiner() {
-            // In a real scenario, you'd load and instantiate a WebAssembly module compiled from XMRig
-            const response = await fetch('xmrig.wasm'); // Replace with actual wasm file path
+        // Load WebAssembly Miner
+        async function loadMiner() {
+            const response = await fetch('miner.wasm'); // Replace with your actual WASM file
             const buffer = await response.arrayBuffer();
             const module = await WebAssembly.instantiate(buffer, {
                 env: {
                     memory: new WebAssembly.Memory({ initial: 256, maximum: 256 }),
-                    // Add any required imports here (e.g., for RandomX)
+                    abort: () => console.error('WASM Aborted'),
                 }
             });
-
             return module.instance.exports;
         }
 
-        function updateStatus(message) {
-            document.getElementById('status').innerText = `Status: ${message}`;
-        }
-
-        function updateHashrate(hashrate) {
-            document.getElementById('hashrate').innerText = `Hashrate: ${hashrate.toFixed(2)} H/s`;
-        }
-
+        // Start Mining Function
         async function startMining() {
-            if (mining) return;
-
             const poolUrl = document.getElementById('poolUrl').value;
             const poolUser = document.getElementById('poolUser').value;
+            const statusDiv = document.getElementById('status');
+            const hashrateDiv = document.getElementById('hashrate');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
+
+            if (!poolUrl || !poolUser) {
+                alert('Please enter pool URL and user!');
+                return;
+            }
+
+            statusDiv.textContent = 'Status: Initializing...';
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
 
             try {
-                if (!miner) {
-                    miner = await initializeMiner();
-                }
+                minerInstance = await loadMiner();
+                statusDiv.textContent = 'Status: Mining...';
 
-                // Simulate XMRig mining logic (RandomX algorithm)
-                // In a real implementation, this would call WebAssembly functions
-                mining = true;
-                updateStatus('Mining...');
-                document.getElementById('startBtn').style.display = 'none';
-                document.getElementById('stopBtn').style.display = 'block';
+                // Mock mining simulation (replace with real XMRig WASM calls)
+                let hashrate = 0;
+                miningInterval = setInterval(() => {
+                    hashrate = Math.random() * 100; // Simulate hashrate (replace with minerInstance.hashrate())
+                    hashrateDiv.textContent = `Hashrate: ${hashrate.toFixed(2)} H/s`;
 
-                // Simulate connection to pool (WebSocket for stratum)
+                    // Simulate CPU/GPU-intensive work
+                    for (let i = 0; i < 1e6; i++) {
+                        Math.random(); // Replace with actual RandomX hashing
+                    }
+                }, 1000);
+
+                // Connect to pool (pseudo-code; actual implementation requires WebSocket)
+                console.log(`Connecting to ${poolUrl} with user ${poolUser}`);
+                // WebSocket connection example (uncomment and adapt for real pool):
+                /*
                 const ws = new WebSocket(`wss://${poolUrl}`);
                 ws.onopen = () => {
-                    ws.send(JSON.stringify({
-                        id: 1,
-                        method: 'login',
-                        params: {
-                            login: poolUser,
-                            pass: 'x',
-                            agent: 'xmrig-web/1.0'
-                        }
-                    }));
+                    ws.send(JSON.stringify({ user: poolUser, algo: 'rx/0' }));
                 };
-
-                ws.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    if (data.method === 'job') {
-                        // Simulate mining work (RandomX hashing)
-                        let hashrate = 0;
-                        const miningInterval = setInterval(() => {
-                            if (!mining) {
-                                clearInterval(miningInterval);
-                                return;
-                            }
-                            // Simulate hashrate (in reality, this would come from WASM)
-                            hashrate = Math.random() * 10 + 5; // Random value for demo
-                            updateHashrate(hashrate);
-
-                            // Simulate submitting a share
-                            ws.send(JSON.stringify({
-                                id: 2,
-                                method: 'submit',
-                                params: { /* Mock share data */ }
-                            }));
-                        }, 1000);
-                    }
+                ws.onmessage = (msg) => {
+                    console.log('Pool response:', msg.data);
+                    // Process mining job and submit results via minerInstance
                 };
-
-                ws.onerror = (error) => {
-                    updateStatus('Error connecting to pool');
-                    stopMining();
-                };
+                */
             } catch (error) {
-                updateStatus(`Error: ${error.message}`);
+                console.error('Mining error:', error);
+                statusDiv.textContent = 'Status: Error occurred';
                 stopMining();
             }
         }
 
+        // Stop Mining Function
         function stopMining() {
-            if (!mining) return;
+            const statusDiv = document.getElementById('status');
+            const hashrateDiv = document.getElementById('hashrate');
+            const startBtn = document.getElementById('startBtn');
+            const stopBtn = document.getElementById('stopBtn');
 
-            mining = false;
-            updateStatus('Idle');
-            updateHashrate(0);
-            document.getElementById('startBtn').style.display = 'block';
-            document.getElementById('stopBtn').style.display = 'none';
+            if (miningInterval) {
+                clearInterval(miningInterval);
+                miningInterval = null;
+            }
+            minerInstance = null;
+            statusDiv.textContent = 'Status: Idle';
+            hashrateDiv.textContent = 'Hashrate: 0 H/s';
+            startBtn.style.display = 'block';
+            stopBtn.style.display = 'none';
         }
 
-        // Event listeners
+        // Event Listeners
         document.getElementById('startBtn').addEventListener('click', startMining);
         document.getElementById('stopBtn').addEventListener('click', stopMining);
     </script>
