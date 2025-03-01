@@ -144,12 +144,12 @@
     .mini-player .track-info { flex-grow: 1; overflow: hidden; }
     .mini-player .track-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; color: #333; }
     .mini-player .artist-name { color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8em; }
-    .player-controls { display: flex; align-items: center; gap: 15px; } /* 간격 조정으로 균형 개선 */
+    .player-controls { display: flex; align-items: center; gap: 10px; } /* 버튼 간격 조정 */
 
     /* Control Buttons */
-    .control-button { background: none; border: none; cursor: pointer; padding: 6px; transition: transform 0.2s; color: #555; font-family: sans-serif; }
-    .mini-player .control-button { width: 18px; height: 18px; }
-    .full-player .control-button { width: 28px; height: 28px; margin: 0 10px; color: #fff; }
+    .control-button { background: none; border: none; cursor: pointer; padding: 8px; transition: transform 0.2s; color: #555; font-size: 20px; } /* 크기와 간격 조정 */
+    .mini-player .control-button { font-size: 20px; }
+    .full-player .control-button { font-size: 30px; margin: 0 10px; color: #fff; }
     .control-button:hover { transform: scale(1.1); }
 
     /* Full Player */
@@ -159,7 +159,7 @@
     .full-player-content { display: flex; flex-direction: column; width: 100%; }
     .player-left, .player-right { flex: none; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .player-right { overflow-y: auto; padding-top: 30px; }
-    .full-player-album-art { width: 200px; height: 200px; border-radius: 15px; margin-bottom: 15px; transition: transform 0.5s ease, opacity 0.5s ease; }
+    .full-player-album-art { width: 200px; height: 200px; border-radius: 15px; margin-bottom: 15px; transition: all 0.5s ease; }
 
     /* Progress Bar */
     .progress-container {
@@ -271,10 +271,6 @@
     @keyframes miniPlayerEnter { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes lyricHighlight { from { opacity: 0.7; transform: translateY(5px); } to { opacity: 1; transform: translateY(-2px) scale(1.03); } }
     @keyframes backFade { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-20px); } }
-    @keyframes albumArtMove { 
-      0% { transform: translate(0, 0) scale(1); opacity: 1; }
-      100% { transform: translate(var(--tx), var(--ty)) scale(var(--scale)); opacity: 1; }
-    }
     .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     .fade-out { animation: fadeOut 0.3s ease-in forwards; }
     .mini-player-enter { animation: miniPlayerEnter 0.3s ease-out forwards; }
@@ -306,15 +302,9 @@
       <div class="artist-name"></div>
     </div>
     <div class="player-controls">
-      <button class="control-button prev-button">
-        <svg viewBox="0 0 24 24"><path d="M19 2L5 12l14 10V2z"/></svg>
-      </button>
-      <button class="control-button play-pause-button">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </button>
-      <button class="control-button next-button">
-        <svg viewBox="0 0 24 24"><path d="M5 2l14 10-14 10V2z"/></svg>
-      </button>
+      <button class="control-button prev-button">⏮</button>
+      <button class="control-button play-pause-button">⏵</button>
+      <button class="control-button next-button">⏭</button>
     </div>
   </div>
 
@@ -334,15 +324,9 @@
           <span class="total-time">0:00</span>
         </div>
         <div class="player-controls">
-          <button class="control-button prev-button">
-            <svg viewBox="0 0 24 24"><path d="M19 2L5 12l14 10V2z"/></svg>
-          </button>
-          <button class="control-button play-pause-button">
-            <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-          <button class="control-button next-button">
-            <svg viewBox="0 0 24 24"><path d="M5 2l14 10-14 10V2z"/></svg>
-          </button>
+          <button class="control-button prev-button">⏮</button>
+          <button class="control-button play-pause-button">⏵</button>
+          <button class="control-button next-button">⏭</button>
         </div>
       </div>
       <div class="player-right">
@@ -582,9 +566,7 @@
       miniPlayer.querySelector('.mini-player-album-art').src = currentAlbum.cover;
       miniPlayer.querySelector('.track-name').textContent = currentTrack.title;
       miniPlayer.querySelector('.artist-name').textContent = currentArtist.name;
-      document.querySelectorAll('.play-pause-button svg path').forEach(path => {
-        path.setAttribute('d', isPlaying ? 'M6 4h4v16H6zM14 4h4v16h-4z' : 'M8 5v14l11-7z');
-      });
+      document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '⏵');
     }
 
     // Update Full Player
@@ -594,9 +576,7 @@
         fullPlayer.querySelector('.track-name').textContent = currentTrack.title;
         fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
         fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
-        document.querySelectorAll('.play-pause-button svg path').forEach(path => {
-          path.setAttribute('d', isPlaying ? 'M6 4h4v16H6zM14 4h4v16h-4z' : 'M8 5v14l11-7z');
-        });
+        document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '⏵');
       }
     }
 
@@ -714,10 +694,7 @@
 
     // Setup Audio Event Listeners
     function setupAudioEventListeners() {
-      audio.addEventListener('timeupdate', () => {
-        updateProgress();
-        requestAnimationFrame(updateLyrics); // 가사 업데이트를 더 자주 확인
-      });
+      audio.addEventListener('timeupdate', () => requestAnimationFrame(updateProgress));
       audio.addEventListener('ended', playNextTrack);
     }
 
@@ -779,33 +756,24 @@
       updateFullPlayer();
       updateFullPlayerBackground();
 
-      // 앨범 아트 애니메이션 개선: 미니에서 풀플레이어로 자연스럽게 이동
+      // 앨범 아트 애니메이션 개선
       const miniRect = miniArt.getBoundingClientRect();
       const fullRect = fullArt.getBoundingClientRect();
-      const tx = (fullRect.left - miniRect.left);
-      const ty = (fullRect.top - miniRect.top);
-      const scale = fullRect.width / miniRect.width;
+      const translateX = miniRect.left - fullRect.left;
+      const translateY = miniRect.top - fullRect.top;
+      const scaleX = miniRect.width / fullRect.width;
+      const scaleY = miniRect.height / fullRect.height;
 
-      fullArt.style.position = 'absolute';
-      fullArt.style.left = `${miniRect.left}px`;
-      fullArt.style.top = `${miniRect.top}px`;
-      fullArt.style.width = `${miniRect.width}px`;
-      fullArt.style.height = `${miniRect.height}px`;
-      fullArt.style.setProperty('--tx', `${tx}px`);
-      fullArt.style.setProperty('--ty', `${ty}px`);
-      fullArt.style.setProperty('--scale', scale);
-      fullArt.style.animation = 'albumArtMove 0.5s ease-out forwards';
+      fullArt.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`;
+      fullArt.style.opacity = '1';
+      requestAnimationFrame(() => {
+        fullArt.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+        fullArt.style.transform = 'translate(0, 0) scale(1, 1)';
+      });
 
       setTimeout(() => {
-        fullArt.style.position = '';
-        fullArt.style.left = '';
-        fullArt.style.top = '';
-        fullArt.style.width = '';
-        fullArt.style.height = '';
-        fullArt.style.animation = '';
-        fullArt.style.removeProperty('--tx');
-        fullArt.style.removeProperty('--ty');
-        fullArt.style.removeProperty('--scale');
+        fullArt.style.transition = '';
+        fullArt.style.transform = '';
       }, 500);
 
       miniPlayer.classList.add('fade-out');
@@ -883,6 +851,7 @@
       }
       document.querySelector('.current-time').textContent = formatTime(audio.currentTime);
       document.querySelector('.total-time').textContent = formatTime(audio.duration);
+      updateLyrics();
     }
 
     // Format Time
@@ -897,7 +866,7 @@
     function updateLyrics() {
       if (!currentLyrics.length || isUserScrollingLyrics) return;
       const currentTime = audio.currentTime;
-      const currentLyricIndex = currentLyrics.findIndex((lyric, i) => 
+      let currentLyricIndex = currentLyrics.findIndex((lyric, i) => 
         currentTime >= lyric.time && (i === currentLyrics.length - 1 || currentTime < currentLyrics[i + 1].time)
       );
 
