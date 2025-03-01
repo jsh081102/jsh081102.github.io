@@ -39,9 +39,10 @@
       gap: 15px;
       margin-top: 20px;
       opacity: 1;
-      transition: opacity 0.3s, transform 0.3s;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
     .artists-grid.hidden {
+      display: none; /* 공간을 차지하지 않도록 수정 */
       opacity: 0;
       transform: translateY(20px);
       pointer-events: none;
@@ -59,7 +60,7 @@
       padding: 15px;
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.3s, transform 0.3s;
+      transition: opacity 0.3s ease, transform 0.3s ease;
       background: rgba(255, 255, 255, 0.05);
     }
     .artist-section.active {
@@ -81,7 +82,7 @@
       position: relative;
       opacity: 0;
       transform: translateY(20px);
-      transition: opacity 0.3s, transform 0.3s;
+      transition: opacity 0.3s ease, transform 0.3s ease;
     }
     .albums-grid.active {
       display: grid;
@@ -106,7 +107,7 @@
       position: relative; 
       opacity: 0; 
       transform: translateY(20px); 
-      transition: opacity 0.3s, transform 0.3s; 
+      transition: opacity 0.3s ease, transform 0.3s ease; 
       backdrop-filter: blur(10px);
     }
     .tracks-list.active {
@@ -432,6 +433,7 @@
       const artistsGrid = document.querySelector('.artists-grid');
       artistsGrid.innerHTML = '';
       artistsGrid.classList.remove('hidden');
+      artistsGrid.style.display = 'grid'; // 명시적으로 표시
       document.querySelector('.artist-section').classList.remove('active');
       document.querySelector('.albums-grid').classList.remove('active');
       document.querySelector('.tracks-list').classList.remove('active');
@@ -472,7 +474,8 @@
       document.querySelector('.artist-video-overlay h2').textContent = artist.name;
       loadAlbums(artist);
 
-      artistsGrid.classList.add('hidden');
+      artistsGrid.classList.add('hidden'); // 숨김 처리
+      artistsGrid.style.display = 'none'; // 공간 차지 방지
       artistSection.classList.add('active');
       albumsGrid.classList.add('active');
       backButton.style.display = 'block';
@@ -724,6 +727,7 @@
             artistSection.classList.remove('active', 'back-fade');
             albumsGrid.classList.remove('active');
             artistsGrid.classList.remove('hidden');
+            artistsGrid.style.display = 'grid'; // 다시 표시
             backButton.style.display = 'none';
           }
           if (historyStack.length === 1 && nextView === 'artists') goToHome();
@@ -738,6 +742,7 @@
       document.querySelector('.tracks-list').classList.remove('active');
       document.querySelector('.full-player').style.display = 'none';
       document.querySelector('.artists-grid').classList.remove('hidden');
+      document.querySelector('.artists-grid').style.display = 'grid'; // 명시적으로 표시
       document.querySelector('.back-button').style.display = 'none';
       document.querySelector('.artist-video').style.display = 'block';
       historyStack = ['artists'];
