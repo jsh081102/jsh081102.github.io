@@ -1,39 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Mining Simulation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XMRig Web Miner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 400px;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        button.stop {
+            background-color: #dc3545;
+        }
+        button.stop:hover {
+            background-color: #c82333;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+        #hashrate {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
 </head>
 <body>
-    <h1>Mining Simulation</h1>
-    <div id="status">Click "Start Mining" to begin.</div>
-    <button onclick="startMining()">Start Mining</button>
-    <button onclick="stopMining()">Stop Mining</button>
+    <div class="container">
+        <h1>XMRig Web Miner</h1>
+        <input type="text" id="poolUrl" value="rx.unmineable.com:443" placeholder="Pool URL" readonly>
+        <input type="text" id="poolUser" value="DOGE:D7s1nsk9KQCLJsFZrbrpXcxRDLazoyqe8v.M2MacBookAir#ahk9-mxhz" placeholder="Pool User" readonly>
+        <button id="startBtn">Start Mining</button>
+        <button id="stopBtn" class="stop" style="display: none;">Stop Mining</button>
+        <div id="status">Status: Idle</div>
+        <div id="hashrate">Hashrate: 0 H/s</div>
+    </div>
 
     <script>
-        let miningInterval;
-        let nonce = 0;
+        let miner = null;
+        let mining = false;
 
-        function startMining() {
-            document.getElementById("status").innerText = "Mining in progress...";
-            miningInterval = setInterval(() => {
-                nonce++;
-                const hash = simulateHash(nonce);
-                if (hash.startsWith("0000")) { // Simulate finding a valid hash
-                    clearInterval(miningInterval);
-                    document.getElementById("status").innerText = `Block mined! Nonce: ${nonce}, Hash: ${hash}`;
+        // Hypothetical WebAssembly miner initialization
+        async function initializeMiner() {
+            // In a real scenario, you'd load and instantiate a WebAssembly module compiled from XMRig
+            const response = await fetch('xmrig.wasm'); // Replace with actual wasm file path
+            const buffer = await response.arrayBuffer();
+            const module = await WebAssembly.instantiate(buffer, {
+                env: {
+                    memory: new WebAssembly.Memory({ initial: 256, maximum: 256 }),
+                    // Add any required imports here (e.g., for RandomX)
                 }
-            }, 100); // Simulate computational delay
+            });
+
+            return module.instance.exports;
+        }
+
+        function updateStatus(message) {
+            document.getElementById('status').innerText = `Status: ${message}`;
+        }
+
+        function updateHashrate(hashrate) {
+            document.getElementById('hashrate').innerText = `Hashrate: ${hashrate.toFixed(2)} H/s`;
+        }
+
+        async function startMining() {
+            if (mining) return;
+
+            const poolUrl = document.getElementById('poolUrl').value;
+            const poolUser = document.getElementById('poolUser').value;
+
+            try {
+                if (!miner) {
+                    miner = await initializeMiner();
+                }
+
+                // Simulate XMRig mining logic (RandomX algorithm)
+                // In a real implementation, this would call WebAssembly functions
+                mining = true;
+                updateStatus('Mining...');
+                document.getElementById('startBtn').style.display = 'none';
+                document.getElementById('stopBtn').style.display = 'block';
+
+                // Simulate connection to pool (WebSocket for stratum)
+                const ws = new WebSocket(`wss://${poolUrl}`);
+                ws.onopen = () => {
+                    ws.send(JSON.stringify({
+                        id: 1,
+                        method: 'login',
+                        params: {
+                            login: poolUser,
+                            pass: 'x',
+                            agent: 'xmrig-web/1.0'
+                        }
+                    }));
+                };
+
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.method === 'job') {
+                        // Simulate mining work (RandomX hashing)
+                        let hashrate = 0;
+                        const miningInterval = setInterval(() => {
+                            if (!mining) {
+                                clearInterval(miningInterval);
+                                return;
+                            }
+                            // Simulate hashrate (in reality, this would come from WASM)
+                            hashrate = Math.random() * 10 + 5; // Random value for demo
+                            updateHashrate(hashrate);
+
+                            // Simulate submitting a share
+                            ws.send(JSON.stringify({
+                                id: 2,
+                                method: 'submit',
+                                params: { /* Mock share data */ }
+                            }));
+                        }, 1000);
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    updateStatus('Error connecting to pool');
+                    stopMining();
+                };
+            } catch (error) {
+                updateStatus(`Error: ${error.message}`);
+                stopMining();
+            }
         }
 
         function stopMining() {
-            clearInterval(miningInterval);
-            document.getElementById("status").innerText = "Mining stopped.";
+            if (!mining) return;
+
+            mining = false;
+            updateStatus('Idle');
+            updateHashrate(0);
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'none';
         }
 
-        function simulateHash(nonce) {
-            return CryptoJS.SHA256(nonce.toString()).toString();
-        }
+        // Event listeners
+        document.getElementById('startBtn').addEventListener('click', startMining);
+        document.getElementById('stopBtn').addEventListener('click', stopMining);
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </body>
 </html>
