@@ -203,6 +203,25 @@
         .ai-message.multiline {
             border-bottom-left-radius: 4px !important;
         }
+        
+        /* 이미지 메시지 스타일 */
+        .message-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            margin-top: 8px;
+            object-fit: contain;
+            display: block;
+        }
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--input-border-color);
+            display: none; /* 미리보기 숨김 - 이미지는 메시지 버블에 표시됨 */
+        }
 
         /* Input Area Styles */
         .input-area {
@@ -562,14 +581,6 @@
         .image-upload-input {
             display: none;
         }
-        .image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 10px;
-            border-radius: 10px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--input-border-color);
-        }
     </style>
 </head>
 <body>
@@ -747,49 +758,23 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     selectedImageBase64 = reader.result; // Base64 데이터 저장
-
-                    // 이미지 미리보기 요소 생성 및 추가
-                    const imagePreview = document.createElement('img');
-                    imagePreview.className = 'image-preview';
-                    imagePreview.src = selectedImageBase64;
-                    chatContainer.appendChild(imagePreview);
-                    chatContainer.scrollTop = chatContainer.scrollHeight; // 스크롤 하단으로 이동
                 };
                 reader.readAsDataURL(file); // 파일을 Base64 Data URL로 읽기
             } else {
                 selectedImageBase64 = null;
-                // 이미지 미리보기 제거
-                const imagePreview = document.querySelector('.image-preview');
-                if (imagePreview) {
-                    chatContainer.removeChild(imagePreview);
-                }
             }
         });
 
         // 메시지 전송 함수 (API 호출 및 응답 처리)
         async function sendMessage() {
-            const userMessage = userInput.value; // 입력창의 사용자 메시지
+            const userMessage = userInput.value.trim(); // 입력창의 사용자 메시지
             const imageBase64 = selectedImageBase64; // 선택된 이미지 Base64 데이터
 
             // 메시지나 이미지가 없으면 전송 중단
-            if (!userMessage.trim() && !imageBase64) return;
-
-            // 사용자 메시지 화면에 표시
-            if (userMessage) {
-                const userDiv = document.createElement('div');
-                userDiv.className = 'message user-message';
-                userDiv.innerHTML = markdownToHtml(userMessage);
-                chatContainer.appendChild(userDiv);
-            }
-
-            // 이미지 미리보기 제거 (새 메시지를 보낼 때)
-            const imagePreview = document.querySelector('.image-preview');
-            if (imagePreview) {
-                chatContainer.removeChild(imagePreview);
-            }
+            if (!userMessage && !imageBase64) return;
 
             // 금지어 포함 시 경고 메시지 표시 후 처리 중단
-            if (containsBannedWord(userMessage)) {
+            if (userMessage && containsBannedWord(userMessage)) {
                 const warningDiv = document.createElement('div');
                 warningDiv.className = 'message ai-message';
                 warningDiv.textContent = '적절하지 않은 문구가 감지되었습니다.';
@@ -799,9 +784,32 @@
                 return;
             }
 
+            // 사용자 메시지 화면에 표시
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-message';
+            
+            let messageContent = '';
+            
+            // 텍스트 메시지가 있으면 추가
+            if (userMessage) {
+                messageContent += markdownToHtml(userMessage);
+            }
+            
+            // 이미지가 있으면 추가
+            if (imageBase64) {
+                // 텍스트와 이미지 사이 간격을 위한 줄바꿈 추가
+                if (userMessage) {
+                    messageContent += '<br><br>';
+                }
+                messageContent += `<img src="${imageBase64}" class="message-image" alt="User uploaded image">`;
+            }
+            
+            userDiv.innerHTML = messageContent;
+            chatContainer.appendChild(userDiv);
+            adjustMessageBubble(userDiv);
+            
             userInput.value = ''; // 입력창 초기화
             imageUploadInput.value = ''; // 파일 입력 필드 초기화
-            selectedImageBase64 = null; // 이미지 Base64 데이터 초기화
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             // 타이핑 표시 애니메이션 추가
@@ -853,6 +861,7 @@
                 aiDiv.className = 'message ai-message';
                 aiDiv.innerHTML = markdownToHtml(aiMessage);
                 chatContainer.appendChild(aiDiv);
+                adjustMessageBubble(aiDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
 
                 // AI 응답을 대화 기록에 추가
@@ -863,7 +872,7 @@
                 chatRef.set({
                     ...(userMessage && { user: userMessage }), // userMessage가 있을 때만 user 속성 추가
                     ai: aiMessage,
-                    ...(imageBase64 && { image: imageBase64 }), // imageBase64가 있을 때만 image 속성 추가
+                    ...(imageBase64 && { image: true }), // 이미지 여부만 저장 (용량 문제)
                     timestamp: firebase.database().ServerValue.TIMESTAMP // 서버 타임스탬프
                 });
 
@@ -878,6 +887,9 @@
                 chatContainer.appendChild(errorDiv);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
+            
+            // 이미지 Base64 데이터 초기화
+            selectedImageBase64 = null;
         }
 
         // 사용자 입력창에서 Enter 키 입력 시 메시지 전송
@@ -1101,12 +1113,25 @@
         function displayLoadedChat(history) {
             const chatContainer = document.getElementById('chat-container');
             chatContainer.innerHTML = ''; // 기존 채팅 내용 초기화
+            
             // 불러온 대화 기록을 순회하며 메시지 요소 생성 및 추가
             history.forEach(message => {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${message.role === 'user' ? 'user-message' : 'ai-message'}`; // 역할에 따라 클래스 적용
-                messageDiv.innerHTML = markdownToHtml(message.parts[0].text); // Markdown to HTML 변환 후 메시지 내용 설정
+                
+                // 텍스트 메시지 처리
+                if (message.parts && message.parts[0].text) {
+                    messageDiv.innerHTML = markdownToHtml(message.parts[0].text); // Markdown to HTML 변환 후 메시지 내용 설정
+                }
+                // 이미지 메시지 처리
+                else if (message.parts && message.parts[0].inlineData) {
+                    const imageData = message.parts[0].inlineData.data;
+                    const mimeType = message.parts[0].inlineData.mimeType;
+                    messageDiv.innerHTML = `<img src="data:${mimeType};base64,${imageData}" class="message-image" alt="User uploaded image">`;
+                }
+                
                 chatContainer.appendChild(messageDiv); // 채팅 컨테이너에 메시지 추가
+                adjustMessageBubble(messageDiv); // 메시지 버블 스타일 조정
             });
             chatContainer.scrollTop = chatContainer.scrollHeight; // 스크롤 하단으로 이동
         }
