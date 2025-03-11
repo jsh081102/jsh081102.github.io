@@ -2,192 +2,162 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>시험지 생성기</title>
-    <!-- MathJax CDN: LaTeX 렌더링 -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <!-- jsPDF CDN: PDF 출력 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>모의고사 생성기</title>
+    
+    <!-- 스타일시트 -->
     <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --blur-intensity: 10px;
+            --border-radius: 15px;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            margin: 0;
-            padding: 20px;
+            padding: 2rem;
+            font-family: 'Noto Sans KR', sans-serif;
         }
 
-        .container {
-            display: flex;
-            gap: 20px;
-            width: 90%;
-            max-width: 1200px;
-        }
-
-        .input-section, .preview-section {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 20px;
+        /* 글래스모피즘 컨테이너 */
+        .exam-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(var(--blur-intensity));
+            -webkit-backdrop-filter: blur(var(--blur-intensity));
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            flex: 1;
+            padding: 2rem;
+            margin-bottom: 2rem;
         }
 
-        .input-section h2, .preview-section h2 {
-            color: #333;
-            text-align: center;
+        /* 문제 유형별 스타일 */
+        .subject-title {
+            font-size: 1.8rem;
+            border-left: 5px solid #4a5568;
+            padding-left: 1rem;
+            margin: 2rem 0;
         }
 
-        textarea, input[type="text"], input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        button {
-            background: rgba(0, 123, 255, 0.8);
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        button:hover {
-            background: rgba(0, 123, 255, 1);
-        }
-
-        .preview-section {
-            overflow-y: auto;
-            max-height: 80vh;
-        }
-
-        .exam-paper {
-            background: white;
-            padding: 20px;
+        .question-group {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .exam-header {
-            text-align: center;
-            margin-bottom: 20px;
+        .question-number {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 1rem;
         }
 
-        .question {
-            margin-bottom: 20px;
+        .question-content img {
+            max-width: 80%;
+            margin: 1rem auto;
+            display: block;
+            border-radius: 8px;
         }
 
-        .question img {
-            max-width: 100%;
-            height: auto;
-            margin-top: 10px;
+        /* LaTeX 렌더링 영역 */
+        .latex-equation {
+            font-size: 1.2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin: 1rem 0;
         }
 
-        .choices {
-            margin-left: 20px;
+        /* 제어 패널 */
+        .control-panel {
+            position: fixed;
+            right: 2rem;
+            top: 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(5px);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
         }
     </style>
+
+    <!-- LaTeX 지원 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    
+    <!-- PDF 생성 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="input-section">
-            <h2>문제 입력</h2>
-            <input type="text" id="subject" placeholder="과목명 (예: 수학, 국어, 영어)">
-            <textarea id="question" rows="4" placeholder="문제를 입력하세요 (LaTeX 지원, 예: 2^2)"></textarea>
-            <input type="text" id="choices" placeholder="선택지 (쉼표로 구분, 예: 1, 2, 3, 4, 5)">
-            <input type="file" id="image" accept="image/*" onchange="previewImage(event)">
-            <button onclick="addQuestion()">문제 추가</button>
-            <button onclick="generatePDF()">PDF로 저장</button>
-        </div>
-        <div class="preview-section">
-            <h2>시험지 미리보기</h2>
-            <div id="examPaper" class="exam-paper">
-                <div class="exam-header">
-                    <h1 id="examSubject">2024학년도 모의고사</h1>
-                    <p>제 2 교시</p>
-                </div>
-                <div id="questions"></div>
-            </div>
+    <!-- 제어 패널 -->
+    <div class="control-panel">
+        <input type="file" id="image-upload" accept="image/*" hidden>
+        <button onclick="addQuestion()">문제 추가</button>
+        <button onclick="generatePDF()">PDF 생성</button>
+    </div>
+
+    <!-- 시험지 컨테이너 -->
+    <div class="exam-container" id="examPaper">
+        <h1>2025학년도 10월 모의고사</h1>
+        
+        <!-- 동적 문제 삽입 영역 -->
+        <div id="questions-container">
+            <!-- 문제가 여기에 자동 삽입됩니다 -->
         </div>
     </div>
 
     <script>
-        let questionCount = 0;
-        let images = {};
-
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    images[questionCount] = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function addQuestion() {
-            const subject = document.getElementById('subject').value || '수학';
-            const questionText = document.getElementById('question').value;
-            const choicesText = document.getElementById('choices').value;
-            const questionsDiv = document.getElementById('questions');
-            const examSubject = document.getElementById('examSubject');
-
-            if (!questionText) {
-                alert('문제를 입력하세요.');
-                return;
-            }
-
-            questionCount++;
-            examSubject.textContent = `${subject} 모의고사`;
-
-            const questionDiv = document.createElement('div');
-            questionDiv.className = 'question';
-            questionDiv.innerHTML = `
-                <p><strong>${questionCount}.</strong> ${questionText}</p>
-                ${images[questionCount - 1] ? `<img src="${images[questionCount - 1]}" alt="문제 이미지">` : ''}
-                ${choicesText ? '<div class="choices"><p>' + choicesText.split(',').map((choice, index) => `(${index + 1}) ${choice.trim()}`).join(' ') + '</p></div>' : ''}
-            `;
-
-            questionsDiv.appendChild(questionDiv);
-
-            // MathJax로 LaTeX 렌더링
-            MathJax.typesetPromise();
-
-            // 입력 초기화
-            document.getElementById('question').value = '';
-            document.getElementById('choices').value = '';
-            document.getElementById('image').value = '';
-            delete images[questionCount - 1];
-        }
-
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const examPaper = document.getElementById('examPaper');
-
-            doc.html(examPaper, {
-                callback: function (doc) {
-                    doc.save('시험지.pdf');
-                },
-                x: 10,
-                y: 10,
-                width: 190,
-                windowWidth: 650
+        // LaTeX 렌더링 함수
+        function renderLaTeX() {
+            document.querySelectorAll('.latex-equation').forEach(element => {
+                const tex = element.textContent;
+                const displayMode = element.classList.contains('block');
+                katex.render(tex, element, { throwOnError: false, displayMode });
             });
         }
+
+        // 문제 추가 함수
+        function addQuestion(questionData = {type: 'math', content: ''}) {
+            const container = document.getElementById('questions-container');
+            
+            const questionHTML = `
+                <div class="question-group">
+                    <div class="question-number">${questionData.number || '문항 번호'}</div>
+                    <div class="question-content">
+                        ${questionData.content || '문제 내용을 입력하세요'}
+                        ${questionData.image ? `<img src="${questionData.image}" alt="문제 이미지">` : ''}
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', questionHTML);
+            renderLaTeX();
+        }
+
+        // PDF 생성 함수
+        function generatePDF() {
+            const element = document.getElementById('examPaper');
+            const opt = {
+                margin:       10,
+                filename:     'exam_paper.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        // 초기 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            // 예시 문제 추가
+            addQuestion({
+                type: 'math',
+                number: 22,
+                content: `<div class="latex-equation">
+                    방정식 \\((\\sqrt{3})^{x-2}=27\\)을 만족시키는 실수 \\(x\\)의 값을 구하시오.
+                </div>`
+            });
+        });
     </script>
 </body>
 </html>
