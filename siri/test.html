@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험지 생성기</title>
+    <!-- MathJax for LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- html2pdf library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Nanum Gothic', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .input-section, .preview-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #questionForm {
+            display: flex;
+            flex-direction: column;
+        }
+        textarea {
+            min-height: 100px;
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .image-upload {
+            margin-bottom: 10px;
+        }
+        .question-container {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .question-number {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .exam-preview {
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .exam-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #000;
+        }
+        .question-image {
+            max-width: 80%;
+            margin: 10px auto;
+            display: block;
+        }
+        @media print {
+            .input-section, .buttons {
+                display: none;
+            }
+        }
+        #examTitle, #examSubtitle {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>시험지 생성기</h1>
+        
+        <div class="input-section">
+            <h2>시험지 정보 입력</h2>
+            <input type="text" id="examTitle" placeholder="시험지 제목 (예: 중간고사)" value="2025학년도 1학기 중간고사">
+            <input type="text" id="examSubtitle" placeholder="부제목 (예: 수학 I)" value="수학 I">
+            
+            <h2>문제 입력</h2>
+            <div class="buttons">
+                <button id="addQuestion">문제 추가</button>
+                <button id="previewExam">시험지 미리보기</button>
+                <button id="generatePDF">PDF 생성</button>
+            </div>
+            
+            <div id="questionsContainer">
+                <!-- 문제 입력 폼이 여기에 동적으로 추가됩니다 -->
+                <div class="question-container" id="question-1">
+                    <h3>문제 1</h3>
+                    <form id="questionForm-1">
+                        <textarea class="question-text" placeholder="문제 내용을 입력하세요. LaTeX 수식은 $$...$$ 형식으로 입력하세요.">(1) 다음 식을 계산하시오. $$2^2 + \sqrt{16} = ?$$</textarea>
+                        <div class="image-upload">
+                            <label for="questionImage-1">문제 이미지 추가 (선택사항):</label>
+                            <input type="file" id="questionImage-1" class="question-image-input" accept="image/*">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-section">
+            <h2>시험지 미리보기</h2>
+            <div id="examPreview" class="exam-preview">
+                <!-- 시험지 미리보기가 여기에 표시됩니다 -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 문제 번호 카운터
+        let questionCount = 1;
+        
+        // 문제 추가 버튼 이벤트
+        document.getElementById('addQuestion').addEventListener('click', function() {
+            questionCount++;
+            
+            const questionContainer = document.createElement('div');
+            questionContainer.className = 'question-container';
+            questionContainer.id = `question-${questionCount}`;
+            
+            questionContainer.innerHTML = `
+                <h3>문제 ${questionCount}</h3>
+                <form id="questionForm-${questionCount}">
+                    <textarea class="question-text" placeholder="문제 내용을 입력하세요. LaTeX 수식은 $$...$$ 형식으로 입력하세요."></textarea>
+                    <div class="image-upload">
+                        <label for="questionImage-${questionCount}">문제 이미지 추가 (선택사항):</label>
+                        <input type="file" id="questionImage-${questionCount}" class="question-image-input" accept="image/*">
+                    </div>
+                </form>
+            `;
+            
+            document.getElementById('questionsContainer').appendChild(questionContainer);
+            
+            // 파일 입력에 이벤트 리스너 추가
+            document.getElementById(`questionImage-${questionCount}`).addEventListener('change', handleImageUpload);
+        });
+        
+        // 초기 파일 입력에 이벤트 리스너 추가
+        document.getElementById('questionImage-1').addEventListener('change', handleImageUpload);
+        
+        // 이미지 업로드 처리 함수
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.match('image.*')) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const questionId = event.target.id.split('-')[1];
+                    const imagePreviewId = `imagePreview-${questionId}`;
+                    
+                    // 이미 프리뷰가 있는지 확인
+                    let imagePreview = document.getElementById(imagePreviewId);
+                    
+                    if (!imagePreview) {
+                        imagePreview = document.createElement('div');
+                        imagePreview.id = imagePreviewId;
+                        event.target.parentNode.appendChild(imagePreview);
+                    }
+                    
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="문제 이미지" style="max-width: 200px; margin-top: 10px;">`;
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // 시험지 미리보기 생성
+        document.getElementById('previewExam').addEventListener('click', function() {
+            generateExamPreview();
+            
+            // MathJax 다시 렌더링
+            if (typeof MathJax !== 'undefined') {
+                MathJax.typeset();
+            }
+        });
+        
+        // PDF 생성 버튼 이벤트
+        document.getElementById('generatePDF').addEventListener('click', function() {
+            // 먼저 미리보기 업데이트
+            generateExamPreview();
+            
+            // MathJax가 렌더링을 완료할 시간을 주기 위해 약간의 지연 추가
+            setTimeout(() => {
+                const examPreview = document.getElementById('examPreview');
+                
+                // PDF 생성 옵션
+                const options = {
+                    margin: 10,
+                    filename: '시험지.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                
+                // HTML을 PDF로 변환
+                html2pdf().from(examPreview).set(options).save();
+            }, 1000);
+        });
+        
+        // 시험지 미리보기 생성 함수
+        function generateExamPreview() {
+            const title = document.getElementById('examTitle').value || '시험지';
+            const subtitle = document.getElementById('examSubtitle').value || '';
+            
+            let examHTML = `
+                <div class="exam-header">
+                    <h1>${title}</h1>
+                    <h2>${subtitle}</h2>
+                </div>
+            `;
+            
+            // 각 문제 추가
+            for (let i = 1; i <= questionCount; i++) {
+                const questionText = document.querySelector(`#questionForm-${i} .question-text`).value;
+                const imageInput = document.getElementById(`questionImage-${i}`);
+                let imageHTML = '';
+                
+                // 이미지가 있는 경우 추가
+                if (imageInput.files && imageInput.files[0]) {
+                    const imagePreview = document.querySelector(`#imagePreview-${i} img`);
+                    if (imagePreview) {
+                        imageHTML = `<img src="${imagePreview.src}" alt="문제 이미지" class="question-image">`;
+                    }
+                }
+                
+                // LaTeX 수식 변환 ($$...$$를 LaTeX 형식으로 변환)
+                let processedText = questionText.replace(/\$\$(.*?)\$\$/g, function(match, p1) {
+                    return '\\(' + p1 + '\\)';
+                });
+                
+                examHTML += `
+                    <div class="question-item">
+                        <p><span class="question-number">${i}.</span> ${processedText}</p>
+                        ${imageHTML}
+                    </div>
+                `;
+            }
+            
+            document.getElementById('examPreview').innerHTML = examHTML;
+        }
+    </script>
+</body>
+</html>
