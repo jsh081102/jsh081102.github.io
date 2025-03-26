@@ -8,10 +8,10 @@
   <style>
     /* General Styles */
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { 
-      background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2), 
-                  radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%); 
-      overflow-x: hidden; 
+    body {
+      background: linear-gradient(to bottom right, #f5f7fa, #c3cfe2),
+                  radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+      overflow-x: hidden;
       background-blend-mode: overlay;
     }
 
@@ -20,11 +20,11 @@
     .brand-title { font-size: 20px; color: #333; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; position: relative; }
     .os-version { font-size: 11px; color: rgba(0, 0, 0, 0.4); position: absolute; bottom: -0.1px; left: 90px; white-space: nowrap; }
 
-    .back-button { 
-      position: fixed; top: 50px; left: 10px; background: rgba(255, 255, 255, 0.7); 
-      border: 1px solid rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 25px; 
-      cursor: pointer; display: none; z-index: 1001; transition: transform 0.3s ease, opacity 0.3s ease; 
-      font-size: 14px; color: #333; backdrop-filter: blur(10px); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); 
+    .back-button {
+      position: fixed; top: 50px; left: 10px; background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 25px;
+      cursor: pointer; display: none; z-index: 1001; transition: transform 0.3s ease, opacity 0.3s ease;
+      font-size: 14px; color: #333; backdrop-filter: blur(10px); box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
     .back-button:active { transform: scale(0.95); background: rgba(255, 255, 255, 0.9); }
     .back-button.show { display: block; animation: fadeIn 0.3s ease-out; }
@@ -42,7 +42,8 @@
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
     .artists-grid.hidden {
-      display: none; /* 공간을 차지하지 않도록 수정 */
+      /* display: none; 공간을 차지하지 않도록 수정 -> 즉시 숨기도록 display: none 추가 */
+      display: none;
       opacity: 0;
       transform: translateY(20px);
       pointer-events: none;
@@ -98,16 +99,16 @@
     /* Tracks List */
     .tracks-list {
       display: none;
-      background: rgba(255, 255, 255, 0.15); 
-      border-radius: 15px; 
-      padding: 20px; 
-      margin-top: 20px; 
-      border: 1px solid rgba(255, 255, 255, 0.2); 
-      overflow-y: auto; 
-      position: relative; 
-      opacity: 0; 
-      transform: translateY(20px); 
-      transition: opacity 0.3s ease, transform 0.3s ease; 
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow-y: auto;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
       backdrop-filter: blur(10px);
     }
     .tracks-list.active {
@@ -121,26 +122,26 @@
     .track-info { flex-grow: 1; font-size: 0.95em; color: #333; }
 
     /* Mini Player */
-    .mini-player { 
-      position: fixed; 
-      bottom: 15px; 
-      right: 15px; 
-      background: rgba(255, 255, 255, 0.25); 
-      border-radius: 12px; 
-      padding: 12px; 
-      border: 1px solid rgba(255, 255, 255, 0.5); 
-      display: none; 
-      align-items: center; 
-      gap: 10px; 
-      cursor: pointer; 
-      z-index: 1000; 
-      width: calc(100% - 30px); 
-      max-width: 350px; 
-      transition: transform 0.3s ease, opacity 0.3s ease; 
-      backdrop-filter: blur(10px); 
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+    .mini-player {
+      position: fixed;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 12px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      display: none;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      z-index: 1000;
+      width: calc(100% - 30px);
+      max-width: 350px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
-    .mini-player img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; transition: transform 0.5s ease, opacity 0.5s ease; }
+    .mini-player img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; /* 개선 사항 1: 미니 플레이어 자체 아트의 트랜지션은 유지하거나 필요에 따라 조정 */ transition: transform 0.3s ease, opacity 0.3s ease; }
     .mini-player .track-info { flex-grow: 1; overflow: hidden; }
     .mini-player .track-name { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; color: #333; }
     .mini-player .artist-name { color: #777; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8em; }
@@ -159,7 +160,8 @@
     .full-player-content { display: flex; flex-direction: column; width: 100%; }
     .player-left, .player-right { flex: none; width: 100%; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .player-right { overflow-y: auto; padding-top: 30px; }
-    .full-player-album-art { width: 200px; height: 200px; border-radius: 15px; margin-bottom: 15px; transition: transform 0.5s ease, opacity 0.5s ease; opacity: 0; }
+    /* 개선 사항 1: full-player 앨범 아트의 transition에서 transform 제거, opacity만 남기거나 없앰 */
+    .full-player-album-art { width: 200px; height: 200px; border-radius: 15px; margin-bottom: 15px; transition: opacity 0.3s ease; /* transform transition 제거 */ opacity: 1; /* 기본 opacity를 1로 설정 */ }
 
     /* Progress Bar */
     .progress-container {
@@ -251,6 +253,7 @@
       .full-player { padding: 25px; }
       .full-player-content { flex-direction: row; }
       .player-left, .player-right { width: 50%; padding: 20px; }
+      /* 개선 사항 1: 반응형에서도 크기 조정 */
       .full-player-album-art { width: 250px; height: 250px; }
       .progress-container { max-width: 400px; height: 12px; }
       .time-display { max-width: 400px; font-size: 14px; }
@@ -260,6 +263,7 @@
     @media (max-width: 767px) {
       .full-player-content { flex-direction: column; }
       .player-left, .player-right { width: 100%; padding: 15px; }
+      /* 개선 사항 1: 반응형에서도 크기 조정 */
       .full-player-album-art { width: 180px; height: 180px; }
       .progress-container { max-width: 95%; }
       .time-display { max-width: 95%; }
@@ -271,10 +275,11 @@
     @keyframes miniPlayerEnter { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes lyricHighlight { from { opacity: 0.7; transform: translateY(5px); } to { opacity: 1; transform: translateY(-2px) scale(1.03); } }
     @keyframes backFade { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-20px); } }
-    @keyframes albumArtExpand { 
+    /* 개선 사항 1: albumArtExpand 애니메이션 제거 */
+    /* @keyframes albumArtExpand {
       0% { transform: scale(0.5); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
-    }
+    } */
     .fade-in { animation: fadeIn 0.3s ease-out forwards; }
     .fade-out { animation: fadeOut 0.3s ease-in forwards; }
     .mini-player-enter { animation: miniPlayerEnter 0.3s ease-out forwards; }
@@ -433,14 +438,19 @@
       const artistsGrid = document.querySelector('.artists-grid');
       artistsGrid.innerHTML = '';
       artistsGrid.classList.remove('hidden');
-      artistsGrid.style.display = 'grid';
+      artistsGrid.style.display = 'grid'; // Ensure grid display is set
       document.querySelector('.artist-section').classList.remove('active');
       document.querySelector('.albums-grid').classList.remove('active');
       document.querySelector('.tracks-list').classList.remove('active');
       document.querySelector('.back-button').style.display = 'none';
 
+      // 개선 사항 2: 아티스트 이미지를 미리 로드하여 캐싱 시도
+      const imagePromises = musicLibrary.artists.map(artist => getCachedImage(artist.image));
+      await Promise.all(imagePromises); // 모든 아티스트 이미지 로딩 시도 (백그라운드)
+
+      // 이미지가 캐시된 후 카드 생성
       for (const artist of musicLibrary.artists) {
-        const artistCard = await createArtistCard(artist);
+        const artistCard = await createArtistCard(artist); // 생성은 async 유지
         if (artistCard) artistsGrid.appendChild(artistCard);
       }
     }
@@ -449,8 +459,11 @@
     async function createArtistCard(artist) {
       const card = document.createElement('div');
       card.className = 'artist-card';
+      // 이미지는 getCachedImage로 가져오되, await은 유지하여 이미지가 준비된 후 표시
       const artistImage = await getCachedImage(artist.image);
-      if (!artistImage) return null;
+      // 이미 로딩 시도했으므로 캐시에서 바로 가져올 가능성 높음
+      if (!artistImage) return null; // 이미지 로드 실패 시 카드 생성 안함
+
       card.innerHTML = `<img src="${artist.image}" class="artist-image" alt="${artist.name}">
                         <div class="artist-name-overlay">${artist.name}</div>`;
       card.addEventListener('click', () => showArtist(artist));
@@ -458,48 +471,65 @@
     }
 
     // Show Artist Details
-    async function showArtist(artist) {
+    // 개선 사항 2: async 제거 또는 로직 변경으로 즉각적인 UI 업데이트
+    function showArtist(artist) {
       currentArtist = artist;
       const artistsGrid = document.querySelector('.artists-grid');
       const artistSection = document.querySelector('.artist-section');
       const albumsGrid = document.querySelector('.albums-grid');
       const backButton = document.querySelector('.back-button');
-
       const artistVideo = document.querySelector('.artist-video');
-      const videoSrc = await getCachedVideo(artist.video);
-      if (videoSrc) {
-        artistVideo.src = videoSrc;
-        artistVideo.style.display = 'block';
-      }
-      document.querySelector('.artist-video-overlay h2').textContent = artist.name;
-      loadAlbums(artist);
 
+      // 1. UI 즉시 업데이트
       artistsGrid.classList.add('hidden');
-      artistsGrid.style.display = 'none';
+      // artistsGrid.style.display = 'none'; // hidden 클래스가 display: none 처리
       artistSection.classList.add('active');
       albumsGrid.classList.add('active');
       backButton.style.display = 'block';
       backButton.classList.add('show');
+      document.querySelector('.artist-video-overlay h2').textContent = artist.name;
 
+      // 2. 비디오 로딩 (백그라운드)
+      getCachedVideo(artist.video).then(videoSrc => {
+        if (videoSrc) {
+          artistVideo.src = videoSrc;
+          artistVideo.style.display = 'block'; // 비디오 로드 완료 후 표시
+        } else {
+            artistVideo.style.display = 'none'; // 로드 실패 시 숨김
+        }
+      }).catch(error => {
+        console.error("비디오 로딩 중 에러:", error);
+        artistVideo.style.display = 'none';
+      });
+
+
+      // 3. 앨범 로딩 시작 (내부에서 await 사용 가능, UI는 이미 변경됨)
+      loadAlbums(artist); // 비동기 함수 호출 (await 없이)
+
+      // 4. 히스토리 스택 관리
       if (historyStack[historyStack.length - 1] !== 'artist') historyStack.push('artist');
     }
 
-    // Load Albums
+    // Load Albums - async 유지 (내부 createAlbumCard에서 await 사용)
     async function loadAlbums(artist) {
       const albumsGrid = document.querySelector('.albums-grid');
-      albumsGrid.innerHTML = '';
+      albumsGrid.innerHTML = ''; // 기존 앨범 클리어
       for (const [index, album] of artist.albums.entries()) {
+        // createAlbumCard는 여전히 await 할 수 있음 (앨범 표지 로드 대기)
+        // 하지만 showArtist 함수 자체는 이 작업 완료를 기다리지 않음
         const albumCard = await createAlbumCard(album, index + 1);
         if (albumCard) albumsGrid.appendChild(albumCard);
       }
     }
 
-    // Create Album Card
+    // Create Album Card - async 유지 (이미지 로드 대기)
     async function createAlbumCard(album, albumNumber) {
       const card = document.createElement('div');
       card.className = 'album-card';
+      // 이미지 캐싱 및 로드 (await 유지)
       const coverImage = await getCachedImage(album.cover);
-      if (!coverImage) return null;
+      if (!coverImage) return null; // 이미지 로드 실패 시 카드 생성 안함
+
       card.innerHTML = `
         <img src="${album.cover}" class="album-image" alt="${album.name}">
         <div class="album-info">
@@ -516,12 +546,20 @@
       const albumsGrid = document.querySelector('.albums-grid');
       const tracksList = document.querySelector('.tracks-list');
 
-      albumsGrid.classList.remove('active');
-      tracksList.classList.add('active');
-      tracksList.innerHTML = '';
-      album.tracks.forEach(track => tracksList.appendChild(createTrackItem(track)));
+      albumsGrid.classList.remove('active'); // 앨범 그리드 숨김
+      tracksList.classList.add('active'); // 트랙 리스트 표시
+      tracksList.innerHTML = ''; // 기존 트랙 클리어
+
+      // 트랙 아이템 생성 및 추가
+      album.tracks.forEach(track => {
+          const trackItem = createTrackItem(track); // 동기적으로 아이템 생성
+          tracksList.appendChild(trackItem);
+      });
+
+      // 히스토리 스택 관리
       if (historyStack[historyStack.length - 1] !== 'album') historyStack.push('album');
     }
+
 
     // Create Track Item
     function createTrackItem(track) {
@@ -547,18 +585,27 @@
         isPlaying = false;
       }
 
-      const img = await getCachedImage(currentAlbum.cover);
-      if (img) {
-        const colorThief = new ColorThief();
-        const colors = colorThief.getPalette(img, 2);
-        currentGradientColors = colors.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-        updateFullPlayerBackground();
-      }
+      // 앨범 아트 색상 추출 비동기 처리
+      getCachedImage(currentAlbum.cover).then(img => {
+         if (img) {
+            try {
+                const colorThief = new ColorThief();
+                const colors = colorThief.getPalette(img, 2);
+                currentGradientColors = colors.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+                updateFullPlayerBackground(); // 색상 적용
+            } catch (e) {
+                console.error("ColorThief 오류:", e);
+                // 기본 색상 유지 또는 대체 색상 설정
+            }
+         }
+      });
+
 
       updateMiniPlayer();
-      updateFullPlayer();
-      loadAndDisplayLyrics(track.lyrics);
+      updateFullPlayer(); // UI 즉시 업데이트
+      loadAndDisplayLyrics(track.lyrics); // 가사 로딩 시작
     }
+
 
     // Update Mini Player
     function updateMiniPlayer() {
@@ -576,19 +623,25 @@
     // Update Full Player
     function updateFullPlayer() {
       const fullPlayer = document.querySelector('.full-player');
-      if (fullPlayer.style.display === 'flex') {
-        fullPlayer.querySelector('.track-name').textContent = currentTrack.title;
-        fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
-        fullPlayer.querySelector('.full-player-album-art').src = currentAlbum.cover;
-        fullPlayer.querySelector('.full-player-album-art').style.opacity = 1;
-        document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶');
+      if (fullPlayer.style.display === 'flex') { // Check if full player is visible
+          fullPlayer.querySelector('.track-name').textContent = currentTrack.title;
+          fullPlayer.querySelector('.artist-name').textContent = currentArtist.name;
+          const fullArt = fullPlayer.querySelector('.full-player-album-art');
+          fullArt.src = currentAlbum.cover;
+          // 개선 사항 1: opacity를 직접 설정하여 애니메이션 없이 즉시 보이게 함
+          fullArt.style.opacity = 1;
+          document.querySelectorAll('.play-pause-button').forEach(button => button.textContent = isPlaying ? '⏸' : '▶');
       }
     }
+
 
     // Update Full Player Background
     function updateFullPlayerBackground() {
       const fullPlayer = document.querySelector('.full-player');
-      fullPlayer.style.background = `linear-gradient(to bottom right, ${currentGradientColors[0]}, ${currentGradientColors[1]})`;
+      // Ensure fullPlayer exists and gradient colors are valid
+      if (fullPlayer && currentGradientColors && currentGradientColors.length >= 2) {
+         fullPlayer.style.background = `linear-gradient(to bottom right, ${currentGradientColors[0]}, ${currentGradientColors[1]})`;
+      }
     }
 
     // Parse LRC Lyrics
@@ -621,25 +674,32 @@
         lineElement.textContent = line.text;
         lineElement.addEventListener('click', () => {
           audio.currentTime = parseFloat(line.time);
-          updateLyrics();
+          // updateLyrics(); // 클릭 시 즉시 업데이트 (선택 사항)
         });
         lyricsContainer.appendChild(lineElement);
       });
+       // 가사 로드 후 첫 업데이트 강제 실행
+       updateLyrics();
     }
+
 
     // Load and Display Lyrics
     async function loadAndDisplayLyrics(lyricsUrl) {
+      const lyricsContainer = document.querySelector('.lyrics-container');
+      lyricsContainer.innerHTML = '<div class="lyrics-line">가사 로딩 중...</div>'; // 로딩 표시
+      currentLyrics = []; // 기존 가사 초기화
+      highlightedLyric = null; // 하이라이트 초기화
+
       try {
         const response = await fetch(lyricsUrl);
         if (!response.ok) throw new Error(`가사 가져오기 실패: ${response.status}`);
         const text = await response.text();
         currentLyrics = parseLRC(text);
-        displayLyrics(currentLyrics);
-        updateLyrics();
+        displayLyrics(currentLyrics); // 파싱된 가사 표시
       } catch (error) {
         console.error('가사 로드 오류:', error);
-        document.querySelector('.lyrics-container').innerHTML = '<div class="lyrics-line">가사를 불러올 수 없습니다.</div>';
-        currentLyrics = [];
+        lyricsContainer.innerHTML = '<div class="lyrics-line">가사를 불러올 수 없습니다.</div>';
+        currentLyrics = []; // 에러 시 가사 없음 처리
       }
     }
 
@@ -649,10 +709,17 @@
       document.querySelector('.brand-title').addEventListener('click', goToHome);
 
       const miniPlayer = document.querySelector('.mini-player');
-      miniPlayer.addEventListener('click', () => currentTrack && showFullPlayer());
+      // MiniPlayer 클릭 시 fullPlayer 열기 (이벤트 버블링 방지 필요 시 e.target 체크)
+      miniPlayer.addEventListener('click', (e) => {
+          // 컨트롤 버튼 클릭 시에는 fullPlayer 열지 않음
+          if (!e.target.closest('.player-controls')) {
+             currentTrack && showFullPlayer();
+          }
+      });
+
 
       document.querySelectorAll('.player-controls').forEach(control => {
-        control.addEventListener('click', e => e.stopPropagation());
+        // control.addEventListener('click', e => e.stopPropagation()); // mini-player 클릭 이벤트와 분리
         control.querySelector('.play-pause-button').addEventListener('click', togglePlayPause);
         control.querySelector('.prev-button').addEventListener('click', playPreviousTrack);
         control.querySelector('.next-button').addEventListener('click', playNextTrack);
@@ -662,11 +729,11 @@
 
       const progressContainer = document.querySelector('.progress-container');
       progressContainer.addEventListener('mousedown', startDragging);
-      document.addEventListener('mousemove', drag);
-      document.addEventListener('mouseup', stopDragging);
+      document.addEventListener('mousemove', drag); // document에서 이벤트 리스닝해야 영역 벗어나도 동작
+      document.addEventListener('mouseup', stopDragging); // document에서 이벤트 리스닝해야 영역 벗어나도 동작
       progressContainer.addEventListener('touchstart', startDragging, { passive: false });
-      document.addEventListener('touchmove', drag, { passive: false });
-      document.addEventListener('touchend', stopDragging);
+      document.addEventListener('touchmove', drag, { passive: false }); // document에서 이벤트 리스닝
+      document.addEventListener('touchend', stopDragging); // document에서 이벤트 리스닝
 
       document.querySelector('.lyrics-container').addEventListener('scroll', handleLyricsScroll);
     }
@@ -677,67 +744,106 @@
       clearTimeout(lyricScrollTimeout);
       lyricScrollTimeout = setTimeout(() => {
         isUserScrollingLyrics = false;
-        updateLyrics(); // 스크롤 후 즉시 가사 업데이트
-      }, 500); // 딜레이를 500ms로 줄여 반응성 향상
+        // 스크롤 멈춘 후 약간의 지연 뒤 현재 시간에 맞는 가사로 스무스하게 이동 (선택적)
+        // updateLyrics(); // 필요 시 즉시 업데이트
+      }, 1500); // 사용자가 스크롤 멈춘 후 1.5초 뒤 자동 스크롤 재개
     }
 
     // Start Dragging Progress
     function startDragging(e) {
-      e.preventDefault();
+      e.preventDefault(); // 기본 동작 방지 (텍스트 선택 등)
       isDragging = true;
       document.querySelector('.progress-container').classList.add('dragging');
-      seekAudio(e);
+      seekAudio(e); // 클릭 즉시 해당 위치로 이동
     }
 
     // Drag Progress
     function drag(e) {
-      if (isDragging) seekAudio(e);
+      if (isDragging) {
+          seekAudio(e);
+      }
     }
 
     // Stop Dragging Progress
     function stopDragging() {
-      isDragging = false;
-      document.querySelector('.progress-container').classList.remove('dragging');
+       if (isDragging) { // 드래깅 중이었을 때만 실행
+           isDragging = false;
+           document.querySelector('.progress-container').classList.remove('dragging');
+           // seekAudio(e); // mouseup/touchend 위치로 마지막 업데이트 (이미 drag에서 처리됨)
+       }
     }
+
 
     // Setup Audio Event Listeners
     function setupAudioEventListeners() {
-      audio.addEventListener('timeupdate', () => requestAnimationFrame(updateProgress));
+      audio.addEventListener('timeupdate', () => {
+          // Throttle updateProgress calls for performance
+          requestAnimationFrame(updateProgress);
+      });
+      audio.addEventListener('loadedmetadata', () => {
+          // Update total time when metadata is loaded
+          updateProgress();
+      });
       audio.addEventListener('ended', playNextTrack);
+      // Handle potential loading errors
+      audio.addEventListener('error', (e) => {
+          console.error("오디오 에러 발생:", audio.error);
+          isPlaying = false;
+          updateMiniPlayer();
+          updateFullPlayer();
+          // Optionally show an error message to the user
+      });
     }
+
 
     // Handle Back Button Click
     function handleBack() {
-      const currentView = historyStack.pop();
-      const nextView = historyStack[historyStack.length - 1];
+      // full player가 열려있으면 먼저 닫음
+      const fullPlayer = document.querySelector('.full-player');
+      if (fullPlayer.style.display === 'flex') {
+          hideFullPlayer();
+          // historyStack 관리는 hideFullPlayer 내부에서 처리
+          return; // full player 닫기로 동작 종료
+      }
+
+      // full player가 닫혀있으면 이전 뷰로 이동
+      if (historyStack.length <= 1) return; // 최상위(아티스트 목록)면 동작 안함
+
+      historyStack.pop(); // 현재 뷰 제거
+      const previousView = historyStack[historyStack.length - 1];
+
       const artistsGrid = document.querySelector('.artists-grid');
       const artistSection = document.querySelector('.artist-section');
       const albumsGrid = document.querySelector('.albums-grid');
       const tracksList = document.querySelector('.tracks-list');
-      const fullPlayer = document.querySelector('.full-player');
       const backButton = document.querySelector('.back-button');
 
-      if (currentView === 'full-player') {
-        hideFullPlayer();
-      } else {
-        const activeElement = currentView === 'album' ? tracksList : artistSection;
-        activeElement.classList.add('back-fade');
-        setTimeout(() => {
-          if (currentView === 'album') {
-            tracksList.classList.remove('active', 'back-fade');
-            albumsGrid.classList.add('active');
-            backButton.style.display = 'block';
-          } else if (currentView === 'artist') {
-            artistSection.classList.remove('active', 'back-fade');
-            albumsGrid.classList.remove('active');
-            artistsGrid.classList.remove('hidden');
-            artistsGrid.style.display = 'grid';
-            backButton.style.display = 'none';
-          }
-          if (historyStack.length === 1 && nextView === 'artists') goToHome();
-        }, 300);
+      // 모든 뷰 숨김 처리 (애니메이션 위해)
+      artistSection.classList.remove('active');
+      albumsGrid.classList.remove('active');
+      tracksList.classList.remove('active');
+      artistsGrid.classList.add('hidden'); // display: none 처리
+      // artistsGrid.style.display = 'none';
+
+      // 이전 뷰에 따라 표시할 요소 결정 및 애니메이션 적용
+      if (previousView === 'artists') {
+          artistsGrid.classList.remove('hidden');
+          artistsGrid.style.display = 'grid'; // grid로 다시 설정
+          backButton.style.display = 'none';
+          // artistsGrid에 fade-in 애니메이션 추가 가능
+      } else if (previousView === 'artist') {
+          artistSection.classList.add('active');
+          albumsGrid.classList.add('active'); // 아티스트 뷰에서는 앨범 그리드도 활성화
+          backButton.style.display = 'block';
+           // artistSection에 fade-in 애니메이션 추가 가능
+      } else if (previousView === 'album') {
+          artistSection.classList.add('active'); // 앨범의 상위는 아티스트 섹션
+          tracksList.classList.add('active'); // 트랙 리스트 활성 상태 유지
+          backButton.style.display = 'block';
+          // tracksList에 fade-in 애니메이션 추가 가능
       }
     }
+
 
     // Go to Home Page
     function goToHome() {
@@ -745,21 +851,27 @@
       document.querySelector('.albums-grid').classList.remove('active');
       document.querySelector('.tracks-list').classList.remove('active');
       document.querySelector('.full-player').style.display = 'none';
-      document.querySelector('.artists-grid').classList.remove('hidden');
-      document.querySelector('.artists-grid').style.display = 'grid';
+      const artistsGrid = document.querySelector('.artists-grid');
+      artistsGrid.classList.remove('hidden');
+      artistsGrid.style.display = 'grid'; // Ensure it's grid
       document.querySelector('.back-button').style.display = 'none';
-      document.querySelector('.artist-video').style.display = 'block';
-      historyStack = ['artists'];
+      // document.querySelector('.artist-video').style.display = 'block'; // 홈에서는 비디오 불필요
+      historyStack = ['artists']; // 히스토리 초기화
+       // 필요하다면 현재 재생 중인 음악 정지
+       // audio.pause(); isPlaying = false; updateMiniPlayer();
     }
 
-    // Show Full Player with Improved Album Art Animation
+
+    // Show Full Player
+    // 개선 사항 1: 앨범 아트 확장 애니메이션 제거
     function showFullPlayer() {
       const fullPlayer = document.querySelector('.full-player');
       const miniPlayer = document.querySelector('.mini-player');
-      const miniArt = miniPlayer.querySelector('.mini-player-album-art');
+      // const miniArt = miniPlayer.querySelector('.mini-player-album-art'); // 클론 불필요
       const fullArt = fullPlayer.querySelector('.full-player-album-art');
 
-      // Clone the mini-player album art for animation
+      // Clone 및 관련 로직 제거
+      /*
       const cloneArt = miniArt.cloneNode(true);
       cloneArt.style.position = 'fixed';
       const miniRect = miniArt.getBoundingClientRect();
@@ -768,12 +880,21 @@
       cloneArt.style.width = `${miniRect.width}px`;
       cloneArt.style.height = `${miniRect.height}px`;
       document.body.appendChild(cloneArt);
+      */
 
+      // Full Player 즉시 표시 (fade-in 애니메이션 적용)
+      fullPlayer.classList.remove('fade-out'); // 이전 fade-out 제거
       fullPlayer.classList.add('fade-in');
       fullPlayer.style.display = 'flex';
-      updateFullPlayer();
-      updateFullPlayerBackground();
+      updateFullPlayer(); // 내부 정보 업데이트 (앨범아트 src 포함)
+      updateFullPlayerBackground(); // 배경 업데이트
 
+      // Full Player 앨범 아트 즉시 표시 (opacity 1, CSS에서 처리)
+      fullArt.style.opacity = 1; // 명시적으로 설정 (CSS 기본값이 1이므로 불필요할 수 있음)
+      // fullArt.style.animation = ''; // 애니메이션 제거 (CSS에서 제거됨)
+
+      // 클론 애니메이션 관련 로직 제거
+      /*
       const fullRect = fullArt.getBoundingClientRect();
       cloneArt.style.transition = 'all 0.5s ease-out';
       cloneArt.style.left = `${fullRect.left}px`;
@@ -782,94 +903,168 @@
       cloneArt.style.height = `${fullRect.height}px`;
       cloneArt.style.opacity = '0';
 
-      fullArt.style.opacity = 0;
-      fullArt.style.animation = 'albumArtExpand 0.5s ease-out forwards';
       setTimeout(() => {
-        fullArt.style.opacity = 1;
-        document.body.removeChild(cloneArt);
-      }, 500);
+        // fullArt.style.opacity = 1; // 이미 즉시 표시
+        if (document.body.contains(cloneArt)) { // 안전하게 제거
+            document.body.removeChild(cloneArt);
+        }
+      }, 500); // 클론 제거 시간 (fade-out 시간과 맞춤)
+      */
 
+      // Mini Player 숨기기 (fade-out 애니메이션)
+      miniPlayer.classList.remove('mini-player-enter');
       miniPlayer.classList.add('fade-out');
       setTimeout(() => {
-        miniPlayer.style.display = 'none';
-        miniPlayer.classList.remove('fade-out');
-      }, 300);
+        miniPlayer.style.display = 'none'; // 애니메이션 후 display none
+        miniPlayer.classList.remove('fade-out'); // 클래스 제거
+      }, 300); // fade-out 시간과 맞춤 (CSS transition 시간)
 
       if (historyStack[historyStack.length - 1] !== 'full-player') historyStack.push('full-player');
     }
 
+
     // Hide Full Player
     function hideFullPlayer() {
       const fullPlayer = document.querySelector('.full-player');
+      const miniPlayer = document.querySelector('.mini-player');
+
+      // Full Player 숨기기 (fade-out 애니메이션)
+      fullPlayer.classList.remove('fade-in');
       fullPlayer.classList.add('fade-out');
       setTimeout(() => {
-        fullPlayer.style.display = 'none';
-        fullPlayer.classList.remove('fade-out');
-        const miniPlayer = document.querySelector('.mini-player');
-        miniPlayer.style.display = 'flex';
-        miniPlayer.classList.add('mini-player-enter');
-      }, 300);
-      if (historyStack[historyStack.length - 1] === 'full-player') historyStack.pop();
+          fullPlayer.style.display = 'none'; // 애니메이션 후 display none
+          fullPlayer.classList.remove('fade-out'); // 클래스 제거
+
+          // Mini Player 표시 (애니메이션) - full player가 완전히 사라진 후
+          if (currentTrack) { // 재생 중인 트랙이 있을 때만 표시
+              miniPlayer.style.display = 'flex';
+              miniPlayer.classList.remove('fade-out');
+              miniPlayer.classList.add('mini-player-enter');
+              // mini-player-enter 애니메이션 후 클래스 제거 (선택적)
+              setTimeout(() => miniPlayer.classList.remove('mini-player-enter'), 300);
+          }
+      }, 300); // fade-out 시간과 맞춤 (CSS transition 시간)
+
+      // 히스토리 스택 관리
+      if (historyStack[historyStack.length - 1] === 'full-player') {
+          historyStack.pop();
+      }
     }
+
 
     // Toggle Play/Pause
     function togglePlayPause() {
+      if (!currentTrack) return; // 재생할 트랙 없으면 무시
       if (audio.paused) {
-        audio.play();
-        isPlaying = true;
+        audio.play().then(() => {
+            isPlaying = true;
+            updatePlayerUI();
+        }).catch(error => {
+            console.error("재생 시작 오류:", error);
+            isPlaying = false; // 에러 시 상태 반영
+            updatePlayerUI();
+        });
       } else {
         audio.pause();
         isPlaying = false;
+        updatePlayerUI();
       }
-      updateMiniPlayer();
-      updateFullPlayer();
     }
+
+    // Helper to update UI after play/pause
+    function updatePlayerUI() {
+        updateMiniPlayer();
+        updateFullPlayer();
+    }
+
 
     // Play Previous Track
     function playPreviousTrack() {
-      const tracks = currentAlbum.tracks;
-      const currentIndex = tracks.findIndex(t => t === currentTrack);
-      playTrack(tracks[currentIndex > 0 ? currentIndex - 1 : tracks.length - 1]);
+       if (!currentAlbum || !currentTrack) return;
+       const tracks = currentAlbum.tracks;
+       if (tracks.length === 0) return;
+       const currentIndex = tracks.findIndex(t => t === currentTrack);
+       const prevIndex = currentIndex > 0 ? currentIndex - 1 : tracks.length - 1;
+       playTrack(tracks[prevIndex]);
     }
+
 
     // Play Next Track
     function playNextTrack() {
-      const tracks = currentAlbum.tracks;
-      const currentIndex = tracks.findIndex(t => t === currentTrack);
-      playTrack(tracks[currentIndex < tracks.length - 1 ? currentIndex + 1 : 0]);
+       if (!currentAlbum || !currentTrack) return;
+       const tracks = currentAlbum.tracks;
+       if (tracks.length === 0) return;
+       const currentIndex = tracks.findIndex(t => t === currentTrack);
+       const nextIndex = currentIndex < tracks.length - 1 ? currentIndex + 1 : 0;
+       playTrack(tracks[nextIndex]);
     }
+
 
     // Seek Audio
     function seekAudio(e) {
-      if (!isDragging || isNaN(audio.duration)) return;
+      if (isNaN(audio.duration)) return; // 총 시간이 유효하지 않으면 무시
+
       const container = document.querySelector('.progress-container');
       const rect = container.getBoundingClientRect();
+      // 터치 이벤트와 마우스 이벤트 모두 처리
       const clientX = e.touches ? e.touches[0].clientX : e.clientX;
       let percent = (clientX - rect.left) / rect.width;
-      percent = Math.max(0, Math.min(1, percent));
-      audio.currentTime = percent * audio.duration;
-      updateProgress();
+      percent = Math.max(0, Math.min(1, percent)); // 0과 1 사이 값으로 제한
+
+      const seekTime = percent * audio.duration;
+       // 현재 시간과 너무 가까우면 업데이트 방지 (선택적 최적화)
+       // if (Math.abs(audio.currentTime - seekTime) > 0.1) {
+           audio.currentTime = seekTime;
+           updateProgress(); // 즉시 프로그레스바 업데이트
+       // }
     }
+
 
     // Update Progress Bar and Time Display
     function updateProgress() {
-      if (isNaN(audio.duration)) return;
-      const percentage = (audio.currentTime / audio.duration) * 100;
+      if (isNaN(audio.duration)) {
+         // 로드 안됐을 때 기본값 표시
+         document.querySelector('.current-time').textContent = formatTime(0);
+         document.querySelector('.total-time').textContent = formatTime(0);
+         document.querySelector('.progress').style.width = '0%';
+         document.querySelector('.progress-knob').style.left = '0px';
+         return;
+      }
+
+      const currentTime = audio.currentTime;
+      const duration = audio.duration;
+      const percentage = (currentTime / duration) * 100;
+
       const progress = document.querySelector('.progress');
       const knob = document.querySelector('.progress-knob');
+      const progressContainer = document.querySelector('.progress-container');
+
       progress.style.width = `${percentage}%`;
+
+      // 드래그 중이 아닐 때만 노브 위치 직접 업데이트
       if (!isDragging) {
-        const progressWidth = document.querySelector('.progress-container').offsetWidth;
-        knob.style.left = `${(percentage / 100) * progressWidth}px`;
+         const progressWidth = progressContainer.offsetWidth;
+         // 노브 크기의 절반을 빼서 중앙 정렬 효과 (선택적)
+         const knobOffset = knob.offsetWidth / 2;
+         let knobLeft = (percentage / 100) * progressWidth - knobOffset;
+         knobLeft = Math.max(0, Math.min(knobLeft, progressWidth - knob.offsetWidth)); // 노브가 바 밖으로 나가지 않도록
+         knob.style.left = `${knobLeft}px`;
       }
-      document.querySelector('.current-time').textContent = formatTime(audio.currentTime);
-      document.querySelector('.total-time').textContent = formatTime(audio.duration);
+
+
+      document.querySelector('.current-time').textContent = formatTime(currentTime);
+      document.querySelector('.total-time').textContent = formatTime(duration);
+
+      // 가사 업데이트는 timeupdate에서 직접 호출하지 않고,
+      // requestAnimationFrame 내에서 필요한 경우에만 호출하도록 최적화 가능
+      // 여기서는 일단 호출 유지
       updateLyrics();
     }
 
+
     // Format Time
     function formatTime(seconds) {
-      if (isNaN(seconds)) return '0:00';
+      if (isNaN(seconds) || seconds < 0) return '0:00'; // 유효하지 않은 값 처리
       const minutes = Math.floor(seconds / 60);
       const remainingSeconds = Math.floor(seconds % 60);
       return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
@@ -877,26 +1072,54 @@
 
     // Update Lyrics Highlighting
     function updateLyrics() {
-      if (!currentLyrics.length) return;
-      const currentTime = audio.currentTime;
-      let currentLyricIndex = currentLyrics.findIndex((lyric, i) => 
-        currentTime >= lyric.time && (i === currentLyrics.length - 1 || currentTime < currentLyrics[i + 1].time)
-      );
+        if (!currentLyrics.length || !audio) return; // 가사 없거나 오디오 객체 없으면 종료
 
-      if (highlightedLyric) highlightedLyric.classList.remove('active');
-      if (currentLyricIndex >= 0) {
-        const lyricLine = document.querySelector(`.lyrics-line[data-time="${currentLyrics[currentLyricIndex].time}"]`);
-        if (lyricLine) {
-          lyricLine.classList.add('active');
-          highlightedLyric = lyricLine;
-          if (!isUserScrollingLyrics) {
-            const container = document.querySelector('.lyrics-container');
-            const targetPosition = lyricLine.offsetTop - (container.offsetHeight / 2) + (lyricLine.offsetHeight / 2);
-            container.scrollTo({ top: targetPosition, behavior: 'smooth' });
-          }
+        const currentTime = audio.currentTime;
+        let activeLyricIndex = -1;
+
+        // 현재 시간에 맞는 가사 인덱스 찾기 (약간의 오차 허용 가능)
+        for (let i = 0; i < currentLyrics.length; i++) {
+            const nextTime = (i + 1 < currentLyrics.length) ? currentLyrics[i + 1].time : Infinity;
+            // 현재 가사 시작 시간 <= 현재 재생 시간 < 다음 가사 시작 시간
+            if (currentLyrics[i].time <= currentTime + 0.2 && currentTime < nextTime - 0.2) {
+                 activeLyricIndex = i;
+                 break;
+            }
         }
-      }
+
+        const allLyricLines = document.querySelectorAll('.lyrics-container .lyrics-line');
+
+        // 이전에 활성화된 가사 비활성화
+        if (highlightedLyric && !highlightedLyric.classList.contains(`lyric-index-${activeLyricIndex}`)) {
+            highlightedLyric.classList.remove('active');
+            highlightedLyric = null; // 참조 제거
+        }
+
+        // 새로운 가사 활성화 및 스크롤
+        if (activeLyricIndex !== -1) {
+            const activeLine = allLyricLines[activeLyricIndex];
+            // CSS 클래스로 인덱스 부여하여 정확히 타겟팅 (선택적이지만 안전)
+            // allLyricLines.forEach((line, index) => line.classList.add(`lyric-index-${index}`));
+            // const activeLine = document.querySelector(`.lyrics-line.lyric-index-${activeLyricIndex}`);
+
+            if (activeLine && !activeLine.classList.contains('active')) {
+                activeLine.classList.add('active');
+                highlightedLyric = activeLine; // 현재 활성화된 가사 참조
+
+                // 사용자가 직접 스크롤 중이 아닐 때만 자동 스크롤
+                if (!isUserScrollingLyrics) {
+                    const container = document.querySelector('.lyrics-container');
+                    // 가사 라인을 컨테이너 중앙 부근으로 스크롤
+                    const targetScrollTop = activeLine.offsetTop - (container.offsetHeight / 2) + (activeLine.offsetHeight / 2);
+                    container.scrollTo({
+                        top: targetScrollTop,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
     }
+
 
     // Initialize the Player
     document.addEventListener('DOMContentLoaded', initializeMusicPlayer);
