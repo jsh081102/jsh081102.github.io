@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotlight Search</title>
+    <style>
+        /* Basic Reset & Font Setup */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light Mode Variables */
+            --bg-gradient-start: #f0f5ff;
+            --bg-gradient-end: #ffe0f0;
+            --container-bg: rgba(255, 255, 255, 0.7);
+            --text-color-primary: #1d1d1f;
+            --text-color-secondary: #6e6e73;
+            --search-bg: #ffffff;
+            --search-border: rgba(0, 0, 0, 0.1);
+            --search-placeholder: #a1a1a6;
+            --widget-bg: #f2f2f7;
+            --widget-text: #1d1d1f;
+            --apple-logo-color: #000000;
+
+            /* Will be overridden by dark mode media query */
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark Mode Variables */
+                --bg-gradient-start: #2c3e50;
+                --bg-gradient-end: #4a235a;
+                --container-bg: rgba(40, 40, 45, 0.75);
+                --text-color-primary: #f5f5f7;
+                --text-color-secondary: #a1a1a6;
+                --search-bg: #3a3a3c;
+                --search-border: rgba(255, 255, 255, 0.1);
+                --search-placeholder: #8e8e93;
+                --widget-bg: #2c2c2e;
+                --widget-text: #f5f5f7;
+                --apple-logo-color: #ffffff;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top */
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            overflow: hidden; /* Prevent scrollbars from body */
+            color: var(--text-color-primary);
+            padding-top: 10vh; /* Push content down a bit */
+        }
+
+        .background-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            z-index: -1; /* Place it behind content */
+        }
+
+        .spotlight-container {
+            width: 100%;
+            max-width: 680px; /* Max width similar to examples */
+            padding: 20px;
+            background-color: var(--container-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%); /* Safari support */
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Header: Spotlight Title and Date */
+        .spotlight-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .spotlight-title {
+            font-size: 32px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px; /* Space between logo and text */
+        }
+
+        .apple-logo {
+             /* Using a simple text representation */
+            font-size: 28px; /* Adjust size as needed */
+            font-weight: bold;
+            color: var(--apple-logo-color);
+            /* You could replace this with an SVG for better accuracy */
+            /* Example SVG: <svg ...> */
+        }
+
+
+        .spotlight-date {
+            font-size: 13px;
+            color: var(--text-color-secondary);
+            margin-top: 4px;
+        }
+
+        /* Search Bar */
+        .search-form {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background-color: var(--search-bg);
+            border-radius: 12px;
+            padding: 10px 15px;
+            border: 1px solid var(--search-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-icon {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            opacity: 0.6;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            font-size: 16px;
+            color: var(--text-color-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--search-placeholder);
+        }
+
+        .search-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px; /* Space between icons */
+        }
+
+        .mic-icon, .visual-search-icon {
+             /* Using simple text icons */
+             font-size: 18px;
+             cursor: pointer;
+             color: var(--text-color-secondary);
+             opacity: 0.8;
+             /* Replace with SVGs or icon font for better visuals */
+        }
+
+        /* Initial Content Area */
+        #initial-content {
+            width: 100%;
+        }
+
+        .greeting {
+            font-size: 22px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: var(--text-color-primary);
+        }
+
+        /* Weather Widget Example */
+        .weather-widget {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--widget-bg);
+            border-radius: 12px;
+            padding: 12px 15px;
+            width: 100%;
+        }
+
+        .weather-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weather-icon {
+            width: 36px;
+            height: 36px;
+            /* Placeholder background color */
+            background-color: #64b5f6; /* Blueish like weather icon */
+            border-radius: 8px;
+             /* Add a weather icon here (e.g., ☀️, ☁️, or an SVG/image) */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px; /* Adjust size of emoji icon */
+            color: white; /* Icon color */
+        }
+
+        .weather-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .weather-location {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--widget-text);
+        }
+
+        .weather-condition {
+            font-size: 13px;
+            color: var(--text-color-secondary);
+        }
+
+        .weather-temp {
+            font-size: 36px;
+            font-weight: 300;
+            color: var(--widget-text);
+            letter-spacing: -1px; /* Slight tightening */
+        }
+
+        /* Top Right Icons (Placeholder) */
+        .top-right-icons {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            gap: 15px;
+            z-index: 10; /* Above background */
+        }
+
+        .icon-placeholder {
+             /* Simple representation */
+            width: 24px;
+            height: 24px;
+            background-color: rgba(128, 128, 128, 0.5);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- Background element for consistent gradient -->
+    <div class="background-blur"></div>
+
+     <!-- Top Right Placeholder Icons -->
+     <div class="top-right-icons">
+        <div class="icon-placeholder"></div> <!-- Placeholder for grid icon -->
+        <div class="icon-placeholder"></div> <!-- Placeholder for user icon -->
+    </div>
+
+
+    <div class="spotlight-container">
+        <header class="spotlight-header">
+            <div class="spotlight-title">
+                <span class="apple-logo"></span>Spotlight
+            </div>
+            <div class="spotlight-date" id="current-date">Wednesday, January 14</div> <!-- Date will be updated by JS -->
+        </header>
+
+        <form class="search-form" id="search-form" action="https://www.google.com/search" method="GET" target="_blank">
+            <div class="search-bar">
+                <!-- Magnifying glass icon (SVG) -->
+                <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                    <path fill="currentColor" d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/>
+                </svg>
+                <input type="search" class="search-input" id="search-input" name="q" placeholder="Search" required>
+                <div class="search-actions">
+                    <span class="mic-icon">🎤</span> <!-- Placeholder Microphone -->
+                    <span class="visual-search-icon">📷</span> <!-- Placeholder Visual Search -->
+                </div>
+            </div>
+            <!-- Hidden submit button to allow Enter key submission -->
+            <button type="submit" style="display: none;"></button>
+        </form>
+
+        <div id="initial-content">
+            <div class="greeting">Good Morning</div>
+            <div class="weather-widget">
+                <div class="weather-info">
+                    <div class="weather-icon">
+                        <!-- Replace with actual icon if desired -->
+                        🌤️
+                    </div>
+                    <div class="weather-details">
+                        <div class="weather-location">Cupertino Weather</div>
+                        <div class="weather-condition">Cupertino, CA - Clear</div>
+                    </div>
+                </div>
+                <div class="weather-temp">50°</div>
+            </div>
+             <!-- Add more widgets or suggestions here if desired -->
+        </div>
+
+         <!-- Note: Displaying rich results like in the examples (Porter Robinson, Palestine)
+              within this single page would require fetching and parsing data from
+              various APIs (Wikipedia, Music, Maps etc.) and is significantly more complex
+              than just redirecting to Google. This example focuses on the initial
+              Spotlight look and the Google search redirect.
+         -->
+
+    </div>
+
+    <script>
+        // Update Date Dynamically
+        function updateDate() {
+            const dateElement = document.getElementById('current-date');
+            if (dateElement) {
+                const now = new Date();
+                const options = { weekday: 'long', month: 'long', day: 'numeric' };
+                // Using a specific locale for consistent formatting, e.g., 'en-US'
+                // You might adjust this based on desired language/region
+                dateElement.textContent = now.toLocaleDateString('en-US', options);
+            }
+        }
+
+        // Set the date when the page loads
+        document.addEventListener('DOMContentLoaded', updateDate);
+
+        // --- Search Form Handling ---
+        // The form itself handles the redirection via its action attribute.
+        // You could add JS here if you wanted to do something *before* submitting,
+        // like showing a loading state or hiding the initial content, but for a
+        // simple redirect, the default form behavior is sufficient.
+
+        // Example: Clear placeholder on focus, add it back on blur if empty
+        const searchInput = document.getElementById('search-input');
+        const placeholderText = searchInput.placeholder;
+
+        searchInput.addEventListener('focus', () => {
+            searchInput.placeholder = '';
+        });
+
+        searchInput.addEventListener('blur', () => {
+            if (searchInput.value === '') {
+                searchInput.placeholder = placeholderText;
+            }
+        });
+
+    </script>
+</body>
+</html>
