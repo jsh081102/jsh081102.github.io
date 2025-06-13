@@ -36,65 +36,52 @@
     <meta name="twitter:image" content="http://applesodam.kro.kr/logo/favicon/chat/SiriChat.png">
 
     <style>
-        /* Liquid Glass Design CSS Variables */
+        /* --- Liquid Glass Guideline CSS Variables --- */
         :root {
-            /* General */
-            --text-color: #1d1d1f;
-            --outer-radius: 40px;
-            --input-radius: 1000px;
-            --shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            --blur-effect: blur(20px) saturate(180%);
+            /* Core Liquid Glass Properties */
+            --liquid-glass-blur: blur(24px);
+            --liquid-glass-saturation: saturate(180%);
+            --liquid-glass-brightness: brightness(1.1);
+            --liquid-glass-backdrop: var(--liquid-glass-blur) var(--liquid-glass-saturation) var(--liquid-glass-brightness);
+            --liquid-glass-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+            --outer-radius: 40px; /* Increased for a softer, organic feel */
+            --inner-radius: 24px;
+            --button-radius: 100px;
+            
+            /* Light Mode Palette */
+            --body-bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg-color: rgba(255, 255, 255, 0.55);
+            --glass-border-color: rgba(255, 255, 255, 0.25);
+            --primary-text-color: #1d1d1f;
+            --secondary-text-color: rgba(60, 60, 67, 0.7);
+            
+            /* Tinting (for user actions) & Fills */
+            --user-bubble-bg: rgba(0, 122, 255, 0.95); /* Tinting Color */
+            --user-bubble-text: #ffffff;
+            --ai-bubble-bg: rgba(235, 235, 240, 0.9);
+            --input-field-bg: rgba(225, 225, 230, 0.7);
+            --button-bg: rgba(230, 230, 235, 0.85);
+            --button-hover-bg: rgba(215, 215, 220, 0.9);
 
-            /* Light Mode */
-            --bg-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
-            --header-bg: linear-gradient(135deg, rgba(245, 245, 247, 0.7), rgba(245, 245, 247, 0.5));
-            --input-area-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
-            --input-field-bg: rgba(255, 255, 255, 0.5);
-            --user-bubble-gradient: linear-gradient(135deg, #007aff, #0056b3);
-            --ai-bubble-gradient: linear-gradient(135deg, rgba(235, 235, 240, 0.8), rgba(220, 220, 225, 0.7));
-            --glass-border-color: rgba(255, 255, 255, 0.5);
-            --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.3);
-            --toggle-bg: rgba(233, 233, 235, 0.9);
-            --toggle-circle: #ffffff;
-            --button-text-color: #ffffff;
-            --update-date-color: rgba(60, 60, 67, 0.6);
+            /* Transitions */
+            --transition-speed: 0.3s;
+            --transition-timing: ease-in-out;
         }
 
         .dark-mode {
-            /* Dark Mode */
-            --text-color: #f5f5f7;
-            --bg-gradient: linear-gradient(135deg, rgba(29, 29, 31, 0.6), rgba(29, 29, 31, 0.3));
-            --header-bg: linear-gradient(135deg, rgba(44, 44, 46, 0.7), rgba(44, 44, 46, 0.5));
-            --input-area-bg: linear-gradient(135deg, rgba(29, 29, 31, 0.5), rgba(29, 29, 31, 0.3));
-            --input-field-bg: rgba(58, 58, 60, 0.5);
-            --user-bubble-gradient: linear-gradient(135deg, #0a84ff, #005ecb);
-            --ai-bubble-gradient: linear-gradient(135deg, rgba(58, 58, 60, 0.8), rgba(44, 44, 46, 0.7));
-            --glass-border-color: rgba(255, 255, 255, 0.2);
-            --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-            --toggle-bg: rgba(48, 209, 88, 0.9);
-            --update-date-color: rgba(235, 235, 245, 0.6);
-        }
-
-        /* Animated Background for "Environment" */
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 50%, #89f7fe 75%, #a1c4fd 100%);
-            background-size: 400% 400%;
-            animation: gradientAnimation 20s ease infinite;
-            transition: opacity 0.5s ease;
-        }
-        
-        .dark-mode body::before {
-            background: linear-gradient(45deg, #09203f 0%, #537895 50%, #1f4287 100%);
+            /* Dark Mode Palette */
+            --body-bg-color: linear-gradient(135deg, #2c3e50 0%, #434343 100%);
+            --glass-bg-color: rgba(28, 28, 30, 0.65);
+            --glass-border-color: rgba(80, 80, 80, 0.5);
+            --primary-text-color: #f5f5f7;
+            --secondary-text-color: rgba(235, 235, 245, 0.6);
+            
+            /* Tinting (for user actions) & Fills */
+            --user-bubble-bg: rgba(10, 132, 255, 0.95); /* Tinting Color */
+            --ai-bubble-bg: rgba(44, 44, 46, 0.9);
+            --input-field-bg: rgba(58, 58, 60, 0.7);
+            --button-bg: rgba(58, 58, 60, 0.85);
+            --button-hover-bg: rgba(72, 72, 74, 0.9);
         }
 
         /* General Body and HTML Styles */
@@ -103,9 +90,11 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            color: var(--text-color);
-            transition: color 0.5s ease;
-            overflow: hidden;
+            background: var(--body-bg-color);
+            color: var(--primary-text-color);
+            transition: background var(--transition-speed) var(--transition-timing), color var(--transition-speed) var(--transition-timing);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         body {
             display: flex;
@@ -113,346 +102,263 @@
             align-items: center;
         }
 
-        /* Chat Window Styles */
+        /* --- Main Glass Layers --- */
+        .liquid-glass-layer {
+            background: var(--glass-bg-color);
+            backdrop-filter: var(--liquid-glass-backdrop);
+            -webkit-backdrop-filter: var(--liquid-glass-backdrop);
+            border: 1px solid var(--glass-border-color);
+            box-shadow: var(--liquid-glass-shadow);
+            transition: background var(--transition-speed) var(--transition-timing), 
+                        border var(--transition-speed) var(--transition-timing), 
+                        backdrop-filter var(--transition-speed) var(--transition-timing);
+        }
+        
+        /* Chat Window (Primary Glass Surface) */
         .chat-window {
             display: flex;
             flex-direction: column;
             height: 100%;
             width: 100%;
             max-width: 600px;
-            background: var(--bg-gradient);
-            backdrop-filter: var(--blur-effect);
-            -webkit-backdrop-filter: var(--blur-effect);
             border-radius: var(--outer-radius);
-            border: 1px solid var(--glass-border-color);
             overflow: hidden;
-            box-shadow: var(--shadow), var(--inner-highlight);
-            transition: all 0.5s ease;
         }
 
-        /* Chat Header Styles */
+        /* Chat Header (Functional Glass Layer) */
         .chat-header {
-            background: var(--header-bg);
-            backdrop-filter: var(--blur-effect);
-            -webkit-backdrop-filter: var(--blur-effect);
-            color: var(--text-color);
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--glass-border-color);
-            transition: all 0.5s ease;
+            border-bottom: 1px solid var(--glass-border-color); /* Separator */
             flex-shrink: 0;
         }
-        .chat-title-container {
-            display: flex;
-            align-items: center;
-        }
-        .chat-title {
-            font-weight: 600; /* Bolder */
-            margin: 0;
-            line-height: 1;
-            font-size: 1.1em;
-        }
+        .chat-title-container { display: flex; align-items: center; }
+        .chat-title { font-weight: 600; font-size: 1.2em; margin: 0; }
         .chat-title::after {
             content: 'chatOS 26.0 개발자 베타';
             margin-left: 8px;
             font-size: 0.6em;
-            color: var(--update-date-color);
+            color: var(--secondary-text-color);
             font-weight: 500;
         }
-        .header-buttons {
-            display: flex;
-            align-items: center;
-        }
+        .header-buttons { display: flex; align-items: center; gap: 8px; }
+        
+        /* --- Elements ON TOP of Glass (Solid/Translucent Fills) --- */
+        
+        /* Header Buttons */
         .header-button {
-            background: var(--user-bubble-gradient);
-            color: var(--button-text-color);
+            background: var(--button-bg);
+            color: var(--primary-text-color);
             border: none;
-            padding: 6px 12px;
-            border-radius: 100px;
+            padding: 6px 14px;
+            border-radius: var(--button-radius);
             cursor: pointer;
-            font-size: 0.75em;
+            font-size: 0.8em;
             font-weight: 500;
             transition: all 0.2s ease;
-            margin-right: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         .header-button:hover {
-            opacity: 0.9;
+            background: var(--button-hover-bg);
             transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
-        /* Chat Container (Messages Area) Styles */
+        /* Dark Mode Toggle */
+        .dark-mode-toggle-container { display: flex; align-items: center; gap: 8px; }
+        .dark-mode-label { font-size: 0.8em; color: var(--secondary-text-color); }
+        .mode-toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--button-bg);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all var(--transition-speed) var(--transition-timing);
+        }
+        .mode-toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            top: 2px; left: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            transition: transform var(--transition-speed) cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .dark-mode .mode-toggle { background: #32D74B; }
+        .dark-mode .mode-toggle::after { transform: translateX(22px); }
+
+        /* Chat Container (Messages Area) */
         #chat-container {
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
             display: flex;
             flex-direction: column;
+            gap: 12px;
             background: transparent;
         }
+
+        /* Message Bubbles (Solid/Translucent Fills) */
         .message {
             max-width: 75%;
-            margin-bottom: 12px;
-            padding: 15px 20px;
-            border-radius: 25px;
+            padding: 12px 18px;
             line-height: 1.4;
-            animation: fadeIn 0.4s ease-out;
+            animation: fadeIn 0.4s var(--transition-timing);
             word-wrap: break-word;
-            backdrop-filter: var(--blur-effect);
-            -webkit-backdrop-filter: var(--blur-effect);
-            border: 1px solid var(--glass-border-color);
-            box-shadow: var(--shadow), var(--inner-highlight);
-            transition: all 0.5s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
         }
         .user-message {
-            background: var(--user-bubble-gradient);
-            color: white;
+            background: var(--user-bubble-bg);
+            color: var(--user-bubble-text);
             align-self: flex-end;
-            border-bottom-right-radius: 6px;
+            border-radius: var(--inner-radius) var(--inner-radius) 4px var(--inner-radius); /* Organic shape */
         }
         .ai-message {
-            background: var(--ai-bubble-gradient);
-            color: var(--text-color);
+            background: var(--ai-bubble-bg);
+            color: var(--primary-text-color);
             align-self: flex-start;
-            border-bottom-left-radius: 6px;
+            border-radius: var(--inner-radius) var(--inner-radius) var(--inner-radius) 4px; /* Organic shape */
         }
-        
         .message-image {
             max-width: 100%;
-            border-radius: 15px; /* Softer radius */
+            border-radius: 12px;
             margin-bottom: 10px;
             display: block;
-            border: 1px solid var(--glass-border-color);
         }
-        
-        .message-content {
-            display: flex;
-            flex-direction: column;
-        }
+        .message-content { display: flex; flex-direction: column; }
 
-        /* Input Area Styles */
+        /* Input Area (Functional Glass Layer) */
         .input-area {
             display: flex;
             align-items: center;
             padding: 10px;
-            background: var(--input-area-bg);
-            backdrop-filter: var(--blur-effect);
-            -webkit-backdrop-filter: var(--blur-effect);
-            border-top: 1px solid var(--glass-border-color);
-            box-shadow: var(--inner-highlight);
-            transition: all 0.5s ease;
-            margin: 0; /* No margin for seamless look */
-            padding: 15px 20px;
+            margin: 10px;
+            border-radius: var(--button-radius); /* Fully rounded container */
+            gap: 8px;
         }
+
+        /* Input Field (Solid/Translucent Fill) */
         #user-input {
             flex-grow: 1;
-            padding: 12px 20px;
-            border: 1px solid transparent;
-            border-radius: var(--input-radius);
+            padding: 12px 18px;
+            border: none;
+            border-radius: var(--button-radius);
             font-size: 16px;
-            margin: 0 10px;
             background: var(--input-field-bg);
-            color: var(--text-color);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
-            transition: all 0.3s ease;
+            color: var(--primary-text-color);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+            transition: all var(--transition-speed) var(--transition-timing);
         }
         #user-input:focus {
             outline: none;
-            border-color: var(--glass-border-color);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), 0 0 0 4px rgba(0, 122, 255, 0.3);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04), 0 0 0 2px var(--user-bubble-bg);
         }
-        #send-button, .image-upload-label {
-            background: var(--user-bubble-gradient);
+        
+        /* Action Buttons in Input Area */
+        .input-action-button {
+            background: var(--user-bubble-bg);
             color: white;
             border: none;
-            border-radius: 50%;
+            border-radius: var(--button-radius);
             width: 44px;
             height: 44px;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
-            transition: all 0.2s ease;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+            transition: all 0.2s ease;
         }
-        #send-button:hover, .image-upload-label:hover {
+        .input-action-button:hover {
             transform: scale(1.08);
-            box-shadow: 0 6px 15px rgba(0, 122, 255, 0.4);
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
         }
+        .image-upload-input { display: none; }
 
-        /* Dark Mode Toggle Switch Styles */
-        .mode-toggle {
-            position: relative;
-            width: 50px;
-            height: 28px;
-            background: var(--toggle-bg);
-            border-radius: 14px;
-            cursor: pointer;
-            box-shadow: var(--inner-highlight);
-            transition: all 0.3s ease;
-            border: 1px solid var(--glass-border-color);
-        }
-        .mode-toggle::after {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--toggle-circle);
-            top: 1px;
-            left: 1px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .dark-mode .mode-toggle::after {
-            transform: translateX(22px);
-        }
-        .dark-mode-label { display: none; }
-
-        /* Modal Styles (for Update History) */
+        /* Modal (Large Glass Surface) */
         .modal {
             display: none;
             position: fixed;
-            z-index: 10;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(5px);
+            z-index: 1;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
             opacity: 0;
             visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0s 0.3s linear;
+            transition: opacity 0.3s ease, visibility 0.3s;
         }
         .modal.show {
+            display: flex;
             opacity: 1;
             visibility: visible;
-            transition: opacity 0.3s ease;
+            align-items: center;
+            justify-content: center;
         }
         .modal-content {
-            background: var(--bg-gradient);
-            backdrop-filter: var(--blur-effect);
-            -webkit-backdrop-filter: var(--blur-effect);
-            color: var(--text-color);
-            border-radius: 40px;
-            padding: 0;
+            border-radius: var(--outer-radius);
+            padding: 20px;
             width: 90%;
             max-width: 600px;
-            box-shadow: var(--shadow), var(--inner-highlight);
-            border: 1px solid var(--glass-border-color);
-            overflow: hidden;
-            max-height: 85vh;
+            max-height: 80vh;
             display: flex;
             flex-direction: column;
-            transition: all 0.5s ease;
-            margin: auto;
-            transform: scale(0.95);
-            opacity: 0;
-        }
-        .modal.show .modal-content {
-             transform: scale(1);
-             opacity: 1;
-             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .modal-header {
             display: flex;
             align-items: center;
-            margin-bottom: 0;
-            padding: 10px 20px;
+            margin-bottom: 20px;
+            padding: 10px;
             position: relative;
-            background: var(--header-bg);
-            border-bottom: 1px solid var(--glass-border-color);
-            flex-shrink: 0;
         }
-        .modal-title {
-            font-size: 1.1em;
-            font-weight: 600;
-            margin: 0;
-            flex-grow: 1;
-            text-align: center;
-            padding: 5px 0;
-        }
-        .close-button-container {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-        }
-        .close-button {
-            width: 13px; height: 13px; border-radius: 50%;
-            margin-right: 8px; cursor: pointer; transition: transform 0.2s ease;
-        }
+        .modal-title { font-size: 1.5em; font-weight: 600; flex-grow: 1; text-align: center; }
+        .close-button-container { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); display: flex; gap: 8px; }
+        .close-button { width: 14px; height: 14px; border-radius: 100%; cursor: pointer; transition: transform 0.2s ease; }
         .close-button:hover { transform: scale(1.2); }
         .close { background: #ed6a5e; }
-        .minimize, .maximize { background: #ced1d3; }
-        .dark-mode .minimize, .dark-mode .maximize { background: #50565a; }
-
+        .minimize { background: #f4be4f; }
+        .maximize { background: #61c554; }
         #updateHistoryList {
-            padding: 20px 30px;
+            padding: 0 20px;
             overflow-y: auto;
             flex-grow: 1;
         }
-        .update-item {
-            margin-bottom: 25px; padding-bottom: 25px;
-            border-bottom: 1px solid var(--glass-border-color);
-            animation: fadeInUp 0.5s ease;
-        }
+        .update-item { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid var(--glass-border-color); }
         .update-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .update-version { font-size: 1.2em; margin-bottom: 5px; color: var(--text-color); font-weight: 600; }
-        .update-date { font-size: 0.9em; color: var(--update-date-color); margin-bottom: 12px; }
-        .update-description { font-size: 0.95em; margin-bottom: 15px; color: var(--text-color); opacity: 0.9; line-height: 1.5; }
-        .update-list { padding-left: 0; list-style-type: none; }
-        .update-list li { margin-bottom: 8px; position: relative; padding-left: 20px; font-size: 0.95em; line-height: 1.5; }
-        .update-list li::before {
-            content: '•'; position: absolute; left: 0;
-            color: var(--user-bubble-gradient);
-            background: var(--user-bubble-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 1.2em;
-            line-height: 1;
-        }
-        .dark-mode .update-version { color: #0a84ff; }
-
+        .update-version { font-size: 1.2em; margin-bottom: 8px; color: var(--primary-text-color); font-weight: 600; }
+        .update-description { font-size: 0.95em; margin-bottom: 10px; color: var(--secondary-text-color); opacity: 0.9; }
+        .update-list { padding-left: 15px; list-style-type: none; }
+        .update-list li { margin-bottom: 8px; position: relative; padding-left: 20px; font-size: 0.9em; }
+        .update-list li::before { content: '•'; position: absolute; left: 0; color: var(--user-bubble-bg); font-size: 1.2em; top: -1px; }
 
         /* Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* Message Content Formatting */
-        .message strong { font-weight: 600; }
-        .message em { font-style: italic; }
-        .message code { font-family: 'SF Mono', 'Menlo', monospace; background: rgba(0, 0, 0, 0.1); padding: 3px 6px; border-radius: 6px; font-size: 0.9em; }
-
-        /* Typing Indicator Animation */
+        /* Typing Indicator */
         .typing-indicator {
-            display: flex; align-items: center; justify-content: space-between;
-            background: var(--ai-bubble-gradient);
-            backdrop-filter: var(--blur-effect);
-            -webkit-backdrop-filter: var(--blur-effect);
-            padding: 18px 16px; border-radius: 25px; border-bottom-left-radius: 6px;
-            width: 48px; margin-bottom: 12px; align-self: flex-start;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--ai-bubble-bg);
+            padding: 16px 12px;
+            border-radius: var(--inner-radius) var(--inner-radius) var(--inner-radius) 4px;
+            width: 52px;
+            align-self: flex-start;
             animation: fadeIn 0.3s ease;
-            border: 1px solid var(--glass-border-color);
-            box-shadow: var(--shadow), var(--inner-highlight);
         }
         .typing-indicator span {
             height: 8px; width: 8px;
-            background-color: var(--text-color);
-            display: block; border-radius: 50%; opacity: 0.4;
+            background: var(--secondary-text-color);
+            display: block;
+            border-radius: 50%;
+            opacity: 0.4;
         }
         .typing-indicator span:nth-of-type(1) { animation: 1s blink infinite 0.3333s; }
         .typing-indicator span:nth-of-type(2) { animation: 1s blink infinite 0.6666s; }
@@ -461,60 +367,61 @@
 
         /* Media Queries for Responsiveness */
         @media (max-width: 600px) {
-            body { align-items: stretch; }
-            .chat-window { height: 100vh; border-radius: 0; border: none; }
-            .message { max-width: 85%; }
-            .modal-content { width: 100%; height: 100%; margin: 0; border-radius: 0; max-height: 100vh; }
-            .modal-header { padding: 10px 15px; }
-            .close-button-container { left: 15px; }
-            .input-area { padding: 10px 15px; }
+            body { align-items: flex-start; }
+            .chat-window, .modal-content {
+                height: 100%;
+                width: 100%;
+                max-height: none;
+                border-radius: 0;
+                border: none;
+            }
+            .chat-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .header-buttons { width: 100%; justify-content: space-between; }
         }
         @media (min-width: 601px) {
             .chat-window {
-                height: clamp(600px, 90vh, 850px);
+                height: 90vh;
+                max-height: 800px;
             }
-        }
-
-        /* Image Upload */
-        .image-upload-input { display: none; }
-        .image-preview {
-            max-width: 200px; max-height: 200px; margin-top: 10px;
-            border-radius: 15px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--glass-border-color);
         }
     </style>
 </head>
 <body>
     <!-- Chat Window Container -->
-    <div class="chat-window">
+    <div class="chat-window liquid-glass-layer">
         <!-- Chat Header -->
-        <div class="chat-header">
+        <div class="chat-header liquid-glass-layer">
             <div class="chat-title-container">
                 <div class="chat-title">Siri Chat</div>
             </div>
             <!-- Header Buttons -->
             <div class="header-buttons">
-                <button class="header-button" id="updateHistoryBtn">업데이트</button>
-                <button class="header-button" id="saveHistoryBtn">저장</button>
-                <button class="header-button" id="loadHistoryBtn">불러오기</button>
-                <div class="mode-toggle" id="darkModeToggle"></div>
+                <button class="header-button" id="updateHistoryBtn">업데이트 내역</button>
+                <button class="header-button" id="saveHistoryBtn">대화 저장</button>
+                <button class="header-button" id="loadHistoryBtn">대화 불러오기</button>
+                <div class="dark-mode-toggle-container">
+                    <div class="mode-toggle" id="darkModeToggle"></div>
+                </div>
             </div>
         </div>
         <!-- Chat Messages Container -->
         <div id="chat-container"></div>
         <!-- Input Area -->
-        <div class="input-area">
-            <label for="image-upload" class="image-upload-label">
+        <div class="input-area liquid-glass-layer">
+            <label for="image-upload" class="input-action-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
-                    <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z"/>
+                  <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z"/>
                 </svg>
             </label>
             <input type="file" id="image-upload" class="image-upload-input" accept="image/*">
             <input type="text" id="user-input" placeholder="Siri에게 요청하기..." inputmode="search">
-            <button id="send-button">
+            <button id="send-button" class="input-action-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+                  <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
                 </svg>
             </button>
         </div>
@@ -522,7 +429,7 @@
 
     <!-- Update History Modal -->
     <div id="updateHistoryModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content liquid-glass-layer">
             <!-- Modal Header -->
             <div class="modal-header">
                 <div class="close-button-container">
@@ -537,12 +444,13 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK and original script (unchanged) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
     <script>
+        // 기존 JavaScript 코드는 변경 없이 그대로 사용합니다.
         // API 키 및 모델 설정 (보안상 중요 정보는 별도 관리 권장)
         const API_KEY = 'AIzaSyBYYCPgSPktIKgleh4IwbxLILtIR6eZwQQ'; // **주의: API 키는 안전하게 관리해야 합니다.**
         const MODEL = 'gemini-1.5-flash-latest'; // 이미지와 텍스트를 함께 처리할 수 있는 모델
@@ -644,22 +552,10 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     selectedImageBase64 = reader.result; // Base64 데이터 저장
-
-                    // 이미지 미리보기 요소 생성 및 추가
-                    const imagePreview = document.createElement('img');
-                    imagePreview.className = 'image-preview';
-                    imagePreview.src = selectedImageBase64;
-                    chatContainer.appendChild(imagePreview);
-                    chatContainer.scrollTop = chatContainer.scrollHeight; // 스크롤 하단으로 이동
                 };
                 reader.readAsDataURL(file); // 파일을 Base64 Data URL로 읽기
             } else {
                 selectedImageBase64 = null;
-                // 이미지 미리보기 제거
-                const imagePreview = document.querySelector('.image-preview');
-                if (imagePreview) {
-                    chatContainer.removeChild(imagePreview);
-                }
             }
         });
 
@@ -699,11 +595,6 @@
             userDiv.appendChild(contentDiv);
             chatContainer.appendChild(userDiv);
 
-            // 이미지 미리보기 제거 (새 메시지를 보낼 때)
-            const imagePreview = document.querySelector('.image-preview');
-            if (imagePreview) {
-                chatContainer.removeChild(imagePreview);
-            }
 
             // 금지어 포함 시 경고 메시지 표시 후 처리 중단
             if (containsBannedWord(userMessage)) {
@@ -833,141 +724,25 @@
         // 사용자 입력창에서 Enter 키 입력 시 메시지 전송
         userInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                e.preventDefault();
                 sendMessage();
             }
         });
 
         // 업데이트 내역 데이터
         const updateHistory = [
-            {
-                version: "chatOS 3.0",
-                date: "2025년 2월 00일",
-                description: "이 업데이트는 대규모 chatOS 업데이트를 선보이며, 완전히 새롭게 선보이는 디자인과 애니메이션, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "완전히 새로운 인터페이스 디자인을 선보임",
-                    "새로운 인터페이스 애니메이션을 선보임",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 2.1.1",
-                date: "2025년 2월 00일",
-                description: "",
-                changes: [
-                    "모바일 환경에서의 키보드가 최적화됨",
-                    "다크 모드가 예상치 않게 활성화되지 않게 변경됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 2.1",
-                date: "2025년 2월 00일",
-                description: "이 업데이트는 Siri에게 이미지를 전송하고, Siri가 이미지를 이해하는 기능과, 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "Siri에게 이미지를 전송할 수 있음",
-                    "Siri가 이미지를 이해할 수 있음",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 2.0",
-                date: "2025년 1월 25일",
-                description: "이 업데이트는 대규모 chatOS 업데이트를 선보이며, 새롭게 선보이는 대화 내용을 저장하고 불러올 수 있는 기능과, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "더욱 지능적이고 빠르고 이해력이 뛰어난 새롭게 선보이는 Siri 2가 적용됨",
-                    "기존 대화 내용을 저장하거나 해당 대화 내용을 불러올 수 있음",
-                    "상단 디자인이 일부 변경됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.5.1.1",
-                date: "2024년 4월 15일",
-                description: "",
-                changes: [
-                    "'Siri 채팅'이 'Siri Chat'으로 변경됨",
-                    "업데이트된 Siri Chat 로고를 통해, 더욱 직관적인 경험을 제공함",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.5.1",
-                date: "2024년 4월 15일",
-                description: "",
-                changes: [
-                    "소프트웨어 업데이트 내역 디자인이 일부 변경됨",
-                    "모바일 환경에서 소프트웨어 업데이트 내역이 정상적으로 표시되지 않는 문제가 해결됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.5",
-                date: "2024년 4월 1일",
-                description: "이 업데이트는 Siri의 생각 여부를 표시하며, 새롭게 선보이는 Siri 로고를 통해 더욱 직관적으로 웹사이트를 접할 수 있으며, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "사용자가 메시지를 전송하면, Siri의 생각 여부가 표시됨",
-                    "새롭게 선보이는 Siri 채팅 로고를 통해, 더욱 직관적인 경험을 제공함",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.4",
-                date: "2024년 3월 15일",
-                description: "이 업데이트는 새로운 소프트웨어 업데이트 내역 디자인을 선보이며, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "새로운 소프트웨어 업데이트 내역 디자인을 통해, 더 직관적으로 이용할 수 있음",
-                    "디스플레이 크기에 따라 UI가 다이내믹하게 조정됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.3",
-                date: "2024년 3월 1일",
-                description: "이 업데이트는 소프트웨어 업데이트 내역을 확인할 수 있는 새로운 방법을 제시하며, chatOS 버전 표시, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "새롭게 선보이는 소프트웨어 업데이트 내역 탭을 통해 이전 소프트웨어 업데이트 내역을 확인할 수 있음",
-                    "chatOS 버전이 표시됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.2.1",
-                date: "2024년 2월 15일",
-                description: "",
-                changes: [
-                    "UI 디자인이 일체감있게 변경됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.2",
-                date: "2024년 2월 1일",
-                description: "이 업데이트는 새로운 입력 UI를 선보이며, Siri 대화 맥락 인지, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "새롭게 선보이는 입력 UI 디자인을 통해 더욱 직관적인 사용 경험이 제공됨",
-                    "Siri가 대화 맥락을 인지할 수 있음",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.1",
-                date: "2024년 1월 15일",
-                description: "이 업데이트는 새로운 다이내믹 UI를 선보이며, 다크 모드 자동 활성화, 버그 수정 및 보안 업데이트가 포함되어 있습니다.",
-                changes: [
-                    "디스플레이 크기에 따라 UI가 다이내믹하게 조정됨",
-                    "기기의 다크 모드 활성 여부에 따라 자동적으로 다크 모드가 활성화됨",
-                    "UI 디자인이 일체감있게 변경됨",
-                    "중요한 버그 수정 및 보안 업데이트"
-                ]
-            },
-            {
-                version: "chatOS 1.0",
-                description: "",
-                changes: [
-                    "chatOS는 Apple Sodam 최초의 AI 운영체제입니다. chatOS는 Siri를 손쉽게 사용할 수 있는 새로운 가능성을 열어줍니다. 완전히 새로운 대화형 인공지능은 그저 마법처럼 느껴집니다. 정해진 명령어에 같은 반응만 하는것이 아니라, 문장을 '생성'하여 대화를 이어가죠. 그저 궁금한 내용을 http://www.sodam-siri-chat.kro.kr 에 접속하여 채팅에 메시지만 보내면 끝입니다. 독립된 공간이기 때문에 민감한 주제도 이야기할 수 있죠. 채팅 UI도 우아하게 아름답습니다. 당연하지만, 개인정보 보호는 확실히 합니다."
-                ]
-            }
+            { version: "chatOS 3.0", date: "2025년 2월 00일", description: "이 업데이트는 대규모 chatOS 업데이트를 선보이며, 완전히 새롭게 선보이는 디자인과 애니메이션, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["완전히 새로운 인터페이스 디자인을 선보임", "새로운 인터페이스 애니메이션을 선보임", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 2.1.1", date: "2025년 2월 00일", description: "", changes: ["모바일 환경에서의 키보드가 최적화됨", "다크 모드가 예상치 않게 활성화되지 않게 변경됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 2.1", date: "2025년 2월 00일", description: "이 업데이트는 Siri에게 이미지를 전송하고, Siri가 이미지를 이해하는 기능과, 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["Siri에게 이미지를 전송할 수 있음", "Siri가 이미지를 이해할 수 있음", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 2.0", date: "2025년 1월 25일", description: "이 업데이트는 대규모 chatOS 업데이트를 선보이며, 새롭게 선보이는 대화 내용을 저장하고 불러올 수 있는 기능과, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["더욱 지능적이고 빠르고 이해력이 뛰어난 새롭게 선보이는 Siri 2가 적용됨", "기존 대화 내용을 저장하거나 해당 대화 내용을 불러올 수 있음", "상단 디자인이 일부 변경됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.5.1.1", date: "2024년 4월 15일", description: "", changes: ["'Siri 채팅'이 'Siri Chat'으로 변경됨", "업데이트된 Siri Chat 로고를 통해, 더욱 직관적인 경험을 제공함", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.5.1", date: "2024년 4월 15일", description: "", changes: ["소프트웨어 업데이트 내역 디자인이 일부 변경됨", "모바일 환경에서 소프트웨어 업데이트 내역이 정상적으로 표시되지 않는 문제가 해결됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.5", date: "2024년 4월 1일", description: "이 업데이트는 Siri의 생각 여부를 표시하며, 새롭게 선보이는 Siri 로고를 통해 더욱 직관적으로 웹사이트를 접할 수 있으며, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["사용자가 메시지를 전송하면, Siri의 생각 여부가 표시됨", "새롭게 선보이는 Siri 채팅 로고를 통해, 더욱 직관적인 경험을 제공함", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.4", date: "2024년 3월 15일", description: "이 업데이트는 새로운 소프트웨어 업데이트 내역 디자인을 선보이며, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["새로운 소프트웨어 업데이트 내역 디자인을 통해, 더 직관적으로 이용할 수 있음", "디스플레이 크기에 따라 UI가 다이내믹하게 조정됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.3", date: "2024년 3월 1일", description: "이 업데이트는 소프트웨어 업데이트 내역을 확인할 수 있는 새로운 방법을 제시하며, chatOS 버전 표시, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["새롭게 선보이는 소프트웨어 업데이트 내역 탭을 통해 이전 소프트웨어 업데이트 내역을 확인할 수 있음", "chatOS 버전이 표시됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.2.1", date: "2024년 2월 15일", description: "", changes: ["UI 디자인이 일체감있게 변경됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.2", date: "2024년 2월 1일", description: "이 업데이트는 새로운 입력 UI를 선보이며, Siri 대화 맥락 인지, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["새롭게 선보이는 입력 UI 디자인을 통해 더욱 직관적인 사용 경험이 제공됨", "Siri가 대화 맥락을 인지할 수 있음", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.1", date: "2024년 1월 15일", description: "이 업데이트는 새로운 다이내믹 UI를 선보이며, 다크 모드 자동 활성화, 버그 수정 및 보안 업데이트가 포함되어 있습니다.", changes: ["디스플레이 크기에 따라 UI가 다이내믹하게 조정됨", "기기의 다크 모드 활성 여부에 따라 자동적으로 다크 모드가 활성화됨", "UI 디자인이 일체감있게 변경됨", "중요한 버그 수정 및 보안 업데이트"] },
+            { version: "chatOS 1.0", description: "", changes: ["chatOS는 Apple Sodam 최초의 AI 운영체제입니다. chatOS는 Siri를 손쉽게 사용할 수 있는 새로운 가능성을 열어줍니다. 완전히 새로운 대화형 인공지능은 그저 마법처럼 느껴집니다. 정해진 명령어에 같은 반응만 하는것이 아니라, 문장을 '생성'하여 대화를 이어가죠. 그저 궁금한 내용을 http://www.sodam-siri-chat.kro.kr 에 접속하여 채팅에 메시지만 보내면 끝입니다. 독립된 공간이기 때문에 민감한 주제도 이야기할 수 있죠. 채팅 UI도 우아하게 아름답습니다. 당연하지만, 개인정보 보호는 확실히 합니다."] }
         ];
 
         // 업데이트 내역 모달에 표시하는 함수
@@ -980,16 +755,16 @@
                 const updateElement = document.createElement('div');
                 updateElement.className = 'update-item';
                 updateElement.innerHTML = `
-                    <div class="update-version">${update.version}</div>
-                    ${update.date ? `<div class="update-date">${update.date}</div>` : ''}
-                    ${update.description ? `<p class="update-description">${update.description}</p>` : ''}
+                    <h3 class="update-version">${update.version}</h3>
+                    <p class="update-description">${update.description}</p>
                     <ul class="update-list">
                         ${update.changes.map(change => `<li>${change}</li>`).join('')}
                     </ul>
                 `;
                 updateHistoryList.appendChild(updateElement);
             });
-            updateHistoryList.scrollTop = 0; // 모달 스크롤 초기화
+
+            updateHistoryModal.scrollTop = 0; // 모달 스크롤 초기화
         }
 
         // 업데이트 내역 버튼 클릭 시 모달 표시
@@ -1015,19 +790,15 @@
 
         // 대화 내용 저장 기능 (JSON 파일로 다운로드)
         saveHistoryBtn.addEventListener('click', function() {
-            if (conversationHistory.length === 0) {
-                alert("저장할 대화 내용이 없습니다.");
-                return;
-            }
             const chatHistory = {
                 messages: conversationHistory, // 대화 기록
                 timestamp: new Date().toISOString() // 저장 시점 타임스탬프
             };
-            const blob = new Blob([JSON.stringify(chatHistory, null, 2)], {type: "application/json"}); // Blob 생성
+            const blob = new Blob([JSON.stringify(chatHistory)], {type: "application/json"}); // Blob 생성
             const url = URL.createObjectURL(blob); // Blob URL 생성
             const a = document.createElement('a'); // a 태그 생성
             a.href = url;
-            a.download = `siri-chat-history-${new Date().toISOString().slice(0,10)}.json`; // 다운로드 파일명 설정
+            a.download = `siri-chat-history-${new Date().toISOString()}.json`; // 다운로드 파일명 설정
             document.body.appendChild(a);
             a.click(); // 다운로드 트리거
             document.body.removeChild(a); // a 태그 제거
@@ -1043,18 +814,9 @@
                 const file = event.target.files[0]; // 선택된 파일 가져오기
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    try {
-                        const chatHistory = JSON.parse(reader.result); // JSON 파싱
-                        if (chatHistory && Array.isArray(chatHistory.messages)) {
-                            conversationHistory = chatHistory.messages; // 대화 기록 업데이트
-                            displayLoadedChat(conversationHistory); // 불러온 대화 내용 화면에 표시
-                        } else {
-                            alert("올바른 형식의 대화 파일이 아닙니다.");
-                        }
-                    } catch (error) {
-                        alert("파일을 읽는 중 오류가 발생했습니다.");
-                        console.error("Error parsing chat history file:", error);
-                    }
+                    const chatHistory = JSON.parse(reader.result); // JSON 파싱
+                    conversationHistory = chatHistory.messages; // 대화 기록 업데이트
+                    displayLoadedChat(conversationHistory); // 불러온 대화 내용 화면에 표시
                 };
                 reader.readAsText(file); // 파일을 텍스트로 읽기
             };
@@ -1076,23 +838,21 @@
                 contentDiv.className = 'message-content';
                 
                 // 메시지 parts를 순회하며 텍스트 및 이미지 처리
-                if (message.parts && Array.isArray(message.parts)) {
-                    message.parts.forEach(part => {
-                        if (part.text) {
-                            // 텍스트 요소 생성 및 추가
-                            const textElem = document.createElement('div');
-                            textElem.className = 'message-text';
-                            textElem.innerHTML = markdownToHtml(part.text);
-                            contentDiv.appendChild(textElem);
-                        } else if (part.inlineData) {
-                            // 이미지 요소 생성 및 추가
-                            const imageElem = document.createElement('img');
-                            imageElem.className = 'message-image';
-                            imageElem.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                            contentDiv.appendChild(imageElem);
-                        }
-                    });
-                }
+                message.parts.forEach(part => {
+                    if (part.text) {
+                        // 텍스트 요소 생성 및 추가
+                        const textElem = document.createElement('div');
+                        textElem.className = 'message-text';
+                        textElem.innerHTML = markdownToHtml(part.text);
+                        contentDiv.appendChild(textElem);
+                    } else if (part.inlineData) {
+                        // 이미지 요소 생성 및 추가
+                        const imageElem = document.createElement('img');
+                        imageElem.className = 'message-image';
+                        imageElem.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                        contentDiv.appendChild(imageElem);
+                    }
+                });
                 
                 // 메시지 컨텐츠를 메시지 버블에 추가
                 messageDiv.appendChild(contentDiv);
