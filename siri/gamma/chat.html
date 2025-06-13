@@ -36,40 +36,65 @@
     <meta name="twitter:image" content="http://applesodam.kro.kr/logo/favicon/chat/SiriChat.png">
 
     <style>
-        /* CSS Variables for Light and Dark Mode */
+        /* Liquid Glass Design CSS Variables */
         :root {
-            --bg-color: rgba(255, 255, 255, 0.85);
-            --text-color: #333333;
-            --user-bubble-color: rgba(0, 122, 255, 0.9);
-            --ai-bubble-color: rgba(233, 233, 235, 0.85);
-            --input-bg-color: rgba(240, 240, 240, 0.75);
-            --header-color: rgba(242, 242, 247, 0.85);
+            /* General */
+            --text-color: #1d1d1f;
+            --outer-radius: 40px;
+            --input-radius: 1000px;
+            --shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --blur-effect: blur(20px) saturate(180%);
+
+            /* Light Mode */
+            --bg-gradient: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.3));
+            --header-bg: linear-gradient(135deg, rgba(245, 245, 247, 0.7), rgba(245, 245, 247, 0.5));
+            --input-area-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
+            --input-field-bg: rgba(255, 255, 255, 0.5);
+            --user-bubble-gradient: linear-gradient(135deg, #007aff, #0056b3);
+            --ai-bubble-gradient: linear-gradient(135deg, rgba(235, 235, 240, 0.8), rgba(220, 220, 225, 0.7));
+            --glass-border-color: rgba(255, 255, 255, 0.5);
+            --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.3);
             --toggle-bg: rgba(233, 233, 235, 0.9);
             --toggle-circle: #ffffff;
-            --body-bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --input-radius: 1000px;
-            --outer-radius: 40px;
-            --input-padding: 10px;
-            --input-border-color: rgba(200, 200, 200, 0.5);
-            --input-area-bg-color: rgba(255, 255, 255, 0.7);
-            --button-bg-color: rgba(0, 122, 255, 0.9);
             --button-text-color: #ffffff;
-            --modal-header-height: 0px;
-            --blur-effect: blur(10px);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --update-date-color: rgba(60, 60, 67, 0.6);
         }
+
         .dark-mode {
-            --bg-color: rgba(26, 26, 26, 0.85);
-            --text-color: #e0e0e0;
-            --user-bubble-color: rgba(10, 132, 255, 0.9);
-            --ai-bubble-color: rgba(44, 44, 46, 0.85);
-            --input-bg-color: rgba(44, 44, 46, 0.75);
-            --header-color: rgba(44, 44, 46, 0.85);
-            --toggle-bg: rgba(50, 215, 75, 0.9);
-            --body-bg-color: linear-gradient(135deg, #1f1f1f 0%, #434343 100%);
-            --input-border-color: rgba(76, 76, 78, 0.5);
-            --input-area-bg-color: rgba(26, 26, 26, 0.7);
-            --button-bg-color: rgba(10, 132, 255, 0.9);
+            /* Dark Mode */
+            --text-color: #f5f5f7;
+            --bg-gradient: linear-gradient(135deg, rgba(29, 29, 31, 0.6), rgba(29, 29, 31, 0.3));
+            --header-bg: linear-gradient(135deg, rgba(44, 44, 46, 0.7), rgba(44, 44, 46, 0.5));
+            --input-area-bg: linear-gradient(135deg, rgba(29, 29, 31, 0.5), rgba(29, 29, 31, 0.3));
+            --input-field-bg: rgba(58, 58, 60, 0.5);
+            --user-bubble-gradient: linear-gradient(135deg, #0a84ff, #005ecb);
+            --ai-bubble-gradient: linear-gradient(135deg, rgba(58, 58, 60, 0.8), rgba(44, 44, 46, 0.7));
+            --glass-border-color: rgba(255, 255, 255, 0.2);
+            --inner-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            --toggle-bg: rgba(48, 209, 88, 0.9);
+            --update-date-color: rgba(235, 235, 245, 0.6);
+        }
+
+        /* Animated Background for "Environment" */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            background: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 50%, #89f7fe 75%, #a1c4fd 100%);
+            background-size: 400% 400%;
+            animation: gradientAnimation 20s ease infinite;
+            transition: opacity 0.5s ease;
+        }
+        
+        .dark-mode body::before {
+            background: linear-gradient(45deg, #09203f 0%, #537895 50%, #1f4287 100%);
         }
 
         /* General Body and HTML Styles */
@@ -78,9 +103,9 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            background: var(--body-bg-color);
             color: var(--text-color);
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: color 0.5s ease;
+            overflow: hidden;
         }
         body {
             display: flex;
@@ -95,69 +120,68 @@
             height: 100%;
             width: 100%;
             max-width: 600px;
-            background: var(--bg-color);
+            background: var(--bg-gradient);
             backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
             border-radius: var(--outer-radius);
-            border: 1px solid var(--input-border-color);
+            border: 1px solid var(--glass-border-color);
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            box-shadow: var(--shadow), var(--inner-highlight);
+            transition: all 0.5s ease;
         }
 
         /* Chat Header Styles */
         .chat-header {
-            background: var(--header-color);
+            background: var(--header-bg);
             backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
             color: var(--text-color);
             padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--input-border-color);
-            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--glass-border-color);
+            transition: all 0.5s ease;
+            flex-shrink: 0;
         }
         .chat-title-container {
             display: flex;
             align-items: center;
         }
         .chat-title {
-            font-weight: bold;
+            font-weight: 600; /* Bolder */
             margin: 0;
             line-height: 1;
+            font-size: 1.1em;
         }
         .chat-title::after {
             content: 'chatOS 3.0(1) 개발자 베타';
-            margin-left: 5px;
+            margin-left: 8px;
             font-size: 0.6em;
-            color: rgba(136, 136, 136, 0.8);
+            color: var(--update-date-color);
+            font-weight: 500;
         }
         .header-buttons {
             display: flex;
             align-items: center;
         }
         .header-button {
-            background: var(--button-bg-color);
+            background: var(--user-bubble-gradient);
             color: var(--button-text-color);
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 100px;
             cursor: pointer;
             font-size: 0.75em;
-            transition: opacity 0.3s ease, transform 0.2s ease;
+            font-weight: 500;
+            transition: all 0.2s ease;
             margin-right: 10px;
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         .header-button:hover {
             opacity: 0.9;
             transform: scale(1.05);
-        }
-        .dark-mode-toggle-container {
-            display: flex;
-            align-items: center;
-        }
-        .dark-mode-label {
-            font-size: 0.8em;
-            margin-right: 5px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
         }
 
         /* Chat Container (Messages Area) Styles */
@@ -170,46 +194,38 @@
             background: transparent;
         }
         .message {
-            max-width: 70%;
-            margin-bottom: 10px;
-            padding: 15px;
+            max-width: 75%;
+            margin-bottom: 12px;
+            padding: 15px 20px;
             border-radius: 25px;
-            line-height: 1.2;
-            animation: fadeIn 0.3s ease;
+            line-height: 1.4;
+            animation: fadeIn 0.4s ease-out;
             word-wrap: break-word;
             backdrop-filter: var(--blur-effect);
-            border: 1px solid var(--input-border-color);
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            -webkit-backdrop-filter: var(--blur-effect);
+            border: 1px solid var(--glass-border-color);
+            box-shadow: var(--shadow), var(--inner-highlight);
+            transition: all 0.5s ease;
         }
         .user-message {
-            background: var(--user-bubble-color);
+            background: var(--user-bubble-gradient);
             color: white;
             align-self: flex-end;
-            border-bottom-right-radius: 4px;
+            border-bottom-right-radius: 6px;
         }
         .ai-message {
-            background: var(--ai-bubble-color);
+            background: var(--ai-bubble-gradient);
             color: var(--text-color);
             align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-        .message.multiline {
-            border-radius: 20px !important;
-        }
-        .user-message.multiline {
-            border-bottom-right-radius: 4px !important;
-        }
-        .ai-message.multiline {
-            border-bottom-left-radius: 4px !important;
+            border-bottom-left-radius: 6px;
         }
         
-        /* 메시지 내 이미지 스타일 */
         .message-image {
             max-width: 100%;
-            border-radius: 10px;
+            border-radius: 15px; /* Softer radius */
             margin-bottom: 10px;
             display: block;
+            border: 1px solid var(--glass-border-color);
         }
         
         .message-content {
@@ -222,48 +238,51 @@
             display: flex;
             align-items: center;
             padding: 10px;
-            background: var(--input-area-bg-color);
+            background: var(--input-area-bg);
             backdrop-filter: var(--blur-effect);
-            border: 1px solid var(--input-border-color);
-            border-radius: var(--outer-radius);
-            margin: 10px;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            -webkit-backdrop-filter: var(--blur-effect);
+            border-top: 1px solid var(--glass-border-color);
+            box-shadow: var(--inner-highlight);
+            transition: all 0.5s ease;
+            margin: 0; /* No margin for seamless look */
+            padding: 15px 20px;
         }
         #user-input {
             flex-grow: 1;
-            padding: 10px 15px;
-            border: none;
+            padding: 12px 20px;
+            border: 1px solid transparent;
             border-radius: var(--input-radius);
             font-size: 16px;
-            margin: 0 8px;
-            background: var(--input-bg-color);
-            backdrop-filter: var(--blur-effect);
+            margin: 0 10px;
+            background: var(--input-field-bg);
             color: var(--text-color);
-            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease;
         }
         #user-input:focus {
             outline: none;
-            background: rgba(255, 255, 255, 0.9);
+            border-color: var(--glass-border-color);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06), 0 0 0 4px rgba(0, 122, 255, 0.3);
         }
-        #send-button {
-            background: var(--user-bubble-color);
+        #send-button, .image-upload-label {
+            background: var(--user-bubble-gradient);
             color: white;
             border: none;
-            border-radius: var(--input-radius);
-            width: 40px;
-            height: 40px;
-            font-size: 18px;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3);
+            transition: all 0.2s ease;
+            flex-shrink: 0;
         }
-        #send-button:hover {
-            transform: scale(1.05);
+        #send-button:hover, .image-upload-label:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 15px rgba(0, 122, 255, 0.4);
         }
 
         /* Dark Mode Toggle Switch Styles */
@@ -272,11 +291,11 @@
             width: 50px;
             height: 28px;
             background: var(--toggle-bg);
-            backdrop-filter: var(--blur-effect);
             border-radius: 14px;
             cursor: pointer;
-            box-shadow: var(--shadow);
+            box-shadow: var(--inner-highlight);
             transition: all 0.3s ease;
+            border: 1px solid var(--glass-border-color);
         }
         .mode-toggle::after {
             content: '';
@@ -285,66 +304,79 @@
             height: 24px;
             border-radius: 50%;
             background: var(--toggle-circle);
-            top: 2px;
-            left: 2px;
+            top: 1px;
+            left: 1px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .dark-mode .mode-toggle::after {
             transform: translateX(22px);
         }
+        .dark-mode-label { display: none; }
 
         /* Modal Styles (for Update History) */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
+            z-index: 10;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
             overflow: auto;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            transition: opacity 0.3s ease, visibility 0s 0.3s linear;
         }
         .modal.show {
-            display: flex;
             opacity: 1;
             visibility: visible;
-            align-items: center;
-            justify-content: center;
+            transition: opacity 0.3s ease;
         }
         .modal-content {
-            background: var(--bg-color);
+            background: var(--bg-gradient);
             backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
             color: var(--text-color);
             border-radius: 40px;
-            padding: 20px;
+            padding: 0;
             width: 90%;
             max-width: 600px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--input-border-color);
+            box-shadow: var(--shadow), var(--inner-highlight);
+            border: 1px solid var(--glass-border-color);
             overflow: hidden;
-            max-height: 80vh;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
+            margin: auto;
+            transform: scale(0.95);
+            opacity: 0;
+        }
+        .modal.show .modal-content {
+             transform: scale(1);
+             opacity: 1;
+             transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
         .modal-header {
             display: flex;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 0;
             padding: 10px 20px;
             position: relative;
+            background: var(--header-bg);
+            border-bottom: 1px solid var(--glass-border-color);
+            flex-shrink: 0;
         }
         .modal-title {
-            font-size: 1.3em;
-            font-weight: bold;
+            font-size: 1.1em;
+            font-weight: 600;
             margin: 0;
             flex-grow: 1;
             text-align: center;
+            padding: 5px 0;
         }
         .close-button-container {
             position: absolute;
@@ -354,77 +386,41 @@
             display: flex;
         }
         .close-button {
-            width: 15px;
-            height: 15px;
-            border-radius: 100%;
-            margin-right: 10px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            width: 13px; height: 13px; border-radius: 50%;
+            margin-right: 8px; cursor: pointer; transition: transform 0.2s ease;
         }
-        .close-button:hover {
-            transform: scale(1.2);
-        }
-        .close {
-            background: #ed6a5e;
-        }
-        .minimize, .maximize {
-            background: #ced1d3;
-        }
-        .dark-mode .minimize,
-        .dark-mode .maximize {
-            background: #50565a;
-        }
+        .close-button:hover { transform: scale(1.2); }
+        .close { background: #ed6a5e; }
+        .minimize, .maximize { background: #ced1d3; }
+        .dark-mode .minimize, .dark-mode .maximize { background: #50565a; }
+
         #updateHistoryList {
-            padding: 0 20px;
+            padding: 20px 30px;
             overflow-y: auto;
             flex-grow: 1;
         }
         .update-item {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--input-border-color);
+            margin-bottom: 25px; padding-bottom: 25px;
+            border-bottom: 1px solid var(--glass-border-color);
             animation: fadeInUp 0.5s ease;
         }
-        .update-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .update-version {
-            font-size: 1.2em;
-            margin-bottom: 8px;
-            color: var(--user-bubble-color);
-        }
-        .update-date {
-            font-size: 0.9em;
-            color: rgba(136, 136, 136, 0.8);
-            margin-bottom: 5px;
-        }
-        .dark-mode .update-date {
-            color: rgba(170, 170, 170, 0.8);
-        }
-        .update-description {
-            font-size: 0.9em;
-            margin-bottom: 10px;
-            color: var(--text-color);
-            opacity: 0.9;
-        }
-        .update-list {
-            padding-left: 15px;
-            list-style-type: none;
-        }
-        .update-list li {
-            margin-bottom: 8px;
-            position: relative;
-            padding-left: 15px;
-            font-size: 0.9em;
-        }
+        .update-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .update-version { font-size: 1.2em; margin-bottom: 5px; color: var(--text-color); font-weight: 600; }
+        .update-date { font-size: 0.9em; color: var(--update-date-color); margin-bottom: 12px; }
+        .update-description { font-size: 0.95em; margin-bottom: 15px; color: var(--text-color); opacity: 0.9; line-height: 1.5; }
+        .update-list { padding-left: 0; list-style-type: none; }
+        .update-list li { margin-bottom: 8px; position: relative; padding-left: 20px; font-size: 0.95em; line-height: 1.5; }
         .update-list li::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: var(--user-bubble-color);
+            content: '•'; position: absolute; left: 0;
+            color: var(--user-bubble-gradient);
+            background: var(--user-bubble-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.2em;
+            line-height: 1;
         }
+        .dark-mode .update-version { color: #0a84ff; }
+
 
         /* Animations */
         @keyframes fadeInUp {
@@ -432,156 +428,60 @@
             to { opacity: 1; transform: translateY(0); }
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         /* Message Content Formatting */
-        .message strong {
-            font-weight: bold;
-        }
-        .message em {
-            font-style: italic;
-        }
-        .message code {
-            font-family: monospace;
-            background: rgba(0, 0, 0, 0.1);
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
+        .message strong { font-weight: 600; }
+        .message em { font-style: italic; }
+        .message code { font-family: 'SF Mono', 'Menlo', monospace; background: rgba(0, 0, 0, 0.1); padding: 3px 6px; border-radius: 6px; font-size: 0.9em; }
 
         /* Typing Indicator Animation */
         .typing-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--ai-bubble-color);
+            display: flex; align-items: center; justify-content: space-between;
+            background: var(--ai-bubble-gradient);
             backdrop-filter: var(--blur-effect);
-            padding: 16px 12px;
-            border-radius: 25px;
-            border-bottom-left-radius: 4px;
-            width: 52px;
-            margin-bottom: 10px;
-            align-self: flex-start;
+            -webkit-backdrop-filter: var(--blur-effect);
+            padding: 18px 16px; border-radius: 25px; border-bottom-left-radius: 6px;
+            width: 48px; margin-bottom: 12px; align-self: flex-start;
             animation: fadeIn 0.3s ease;
-            border: 1px solid var(--input-border-color);
-            box-shadow: var(--shadow);
+            border: 1px solid var(--glass-border-color);
+            box-shadow: var(--shadow), var(--inner-highlight);
         }
         .typing-indicator span {
-            height: 8px;
-            width: 8px;
-            background: var(--text-color);
-            display: block;
-            border-radius: 50%;
-            opacity: 0.4;
+            height: 8px; width: 8px;
+            background-color: var(--text-color);
+            display: block; border-radius: 50%; opacity: 0.4;
         }
-        .typing-indicator span:nth-of-type(1) {
-            animation: 1s blink infinite 0.3333s;
-        }
-        .typing-indicator span:nth-of-type(2) {
-            animation: 1s blink infinite 0.6666s;
-        }
-        .typing-indicator span:nth-of-type(3) {
-            animation: 1s blink infinite 0.9999s;
-        }
-        @keyframes blink {
-            50% { opacity: 1; }
-        }
+        .typing-indicator span:nth-of-type(1) { animation: 1s blink infinite 0.3333s; }
+        .typing-indicator span:nth-of-type(2) { animation: 1s blink infinite 0.6666s; }
+        .typing-indicator span:nth-of-type(3) { animation: 1s blink infinite 0.9999s; }
+        @keyframes blink { 50% { opacity: 1; } }
 
         /* Media Queries for Responsiveness */
         @media (max-width: 600px) {
-            body {
-                align-items: flex-start;
-            }
-            .chat-window {
-                height: 100%;
-                border-radius: 0;
-            }
-            .message {
-                max-width: 80%;
-            }
-            .chat-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .header-buttons {
-                width: 100%;
-                justify-content: space-between;
-            }
-            .chat-title-container {
-                margin-bottom: 10px;
-            }
-            .modal-content {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                border-radius: 0;
-                max-height: 128vh;
-            }
-            .modal-header {
-                padding: 15px 20px;
-            }
-            .close-button-container {
-                left: 0px;
-            }
-            #updateHistoryList {
-                padding: 0 15px 15px;
-            }
-            .update-item {
-                margin-bottom: 15px;
-                padding-bottom: 15px;
-            }
-            .update-version {
-                font-size: 1.1em;
-            }
-            .update-description, .update-list li {
-                font-size: 0.85em;
-            }
+            body { align-items: stretch; }
+            .chat-window { height: 100vh; border-radius: 0; border: none; }
+            .message { max-width: 85%; }
+            .modal-content { width: 100%; height: 100%; margin: 0; border-radius: 0; max-height: 100vh; }
+            .modal-header { padding: 10px 15px; }
+            .close-button-container { left: 15px; }
+            .input-area { padding: 10px 15px; }
         }
         @media (min-width: 601px) {
-            body {
-                background: var(--body-bg-color);
-            }
             .chat-window {
-                height: 90vh;
-                max-height: 800px;
-                border-radius: var(--outer-radius);
+                height: clamp(600px, 90vh, 850px);
             }
         }
 
-        /* Image Upload Button Styles */
-        .image-upload-container {
-            display: flex;
-            align-items: center;
-            margin-right: 8px;
-        }
-        .image-upload-label {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: var(--input-radius);
-            background: var(--user-bubble-color);
-            color: white;
-            font-size: 18px;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
-        }
-        .image-upload-label:hover {
-            transform: scale(1.05);
-        }
-        .image-upload-input {
-            display: none;
-        }
+        /* Image Upload */
+        .image-upload-input { display: none; }
         .image-preview {
-            max-width: 200px;
-            max-height: 200px;
-            margin-top: 10px;
-            border-radius: 10px;
+            max-width: 200px; max-height: 200px; margin-top: 10px;
+            border-radius: 15px;
             box-shadow: var(--shadow);
-            border: 1px solid var(--input-border-color);
+            border: 1px solid var(--glass-border-color);
         }
     </style>
 </head>
@@ -595,13 +495,10 @@
             </div>
             <!-- Header Buttons -->
             <div class="header-buttons">
-                <button class="header-button" id="updateHistoryBtn">업데이트 내역</button>
-                <button class="header-button" id="saveHistoryBtn">대화 저장</button>
-                <button class="header-button" id="loadHistoryBtn">대화 불러오기</button>
-                <div class="dark-mode-toggle-container">
-                    <span class="dark-mode-label">다크</span>
-                    <div class="mode-toggle" id="darkModeToggle"></div>
-                </div>
+                <button class="header-button" id="updateHistoryBtn">업데이트</button>
+                <button class="header-button" id="saveHistoryBtn">저장</button>
+                <button class="header-button" id="loadHistoryBtn">불러오기</button>
+                <div class="mode-toggle" id="darkModeToggle"></div>
             </div>
         </div>
         <!-- Chat Messages Container -->
@@ -609,11 +506,17 @@
         <!-- Input Area -->
         <div class="input-area">
             <label for="image-upload" class="image-upload-label">
-                +
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-paperclip" viewBox="0 0 16 16">
+                    <path d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0z"/>
+                </svg>
             </label>
             <input type="file" id="image-upload" class="image-upload-input" accept="image/*">
             <input type="text" id="user-input" placeholder="Siri에게 요청하기..." inputmode="search">
-            <button id="send-button">↑</button>
+            <button id="send-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -732,25 +635,6 @@
             typingIndicator.className = 'typing-indicator';
             typingIndicator.innerHTML = '<span></span><span></span><span></span>'; // 점 세 개로 구성된 타이핑 애니메이션
             return typingIndicator;
-        }
-
-        // 메시지 버블 스타일 조정 함수 (줄 수에 따라 multiline 클래스 추가)
-        function adjustMessageBubble(messageDiv) {
-            const lineHeight = parseFloat(getComputedStyle(messageDiv).lineHeight);
-            const messageHeight = messageDiv.offsetHeight;
-            const lines = Math.round(messageHeight / lineHeight);
-
-            if (lines > 1) {
-                messageDiv.classList.add('multiline'); // 여러 줄인 경우 multiline 클래스 추가
-            } else {
-                messageDiv.classList.remove('multiline');
-            }
-
-            const messageLength = messageDiv.textContent.length;
-
-            if (messageLength > 50) {
-                messageDiv.classList.add('multiline'); // 메시지 길이가 긴 경우에도 multiline 클래스 추가
-            }
         }
 
         // 이미지 선택 및 미리보기 처리 이벤트 리스너
@@ -930,7 +814,7 @@
                     ...(userMessage && { user: userMessage }), // userMessage가 있을 때만 user 속성 추가
                     ai: aiMessage,
                     ...(imageBase64 && { image: imageBase64 }), // imageBase64가 있을 때만 image 속성 추가
-                    timestamp: firebase.database().ServerValue.TIMESTAMP // 서버 타임스탬프
+                    timestamp: firebase.database.ServerValue.TIMESTAMP // 서버 타임스탬프
                 });
 
             } catch (error) {
@@ -949,6 +833,7 @@
         // 사용자 입력창에서 Enter 키 입력 시 메시지 전송
         userInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
+                e.preventDefault();
                 sendMessage();
             }
         });
@@ -1095,16 +980,16 @@
                 const updateElement = document.createElement('div');
                 updateElement.className = 'update-item';
                 updateElement.innerHTML = `
-                    <h3 class="update-version">${update.version}</h3>
-                    <p class="update-description">${update.description}</p>
+                    <div class="update-version">${update.version}</div>
+                    ${update.date ? `<div class="update-date">${update.date}</div>` : ''}
+                    ${update.description ? `<p class="update-description">${update.description}</p>` : ''}
                     <ul class="update-list">
                         ${update.changes.map(change => `<li>${change}</li>`).join('')}
                     </ul>
                 `;
                 updateHistoryList.appendChild(updateElement);
             });
-
-            updateHistoryModal.scrollTop = 0; // 모달 스크롤 초기화
+            updateHistoryList.scrollTop = 0; // 모달 스크롤 초기화
         }
 
         // 업데이트 내역 버튼 클릭 시 모달 표시
@@ -1130,15 +1015,19 @@
 
         // 대화 내용 저장 기능 (JSON 파일로 다운로드)
         saveHistoryBtn.addEventListener('click', function() {
+            if (conversationHistory.length === 0) {
+                alert("저장할 대화 내용이 없습니다.");
+                return;
+            }
             const chatHistory = {
                 messages: conversationHistory, // 대화 기록
                 timestamp: new Date().toISOString() // 저장 시점 타임스탬프
             };
-            const blob = new Blob([JSON.stringify(chatHistory)], {type: "application/json"}); // Blob 생성
+            const blob = new Blob([JSON.stringify(chatHistory, null, 2)], {type: "application/json"}); // Blob 생성
             const url = URL.createObjectURL(blob); // Blob URL 생성
             const a = document.createElement('a'); // a 태그 생성
             a.href = url;
-            a.download = `siri-chat-history-${new Date().toISOString()}.json`; // 다운로드 파일명 설정
+            a.download = `siri-chat-history-${new Date().toISOString().slice(0,10)}.json`; // 다운로드 파일명 설정
             document.body.appendChild(a);
             a.click(); // 다운로드 트리거
             document.body.removeChild(a); // a 태그 제거
@@ -1154,9 +1043,18 @@
                 const file = event.target.files[0]; // 선택된 파일 가져오기
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const chatHistory = JSON.parse(reader.result); // JSON 파싱
-                    conversationHistory = chatHistory.messages; // 대화 기록 업데이트
-                    displayLoadedChat(conversationHistory); // 불러온 대화 내용 화면에 표시
+                    try {
+                        const chatHistory = JSON.parse(reader.result); // JSON 파싱
+                        if (chatHistory && Array.isArray(chatHistory.messages)) {
+                            conversationHistory = chatHistory.messages; // 대화 기록 업데이트
+                            displayLoadedChat(conversationHistory); // 불러온 대화 내용 화면에 표시
+                        } else {
+                            alert("올바른 형식의 대화 파일이 아닙니다.");
+                        }
+                    } catch (error) {
+                        alert("파일을 읽는 중 오류가 발생했습니다.");
+                        console.error("Error parsing chat history file:", error);
+                    }
                 };
                 reader.readAsText(file); // 파일을 텍스트로 읽기
             };
@@ -1178,21 +1076,23 @@
                 contentDiv.className = 'message-content';
                 
                 // 메시지 parts를 순회하며 텍스트 및 이미지 처리
-                message.parts.forEach(part => {
-                    if (part.text) {
-                        // 텍스트 요소 생성 및 추가
-                        const textElem = document.createElement('div');
-                        textElem.className = 'message-text';
-                        textElem.innerHTML = markdownToHtml(part.text);
-                        contentDiv.appendChild(textElem);
-                    } else if (part.inlineData) {
-                        // 이미지 요소 생성 및 추가
-                        const imageElem = document.createElement('img');
-                        imageElem.className = 'message-image';
-                        imageElem.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                        contentDiv.appendChild(imageElem);
-                    }
-                });
+                if (message.parts && Array.isArray(message.parts)) {
+                    message.parts.forEach(part => {
+                        if (part.text) {
+                            // 텍스트 요소 생성 및 추가
+                            const textElem = document.createElement('div');
+                            textElem.className = 'message-text';
+                            textElem.innerHTML = markdownToHtml(part.text);
+                            contentDiv.appendChild(textElem);
+                        } else if (part.inlineData) {
+                            // 이미지 요소 생성 및 추가
+                            const imageElem = document.createElement('img');
+                            imageElem.className = 'message-image';
+                            imageElem.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                            contentDiv.appendChild(imageElem);
+                        }
+                    });
+                }
                 
                 // 메시지 컨텐츠를 메시지 버블에 추가
                 messageDiv.appendChild(contentDiv);
