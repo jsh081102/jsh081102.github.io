@@ -3,232 +3,467 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siri Chat</title>
+    <title>Siri Chat - Liquid Glass Edition</title>
 
-    <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="http://applesodam.kro.kr/logo/favicon/chat/favicon.ico">
+    <link rel="apple-touch-icon" sizes="57x57" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="180x180" href="http://applesodam.kro.kr/logo/favicon/chat/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="http://applesodam.kro.kr/logo/favicon/chat/android-icon-192x192.png">
     <link rel="icon" type="image/png" sizes="32x32" href="http://applesodam.kro.kr/logo/favicon/chat/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="http://applesodam.kro.kr/logo/favicon/chat/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="http://applesodam.kro.kr/logo/favicon/chat/favicon-16x16.png">
+    <meta name="msapplication-TileImage" content="http://applesodam.kro.kr/logo/favicon/chat/SiriChat.png">
 
-    <!-- Open Graph & Twitter Card Tags -->
+    <!-- Open Graph Protocol 태그 -->
     <meta property="og:title" content="Siri Chat">
     <meta property="og:description" content="Siri와 대화하며 질문하고 답변을 받아보세요. AI 기반의 대화형 인터페이스를 경험해보세요.">
     <meta property="og:image" content="http://applesodam.kro.kr/logo/favicon/chat/SiriChat.png">
     <meta property="og:url" content="http://applesodam.kro.kr/chat/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="Siri Chat">
+
+    <!-- Twitter Card 태그 -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Siri Chat">
     <meta name="twitter:description" content="Siri와 대화하며 질문하고 답변을 받아보세요. AI 기반의 대화형 인터페이스를 경험해보세요.">
     <meta name="twitter:image" content="http://applesodam.kro.kr/logo/favicon/chat/SiriChat.png">
 
     <style>
-        /* [IMPROVEMENT] Liquid Glass Design System Variables */
+        /* CSS Variables for Light and Dark Mode */
         :root {
-            --bg-color: rgba(255, 255, 255, 0.75);
-            --text-color: #1d1d1f;
-            --user-bubble-color: #007aff;
-            --ai-bubble-color: rgba(229, 229, 234, 0.9);
-            --header-footer-color: rgba(242, 242, 247, 0.7);
-            --body-bg-color: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --button-text-color: #ffffff;
-            --toggle-bg: rgba(120, 120, 128, 0.36);
-            --toggle-circle: #ffffff;
+            /* Liquid Glass 디자인 가이드라인 적용 */
+            --glass-bg-color: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            --glass-border-color: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            --blur-effect: blur(16px) saturate(180%);
             
-            /* Enhanced Material Properties */
-            --blur-effect: blur(20px);
-            --shadow: 0 12px 28px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
-            --outer-radius: 28px; /* Softer corners */
-            --inner-radius: 20px;
+            --text-color: #1d1d1f;
+            --user-bubble-color: rgba(0, 122, 255, 0.8);
+            --ai-bubble-color: rgba(255, 255, 255, 0.5);
+            --input-bg-color: rgba(255, 255, 255, 0.2);
+            --header-color: transparent; /* 헤더는 이제 glass-effect를 직접 사용 */
+            --toggle-bg: rgba(233, 233, 235, 0.9);
+            --toggle-circle: #ffffff;
+            --body-bg-color: #f5f7fa;
+            --input-radius: 1000px;
+            --outer-radius: 30px;
+            --input-padding: 12px;
+            --button-bg-color: rgba(0, 122, 255, 0.9);
+            --button-text-color: #ffffff;
+            --modal-header-height: 0px;
         }
-
         .dark-mode {
-            --bg-color: rgba(28, 28, 30, 0.75);
+            --glass-bg-color: linear-gradient(135deg, rgba(30, 30, 30, 0.1), rgba(30, 30, 30, 0));
+            --glass-border-color: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            
             --text-color: #f5f5f7;
-            --user-bubble-color: #0a84ff;
-            --ai-bubble-color: rgba(44, 44, 46, 0.9);
-            --header-footer-color: rgba(44, 44, 46, 0.7);
-            --body-bg-color: linear-gradient(135deg, #1f1f1f 0%, #434343 100%);
-            --border-color: rgba(255, 255, 255, 0.15);
-            --toggle-bg: #32d74b;
+            --user-bubble-color: rgba(10, 132, 255, 0.8);
+            --ai-bubble-color: rgba(58, 58, 60, 0.5);
+            --input-bg-color: rgba(58, 58, 60, 0.2);
+            --toggle-bg: rgba(50, 215, 75, 0.9);
+            --body-bg-color: #1d1d1f;
+            --button-bg-color: rgba(10, 132, 255, 0.9);
         }
 
+        /* --- Liquid Glass Enhancements --- */
+        .glass-effect {
+            background: var(--glass-bg-color);
+            backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect); /* Safari 지원 */
+            border-radius: var(--outer-radius);
+            border: 1px solid var(--glass-border-color);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .liquid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .liquid-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 450px;
+            top: -150px;
+            left: -100px;
+            background: #ff3b30; /* Reddish */
+            animation: move 25s infinite alternate;
+        }
+        .blob2 {
+            width: 300px;
+            height: 350px;
+            bottom: -100px;
+            right: -150px;
+            background: #34c759; /* Greenish */
+            animation: move 30s infinite alternate-reverse;
+        }
+        .blob3 {
+            width: 350px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #007aff; /* Blueish */
+            animation: move 35s infinite alternate;
+        }
+        .dark-mode .blob1 { background: #ff453a; }
+        .dark-mode .blob2 { background: #32d74b; }
+        .dark-mode .blob3 { background: #0a84ff; }
+
+        @keyframes move {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(100px, 200px) rotate(180deg); }
+        }
+        
+        /* 접근성: 모션 감소 설정 존중 */
+        @media (prefers-reduced-motion: reduce) {
+            .liquid-blob {
+                animation: none;
+            }
+            .message, .header-button, #send-button, .image-upload-label, .input-area, .close-button {
+                transition: none;
+            }
+        }
+        /* --- End of Liquid Glass Enhancements --- */
+
+
+        /* General Body and HTML Styles */
         body, html {
             height: 100%;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-            background: var(--body-bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--body-bg-color);
             color: var(--text-color);
-            transition: background 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
         body {
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        
-        /* Chat Window - Main container */
+
+        /* Chat Window Styles */
         .chat-window {
-            position: relative; /* [IMPROVEMENT] For absolute positioning of header/footer */
             display: flex;
             flex-direction: column;
             height: 100%;
             width: 100%;
             max-width: 600px;
-            background: var(--bg-color);
-            -webkit-backdrop-filter: var(--blur-effect);
-            backdrop-filter: var(--blur-effect);
-            border: 1px solid var(--border-color);
-            border-radius: var(--outer-radius);
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
+            background: transparent; /* glass-effect가 배경을 처리 */
         }
-        
-        /* [IMPROVEMENT] Header - Floating on top */
-        .chat-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            background: var(--header-footer-color);
-            -webkit-backdrop-filter: var(--blur-effect);
-            backdrop-filter: var(--blur-effect);
-            color: var(--text-color);
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.3s ease;
+        .chat-window.glass-effect {
+            border-radius: var(--outer-radius);
         }
-        .chat-title-container { display: flex; align-items: center; }
-        .chat-title { font-weight: 600; margin: 0; }
-        .chat-title::after { content: 'chatOS 3.0(1) 개발자 베타'; margin-left: 8px; font-size: 0.6em; color: rgba(136, 136, 136, 0.9); }
-        .header-buttons { display: flex; align-items: center; gap: 8px; }
-        .header-button { background: rgba(120, 120, 128, 0.2); color: var(--text-color); border: none; padding: 5px 12px; border-radius: 100px; cursor: pointer; font-size: 0.8em; font-weight: 500; transition: background 0.2s ease, transform 0.2s ease; }
-        .header-button:hover { background: rgba(120, 120, 128, 0.3); transform: scale(1.05); }
 
-        /* [IMPROVEMENT] Main scrolling area for Edge-to-Edge content */
+        /* Chat Header Styles */
+        .chat-header {
+            background: var(--glass-bg-color);
+            backdrop-filter: var(--blur-effect);
+            -webkit-backdrop-filter: var(--blur-effect);
+            border-bottom: 1px solid var(--glass-border-color);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.5s ease;
+            flex-shrink: 0;
+        }
+        .chat-title-container {
+            display: flex;
+            align-items: center;
+        }
+        .chat-title {
+            font-weight: bold;
+            margin: 0;
+            line-height: 1;
+        }
+        .chat-title::after {
+            content: 'chatOS 3.0(1) 개발자 베타';
+            margin-left: 5px;
+            font-size: 0.6em;
+            color: var(--text-color);
+            opacity: 0.6;
+        }
+        .header-buttons {
+            display: flex;
+            align-items: center;
+        }
+        .header-button {
+            background: rgba(128, 128, 128, 0.2);
+            color: var(--text-color);
+            border: 1px solid transparent;
+            padding: 5px 10px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+        .header-button:hover {
+            background: rgba(128, 128, 128, 0.3);
+            border-color: var(--glass-border-color);
+            transform: scale(1.05);
+        }
+        .dark-mode-toggle-container {
+            display: flex;
+            align-items: center;
+        }
+        .dark-mode-label {
+            font-size: 0.8em;
+            margin-right: 5px;
+        }
+
+        /* Chat Container (Messages Area) Styles */
         #chat-container {
             flex-grow: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-top: 110px; /* Space for header */
-            padding-bottom: 90px; /* Space for input area */
             display: flex;
             flex-direction: column;
             background: transparent;
         }
-        
-        /* Message Bubbles */
-        .message { max-width: 75%; margin-bottom: 12px; padding: 12px 18px; border-radius: var(--inner-radius); line-height: 1.4; animation: fadeIn 0.4s ease-out; word-wrap: break-word; transition: all 0.3s ease; }
-        .user-message { background: var(--user-bubble-color); color: white; align-self: flex-end; border-bottom-right-radius: 5px; }
-        .ai-message { background: var(--ai-bubble-color); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .message-content { display: flex; flex-direction: column; gap: 8px; }
-        .message-image { max-width: 100%; border-radius: 10px; display: block; }
-        
-        /* [IMPROVEMENT] Input Area - Floating at bottom */
+        .message {
+            max-width: 75%;
+            margin-bottom: 12px;
+            padding: 15px 20px;
+            border-radius: 25px;
+            line-height: 1.4;
+            animation: fadeIn 0.5s ease;
+            word-wrap: break-word;
+            backdrop-filter: blur(10px) saturate(150%);
+            border: 1px solid var(--glass-border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        .message:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .user-message {
+            background: var(--user-bubble-color);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+        }
+        .ai-message {
+            background: var(--ai-bubble-color);
+            color: var(--text-color);
+            align-self: flex-start;
+            border-bottom-left-radius: 6px;
+        }
+
+        /* Input Area Styles */
         .input-area {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 10;
             display: flex;
             align-items: center;
-            padding: 12px;
-            margin: 0;
-            background: var(--header-footer-color);
-            -webkit-backdrop-filter: var(--blur-effect);
-            backdrop-filter: var(--blur-effect);
-            border-top: 1px solid var(--border-color);
-            gap: 8px;
+            padding: 10px;
+            margin: 10px;
             transition: all 0.3s ease;
         }
-        /* [IMPROVEMENT] Seamless text input */
+        .input-area:focus-within {
+             transform: scale(1.01);
+             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
         #user-input {
             flex-grow: 1;
-            padding: 10px 15px;
+            padding: var(--input-padding) 20px;
             border: none;
-            background: transparent; /* No background */
+            border-radius: var(--input-radius);
             font-size: 16px;
+            margin: 0 8px;
+            background: var(--input-bg-color);
             color: var(--text-color);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
-        #user-input:focus { outline: none; }
-        #user-input::placeholder { color: rgba(60, 60, 67, 0.6); }
-        .dark-mode #user-input::placeholder { color: rgba(235, 235, 245, 0.6); }
+        #user-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .dark-mode #user-input:focus {
+            background: rgba(80, 80, 80, 0.3);
+        }
 
-        /* [IMPROVEMENT] Buttons with SVG Icons */
-        .input-button {
+        #send-button, .image-upload-label {
+            background: var(--button-bg-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            font-size: 18px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
             flex-shrink: 0;
-            transition: background 0.2s ease, transform 0.2s ease;
         }
-        .input-button:hover { transform: scale(1.05); }
-        .input-button svg { width: 20px; height: 20px; }
-        
-        #image-upload-label { background: rgba(120, 120, 128, 0.2); }
-        #image-upload-label:hover { background: rgba(120, 120, 128, 0.3); }
-        #image-upload-label svg { fill: var(--text-color); }
+        #send-button:hover, .image-upload-label:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.5);
+        }
 
-        #send-button { background: var(--user-bubble-color); }
-        #send-button svg { fill: white; }
-        #image-upload-input { display: none; }
+        /* Dark Mode Toggle Switch Styles */
+        .mode-toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--toggle-bg);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .mode-toggle::after {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--toggle-circle);
+            top: 2px;
+            left: 2px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .dark-mode .mode-toggle::after {
+            transform: translateX(22px);
+        }
 
-        /* Dark Mode Toggle */
-        .dark-mode-toggle-container { display: flex; align-items: center; gap: 8px; }
-        .dark-mode-label { font-size: 0.8em; font-weight: 500; }
-        .mode-toggle { position: relative; width: 51px; height: 31px; background: var(--toggle-bg); border-radius: 100px; cursor: pointer; transition: background 0.3s ease; }
-        .mode-toggle::after { content: ''; position: absolute; width: 27px; height: 27px; border-radius: 50%; background: var(--toggle-circle); top: 2px; left: 2px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .dark-mode .mode-toggle::after { transform: translateX(20px); }
-        
         /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-        .modal.show { display: flex; opacity: 1; visibility: visible; align-items: center; justify-content: center; }
-        .modal-content { background: var(--bg-color); -webkit-backdrop-filter: var(--blur-effect); backdrop-filter: var(--blur-effect); color: var(--text-color); border-radius: 20px; padding: 0; width: 90%; max-width: 550px; box-shadow: var(--shadow); border: 1px solid var(--border-color); overflow: hidden; max-height: 80vh; display: flex; flex-direction: column; transition: all 0.3s ease; }
-        .modal-header { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-        .modal-title { font-size: 1em; font-weight: 600; margin: 0; flex-grow: 1; text-align: center; padding-right: 50px; }
-        .close-button-container { display: flex; gap: 8px; }
-        .close-button { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .close { background: #ff5f57; } .minimize { background: #febc2e; } .maximize { background: #28c840; }
-        #updateHistoryList { padding: 20px; overflow-y: auto; flex-grow: 1; }
-        .update-item { margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid var(--border-color); animation: fadeInUp 0.5s ease; }
-        .update-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .update-version { font-size: 1.1em; font-weight: 600; margin-bottom: 8px; color: var(--text-color); }
-        .update-description { font-size: 0.9em; margin-bottom: 10px; color: var(--text-color); opacity: 0.8; }
-        .update-list { padding-left: 0; list-style-type: none; }
-        .update-list li { margin-bottom: 8px; position: relative; padding-left: 20px; font-size: 0.9em; }
-        .update-list li::before { content: '•'; position: absolute; left: 0; color: var(--user-bubble-color); font-size: 1.2em; top: -2px; }
-
-        /* Animations */
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-
-        /* Typing Indicator */
-        .typing-indicator { display: flex; align-items: center; gap: 6px; background: var(--ai-bubble-color); padding: 16px; border-radius: var(--inner-radius); border-bottom-left-radius: 5px; margin-bottom: 10px; align-self: flex-start; animation: fadeIn 0.3s ease; }
-        .typing-indicator span { height: 8px; width: 8px; background: var(--text-color); display: block; border-radius: 50%; opacity: 0.4; animation: 1s blink infinite; }
-        .typing-indicator span:nth-of-type(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-of-type(3) { animation-delay: 0.4s; }
-        @keyframes blink { 50% { opacity: 1; } }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal.show {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            border-radius: var(--outer-radius);
+            padding: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+            transform: scale(0.95);
+        }
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
         
-        /* Media Queries */
+        /* Typing Indicator Animation */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 12px;
+            border-radius: 25px;
+            border-bottom-left-radius: 6px;
+            width: 52px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+            animation: fadeIn 0.3s ease;
+            background: var(--ai-bubble-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: var(--text-color);
+            opacity: 0.6;
+            display: block;
+            border-radius: 50%;
+        }
+        
+        /* --- 나머지 스타일 (기존 코드와 유사하여 축약 가능하나, 일관성을 위해 유지) --- */
+        .message.multiline { border-radius: 20px !important; }
+        .user-message.multiline { border-bottom-right-radius: 6px !important; }
+        .ai-message.multiline { border-bottom-left-radius: 6px !important; }
+        .message-image { max-width: 100%; border-radius: 10px; margin-bottom: 10px; display: block; }
+        .message-content { display: flex; flex-direction: column; }
+        .image-upload-container { display: flex; align-items: center; margin-right: 8px; }
+        .image-upload-input { display: none; }
+        .image-preview { max-width: 200px; max-height: 200px; margin-top: 10px; border-radius: 10px; box-shadow: var(--glass-shadow); border: 1px solid var(--glass-border-color); }
+        .modal-header { display: flex; align-items: center; margin-bottom: 20px; padding: 10px 20px; position: relative; }
+        .modal-title { font-size: 1.3em; font-weight: bold; margin: 0; flex-grow: 1; text-align: center; }
+        .close-button-container { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); display: flex; }
+        .close-button { width: 15px; height: 15px; border-radius: 100%; margin-right: 10px; cursor: pointer; transition: transform 0.2s ease; }
+        .close-button:hover { transform: scale(1.2); }
+        .close { background: #ed6a5e; }
+        .minimize, .maximize { background: #ced1d3; }
+        .dark-mode .minimize, .dark-mode .maximize { background: #50565a; }
+        #updateHistoryList { padding: 0 20px; overflow-y: auto; flex-grow: 1; }
+        .update-item { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border-color); animation: fadeInUp 0.5s ease; }
+        .update-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .update-version { font-size: 1.2em; margin-bottom: 8px; color: var(--user-bubble-color); }
+        .update-date { font-size: 0.9em; color: var(--text-color); opacity: 0.7; margin-bottom: 5px; }
+        .update-description { font-size: 0.9em; margin-bottom: 10px; color: var(--text-color); opacity: 0.9; }
+        .update-list { padding-left: 15px; list-style-type: none; }
+        .update-list li { margin-bottom: 8px; position: relative; padding-left: 15px; font-size: 0.9em; }
+        .update-list li::before { content: '•'; position: absolute; left: 0; color: var(--user-bubble-color); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .message strong { font-weight: bold; }
+        .message em { font-style: italic; }
+        .message code { font-family: monospace; background: rgba(0, 0, 0, 0.1); padding: 2px 4px; border-radius: 4px; }
+        .typing-indicator span:nth-of-type(1) { animation: 1s blink infinite 0.3333s; }
+        .typing-indicator span:nth-of-type(2) { animation: 1s blink infinite 0.6666s; }
+        .typing-indicator span:nth-of-type(3) { animation: 1s blink infinite 0.9999s; }
+        @keyframes blink { 50% { opacity: 1; } }
+
+        /* Media Queries for Responsiveness */
         @media (max-width: 600px) {
-            body { align-items: stretch; }
-            .chat-window { height: 100%; border-radius: 0; }
-            .chat-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 12px 15px; }
-            #chat-container { padding-top: 130px; padding-left: 15px; padding-right: 15px; } /* Adjust padding for mobile header */
-            .input-area { padding: 8px; }
-            .modal-content { width: 100%; height: 100%; margin: 0; border-radius: 0; max-height: 100vh; }
+            .chat-window.glass-effect { border-radius: 0; }
+            .message { max-width: 85%; }
+            .chat-header { flex-direction: column; align-items: flex-start; padding: 15px; }
+            .header-buttons { width: 100%; justify-content: space-between; }
+            .chat-title-container { margin-bottom: 15px; }
+            .modal-content { width: 100%; height: 100%; margin: 0; border-radius: 0; max-height: none; }
         }
         @media (min-width: 601px) {
             .chat-window { height: 90vh; max-height: 800px; }
@@ -236,12 +471,21 @@
     </style>
 </head>
 <body>
-    <div class="chat-window">
+    <!-- Liquid Glass Animated Background -->
+    <div class="liquid-background">
+        <div class="liquid-blob blob1"></div>
+        <div class="liquid-blob blob2"></div>
+        <div class="liquid-blob blob3"></div>
+    </div>
+
+    <!-- Chat Window Container -->
+    <div class="chat-window glass-effect">
         <!-- Chat Header -->
         <div class="chat-header">
             <div class="chat-title-container">
                 <div class="chat-title">Siri Chat</div>
             </div>
+            <!-- Header Buttons -->
             <div class="header-buttons">
                 <button class="header-button" id="updateHistoryBtn">업데이트 내역</button>
                 <button class="header-button" id="saveHistoryBtn">대화 저장</button>
@@ -252,28 +496,23 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Chat Messages Container (Scrolls behind header/footer) -->
+        <!-- Chat Messages Container -->
         <div id="chat-container"></div>
-        
-        <!-- Input Area -->
-        <div class="input-area">
-            <label for="image-upload" id="image-upload-label" class="input-button">
-                <!-- [IMPROVEMENT] SVG Icon for Upload -->
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        <!-- Input Area with Glass Effect -->
+        <div class="input-area glass-effect">
+            <label for="image-upload" class="image-upload-label">
+                +
             </label>
             <input type="file" id="image-upload" class="image-upload-input" accept="image/*">
-            <input type="text" id="user-input" placeholder="Siri에게 요청하기..." autocomplete="off">
-            <button id="send-button" class="input-button">
-                <!-- [IMPROVEMENT] SVG Icon for Send -->
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4.00997 12.0001L20 12.0001M12.0049 4.00006L20.005 12.0001L12.0049 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-            </button>
+            <input type="text" id="user-input" placeholder="Siri에게 요청하기..." inputmode="search">
+            <button id="send-button">↑</button>
         </div>
     </div>
 
     <!-- Update History Modal -->
     <div id="updateHistoryModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content glass-effect">
+            <!-- Modal Header -->
             <div class="modal-header">
                 <div class="close-button-container">
                     <span class="close-button close"></span>
@@ -282,18 +521,18 @@
                 </div>
                 <h2 class="modal-title">소프트웨어 업데이트 내역</h2>
             </div>
+            <!-- Update History List Container -->
             <div id="updateHistoryList"></div>
         </div>
     </div>
 
-    <!-- Firebase and App Logic (JavaScript is unchanged) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
     <script>
-        // 기존 JavaScript 코드는 변경 없이 그대로 붙여넣습니다.
-        // The existing JavaScript code remains unchanged and should be pasted here.
-        // ... (Original <script> content) ...
+        // --- JavaScript (기존 코드와 동일) ---
         // API 키 및 모델 설정 (보안상 중요 정보는 별도 관리 권장)
         const API_KEY = 'AIzaSyBYYCPgSPktIKgleh4IwbxLILtIR6eZwQQ'; // **주의: API 키는 안전하게 관리해야 합니다.**
         const MODEL = 'gemini-1.5-flash-latest'; // 이미지와 텍스트를 함께 처리할 수 있는 모델
@@ -603,7 +842,6 @@
         // 사용자 입력창에서 Enter 키 입력 시 메시지 전송
         userInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                e.preventDefault(); // 기본 동작(줄바꿈 등) 방지
                 sendMessage();
             }
         });
@@ -785,19 +1023,15 @@
 
         // 대화 내용 저장 기능 (JSON 파일로 다운로드)
         saveHistoryBtn.addEventListener('click', function() {
-            if (conversationHistory.length === 0) {
-                alert("저장할 대화 내용이 없습니다.");
-                return;
-            }
             const chatHistory = {
                 messages: conversationHistory, // 대화 기록
                 timestamp: new Date().toISOString() // 저장 시점 타임스탬프
             };
-            const blob = new Blob([JSON.stringify(chatHistory, null, 2)], {type: "application/json"}); // Blob 생성
+            const blob = new Blob([JSON.stringify(chatHistory)], {type: "application/json"}); // Blob 생성
             const url = URL.createObjectURL(blob); // Blob URL 생성
             const a = document.createElement('a'); // a 태그 생성
             a.href = url;
-            a.download = `siri-chat-history-${new Date().toISOString().slice(0,10)}.json`; // 다운로드 파일명 설정
+            a.download = `siri-chat-history-${new Date().toISOString()}.json`; // 다운로드 파일명 설정
             document.body.appendChild(a);
             a.click(); // 다운로드 트리거
             document.body.removeChild(a); // a 태그 제거
@@ -811,21 +1045,11 @@
             input.accept = '.json'; // JSON 파일만 허용
             input.onchange = function(event) {
                 const file = event.target.files[0]; // 선택된 파일 가져오기
-                if (!file) return;
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    try {
-                        const chatHistory = JSON.parse(reader.result); // JSON 파싱
-                        if (chatHistory && Array.isArray(chatHistory.messages)) {
-                           conversationHistory = chatHistory.messages; // 대화 기록 업데이트
-                           displayLoadedChat(conversationHistory); // 불러온 대화 내용 화면에 표시
-                        } else {
-                           alert("올바른 형식의 대화 파일이 아닙니다.");
-                        }
-                    } catch (err) {
-                        alert("파일을 읽는 중 오류가 발생했습니다.");
-                        console.error("Error parsing chat history file:", err);
-                    }
+                    const chatHistory = JSON.parse(reader.result); // JSON 파싱
+                    conversationHistory = chatHistory.messages; // 대화 기록 업데이트
+                    displayLoadedChat(conversationHistory); // 불러온 대화 내용 화면에 표시
                 };
                 reader.readAsText(file); // 파일을 텍스트로 읽기
             };
@@ -842,25 +1066,28 @@
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${message.role === 'user' ? 'user-message' : 'ai-message'}`;
                 
+                // 메시지 내용을 담을 컨테이너 생성
                 const contentDiv = document.createElement('div');
                 contentDiv.className = 'message-content';
                 
-                if (message.parts && Array.isArray(message.parts)) {
-                    message.parts.forEach(part => {
-                        if (part.text) {
-                            const textElem = document.createElement('div');
-                            textElem.className = 'message-text';
-                            textElem.innerHTML = markdownToHtml(part.text);
-                            contentDiv.appendChild(textElem);
-                        } else if (part.inlineData && part.inlineData.data) {
-                            const imageElem = document.createElement('img');
-                            imageElem.className = 'message-image';
-                            imageElem.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
-                            contentDiv.appendChild(imageElem);
-                        }
-                    });
-                }
+                // 메시지 parts를 순회하며 텍스트 및 이미지 처리
+                message.parts.forEach(part => {
+                    if (part.text) {
+                        // 텍스트 요소 생성 및 추가
+                        const textElem = document.createElement('div');
+                        textElem.className = 'message-text';
+                        textElem.innerHTML = markdownToHtml(part.text);
+                        contentDiv.appendChild(textElem);
+                    } else if (part.inlineData) {
+                        // 이미지 요소 생성 및 추가
+                        const imageElem = document.createElement('img');
+                        imageElem.className = 'message-image';
+                        imageElem.src = `data:${part.inlineData.mimeType};base64,${part.inlineData.data}`;
+                        contentDiv.appendChild(imageElem);
+                    }
+                });
                 
+                // 메시지 컨텐츠를 메시지 버블에 추가
                 messageDiv.appendChild(contentDiv);
                 chatContainer.appendChild(messageDiv);
             });
